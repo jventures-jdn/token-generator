@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "eslint-config-react",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "test patch dunp",
   "license": "MIT",
   "main": "index.js",
