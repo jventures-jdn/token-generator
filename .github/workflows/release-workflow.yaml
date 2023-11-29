@@ -9,7 +9,7 @@ on:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 env:
-  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
 jobs:
@@ -74,5 +74,5 @@ jobs:
           version: pnpm version:packages
           commit: 'chore(release): version packages 🦋 [skip ci]'
         env:
-          GITHUB_TOKEN: ${{ env.GIT_TOKEN }}
+          GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
