@@ -1,0 +1,21 @@
+{
+  "private": true,
+  "name": "eslint-config-react",
+  "version": "0.0.1",
+  "description": "test patch dunp",
+  "license": "MIT",
+  "main": "index.js",
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.13.1",
+    "@typescript-eslint/parser": "^6.13.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-turbo": "^1.10.16",
+    "eslint-plugin-react": "^7.29.4"
+  },
+  "devDependencies": {
+    "config-prettier": "workspace:*"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  }
+}

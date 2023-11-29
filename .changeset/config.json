@@ -4,11 +4,14 @@
     "@changesets/changelog-github",
     { "repo": "jventures-jdn/token-generator" }
   ],
+  "privatePackages": {
+    "version": true,
+    "tag": true
+  },
   "commit": false,
+  "access": "public",
+  "baseBranch": "main",
   "fixed": [],
   "linked": [],
-  "access": "restricted",
-  "baseBranch": "main",
-  "updateInternalDependencies": "patch",
   "ignore": []
 }

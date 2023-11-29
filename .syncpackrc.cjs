@@ -3,18 +3,23 @@ module.exports = {
   semverRange: '^',
   source: [
     'package.json',
-    'apps/*/package.json',
+    'app/*/package.json',
     'config/*/package.json',
     'libs/*/package.json',
   ],
   versionGroups: [
     {
-      label:
-        'Internal config packages should be pinned to "*" (meaning any version is acceptable)',
+      label: 'Internal Workspace Version Group',
       packages: ['**'],
-      dependencies: ['@config/config-prettier', '@config/config-tsconfig', '@config/config-eslint-react'],
+      dependencies: [
+        'config-prettier',
+        'config-tsconfig',
+        'config-tailwind',
+        'eslint-config-react',
+        'eslint-config-next',
+      ],
       dependencyTypes: ['dev'],
-      pinVersion: '*',
+      pinVersion: 'workspace:*',
     },
   ],
 };
