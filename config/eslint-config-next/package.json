@@ -1,0 +1,26 @@
+{
+  "name": "eslint-config-next",
+  "version": "0.0.1",
+  "private": true,
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@next/eslint-plugin-next": "^14.0.3",
+    "@typescript-eslint/eslint-plugin": "^6.13.1",
+    "@typescript-eslint/parser": "^6.13.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-turbo": "^1.10.16",
+    "typescript": "^5.3.2"
+  },
+  "devDependencies": {
+    "config-prettier": "workspace:*"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com:jventures-jdn/token-generator.git",
+    "directory": "packages/@jdn-config-eslint-react"
+  }
+}
