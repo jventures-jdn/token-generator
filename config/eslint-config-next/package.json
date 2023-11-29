@@ -1,9 +1,9 @@
 {
+  "private": true,
   "name": "eslint-config-next",
   "version": "0.0.1",
-  "private": true,
-  "main": "index.js",
   "license": "MIT",
+  "main": "index.js",
   "dependencies": {
     "@next/eslint-plugin-next": "^14.0.3",
     "@typescript-eslint/eslint-plugin": "^6.13.1",
@@ -17,10 +17,5 @@
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
-  },
-  "repository": {
-    "type": "git",
-    "url": "ssh://git@github.com:jventures-jdn/token-generator.git",
-    "directory": "packages/@jdn-config-eslint-react"
   }
 }
