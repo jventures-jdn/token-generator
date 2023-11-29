@@ -1,7 +1,8 @@
 {
-  "name": "@config/config-prettier",
+  "name": "config-prettier",
   "version": "0.0.0",
   "private": true,
   "main": "index.js",
+  "description": "",
   "license": "MIT"
 }
