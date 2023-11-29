@@ -1,0 +1,25 @@
+{
+  "name": "@jdn-project/token-generator",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "lint": "turbo run lint",
+    "lint:format": "prettier --check \"**/*.{js,ts,tsx,md,mdx,json}\"",
+    "lint:format:fix": "pnpm lint:format --fix",
+    "syncpack:sync": "npm-run-all --parallel --print-label --continue-on-error syncpack:sync:*",
+    "syncpack:sync:semver": "syncpack lint-semver-ranges",
+    "syncpack:sync:mismatches": "syncpack list-mismatches",
+    "syncpack:update": "syncpack update"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "18.4.3",
+    "@commitlint/config-conventional": "18.4.3",
+    "@config/config-prettier": "workspace:*",
+    "husky": "^8.0.3",
+    "npm-run-all": "4.1.5",
+    "prettier": "3.1.0",
+    "syncpack": "11.2.1",
+    "turbo": "1.10.16"
+  }
+}

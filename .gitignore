@@ -1,0 +1,31 @@
+# dependencies
+node_modules/
+
+# IDE
+/.idea
+/.awcache
+/.vscode
+
+
+# misc
+.DS_Store
+*.tsbuildinfo
+.turbo
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# test
+coverage
+
+# build
+/.dist
+/.next
+
+# hardhat
+artifacts
+cache
+typechain
