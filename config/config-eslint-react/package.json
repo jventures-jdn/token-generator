@@ -1,6 +1,6 @@
 {
   "name": "@config/config-eslint-react",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": false,
   "main": "index.js",
   "description": "test",
