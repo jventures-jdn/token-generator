@@ -3,8 +3,8 @@ module.exports = {
   semverRange: '^',
   source: [
     'package.json',
-    'apps/*/package.json',
-    'config/*/package.json',
-    'libs/*/package.json',
+    'app/**/package.json',
+    'config/**/package.json',
+    'libs/**/package.json',
   ],
 };
