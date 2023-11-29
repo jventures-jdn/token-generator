@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": false,
   "main": "index.js",
-  "description": "test",
+  "description": "test patch dunp",
   "license": "MIT",
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^5.33.0",
