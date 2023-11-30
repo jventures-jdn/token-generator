@@ -1,6 +1,4 @@
-import type { Config } from 'tailwindcss';
-
-const config: Config = {
+const config = {
   ...require('config-tailwind'),
   mode: 'jit',
   content: ['./app/**/*.{js,ts,jsx,tsx,mdx}'],
