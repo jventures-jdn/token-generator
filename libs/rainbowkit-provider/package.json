@@ -1,19 +1,19 @@
 {
   "private": false,
-  "name": "rainbowkit-provider",
-  "version": "0.1.1",
+  "name": "@jventures-jdn/rainbowkit-provider",
+  "version": "0.1.0",
   "type": "module",
   "license": "MIT",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "repository": {
-    "directory": "packages/wallet-connect-provider",
-    "type": "git",
-    "url": "https://github.com/jventures-jdn/token-generator.git"
-  },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jventures-jdn/token-generator.git",
+    "directory": "packages/wallet-connect-provider"
   },
   "files": [
     "dist/**"

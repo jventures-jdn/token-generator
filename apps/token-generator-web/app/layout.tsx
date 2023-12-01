@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { IBM_Plex_Sans_Thai } from 'next/font/google';
-import RainbotKitProvider from 'rainbowkit-provider';
+import RainbotKitProvider from '@jventures-jdn/rainbowkit-provider';
 import '@/styles/global.css';
 
 const inter = IBM_Plex_Sans_Thai({

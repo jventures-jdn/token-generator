@@ -23,6 +23,6 @@
     "config-tsconfig": "workspace:*",
     "eslint-config-next": "workspace:*",
     "postcss": "^8",
-    "rainbowkit-provider": "workspace:*"
+    "@jventures-jdn/rainbowkit-provider": "workspace:*"
   }
 }
