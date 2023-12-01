@@ -26,13 +26,14 @@ yarn-error.log*
 /coverage
 
 # build
-.dist
+dist
 .next
 out/
 build
 
 # local env files
 .env*.local
+.env
 
 # vercel
 .vercel

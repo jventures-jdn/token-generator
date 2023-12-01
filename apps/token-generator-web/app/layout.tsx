@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { IBM_Plex_Sans_Thai } from 'next/font/google';
+import RainbotKitProvider from 'rainbowkit-provider';
 import '@/styles/global.css';
 
 const inter = IBM_Plex_Sans_Thai({
@@ -20,7 +21,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <RainbotKitProvider>{children}</RainbotKitProvider>
+      </body>
     </html>
   );
 }

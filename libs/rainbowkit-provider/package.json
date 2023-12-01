@@ -1,0 +1,40 @@
+{
+  "private": false,
+  "name": "rainbowkit-provider",
+  "version": "0.0.0",
+  "type": "module",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "repository": {
+    "directory": "packages/wallet-connect-provider",
+    "type": "git",
+    "url": "https://github.com/jventures-jdn/token-generator.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsup index.tsx --format cjs,esm --dts"
+  },
+  "dependencies": {
+    "@rainbow-me/rainbowkit": "^1.3.0",
+    "pino-pretty": "^10.2.3",
+    "react": "^18",
+    "react-dom": "^18",
+    "viem": "^1.19.10",
+    "wagmi": "^1.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "config-tsconfig": "workspace:*",
+    "eslint-config-react": "workspace:*",
+    "tsup": "^8.0.1"
+  }
+}
