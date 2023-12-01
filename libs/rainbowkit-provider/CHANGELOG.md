@@ -1,5 +1,11 @@
 # rainbowkit-provider
 
+## 0.1.1
+
+### Patch Changes
+
+- [`874ee11`](https://github.com/jventures-jdn/token-generator/commit/874ee1147ae23111ae560e19669fb3d25b9575f3) Thanks [@vasin-peach](https://github.com/vasin-peach)! - fix(github): publish requires to be logged in
+
 ## 0.1.0
 
 ### Minor Changes
