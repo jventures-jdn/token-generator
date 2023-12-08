@@ -1,4 +1,6 @@
 module.exports = {
   extends: ['turbo', 'next', 'prettier'],
-  rules: {},
+  rules: {
+    '@next/next/no-img-element': 0,
+  },
 };

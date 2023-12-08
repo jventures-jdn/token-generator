@@ -1,3 +1,5 @@
+'use client';
+
 import { LoggerReactProvider } from './src/provider/LoggerReactProvider';
 export default LoggerReactProvider;
 export * from './src/components/LoggerReact';
