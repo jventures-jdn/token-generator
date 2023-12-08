@@ -1,6 +1,7 @@
 {
   "private": true,
   "name": "@jdn-project/token-generator",
+  "author": "J Ventures Co., Ltd.",
   "scripts": {
     "clean": "turbo run clean && rm -rf node_modules",
     "build": "turbo run build",

@@ -1,6 +1,7 @@
 {
   "private": true,
   "name": "eslint-config-next",
+  "author": "J Ventures Co., Ltd.",
   "version": "0.0.2",
   "license": "MIT",
   "main": "index.js",

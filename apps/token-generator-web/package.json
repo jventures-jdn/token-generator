@@ -1,6 +1,7 @@
 {
   "private": true,
   "name": "token-generator-web",
+  "author": "J Ventures Co., Ltd.",
   "version": "0.0.1",
   "scripts": {
     "build": "pnpm dotenv -e .env -- next build",
@@ -23,6 +24,7 @@
     "config-tsconfig": "workspace:*",
     "eslint-config-next": "workspace:*",
     "postcss": "^8",
-    "@jventures-jdn/rainbowkit-provider": "workspace:*"
+    "@jventures-jdn/react-rainbowkit-provider": "workspace:*",
+    "@jventures-jdn/react-logger-provider": "workspace:*"
   }
 }

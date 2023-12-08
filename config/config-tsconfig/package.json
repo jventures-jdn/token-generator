@@ -1,6 +1,7 @@
 {
   "private": true,
   "name": "config-tsconfig",
+  "author": "J Ventures Co., Ltd.",
   "version": "0.0.1",
   "license": "MIT",
   "files": [

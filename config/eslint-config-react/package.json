@@ -1,6 +1,7 @@
 {
   "private": true,
   "name": "eslint-config-react",
+  "author": "J Ventures Co., Ltd.",
   "version": "0.0.2",
   "description": "test patch dunp",
   "license": "MIT",
