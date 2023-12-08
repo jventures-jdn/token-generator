@@ -2,15 +2,20 @@
 
 import React from 'react';
 import '@rainbow-me/rainbowkit/styles.css';
-import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import {
+  getDefaultWallets,
+  RainbowKitProvider,
+  Theme,
+  darkTheme,
+} from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
-import { mainnet, polygon, optimism, arbitrum, base, zora } from 'wagmi/chains';
+import { mainnet, polygon, optimism, arbitrum } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 /* -------------------------------------------------------------------------- */
 /*                                   States                                   */
 /* -------------------------------------------------------------------------- */
 const { chains, publicClient } = configureChains(
-  [mainnet, polygon, optimism, arbitrum, base, zora],
+  [mainnet, polygon, optimism, arbitrum],
   [publicProvider()],
 );
 
@@ -28,6 +33,11 @@ const wagmiConfig = createConfig({
   publicClient,
 });
 
+const themeConfig: Theme = darkTheme({
+  accentColor: '#ed0000',
+  accentColorForeground: '#ffffff',
+});
+
 /* -------------------------------------------------------------------------- */
 /*                                    Doms                                    */
 /* -------------------------------------------------------------------------- */
@@ -38,7 +48,9 @@ export default function RainbotKitProvider({
 }) {
   return (
     <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={chains}>{children}</RainbowKitProvider>
+      <RainbowKitProvider chains={chains} theme={themeConfig}>
+        {children}
+      </RainbowKitProvider>
     </WagmiConfig>
   );
 }
