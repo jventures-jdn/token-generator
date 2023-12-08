@@ -90,7 +90,7 @@ importers:
       config-tsconfig:
         specifier: workspace:*
         version: link:../../config/config-tsconfig
-      eslint-config-next:
+      eslint-config-next-workspace:
         specifier: workspace:*
         version: link:../../config/eslint-config-next
       postcss:

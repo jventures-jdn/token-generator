@@ -16,7 +16,7 @@ module.exports = {
         'config-tsconfig',
         'config-tailwind',
         'eslint-config-react',
-        'eslint-config-next',
+        'eslint-config-next-workspace',
       ],
       dependencyTypes: ['dev'],
       pinVersion: 'workspace:*',
