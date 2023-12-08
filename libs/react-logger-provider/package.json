@@ -1,0 +1,41 @@
+{
+  "private": true,
+  "name": "@jventures-jdn/react-logger-provider",
+  "author": "J Ventures Co., Ltd.",
+  "version": "0.0.0",
+  "type": "module",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jventures-jdn/token-generator.git",
+    "directory": "packages/react-logger-provider"
+  },
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsup index.ts --format cjs,esm --dts"
+  },
+  "dependencies": {
+    "@next/font": "^14.0.4",
+    "react": "^18",
+    "react-dom": "^18"
+  },
+  "devDependencies": {
+    "postcss": "^8",
+    "autoprefixer": "^10.0.1",
+    "config-tailwind": "workspace:*",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "config-tsconfig": "workspace:*",
+    "eslint-config-react": "workspace:*",
+    "tsup": "^8.0.1"
+  }
+}
