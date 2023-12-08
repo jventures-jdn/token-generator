@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { IBM_Plex_Sans_Thai } from 'next/font/google';
+import { IBM_Plex_Sans_Thai, Space_Mono } from 'next/font/google';
 import RainbotKitProvider from '@jventures-jdn/react-rainbowkit-provider';
 import LoggerReactProvider from '@jventures-jdn/react-logger-provider';
 import '@/styles/global.css';
@@ -10,6 +10,12 @@ const plexSans = IBM_Plex_Sans_Thai({
   variable: '--font-plex-sans-thai',
   subsets: ['thai'],
   weight: ['300', '400', '700'],
+});
+
+const spaceMono = Space_Mono({
+  subsets: ['latin'],
+  variable: '--font-space-mono',
+  weight: ['400', '700'],
 });
 
 export const metadata: Metadata = {
@@ -25,8 +31,8 @@ export default function RootLayout({
   /* ---------------------------------- Doms ---------------------------------- */
 
   return (
-    <html lang="en" className={`${plexSans.className}`}>
-      <body>
+    <html lang="en">
+      <body className={`${plexSans.variable} ${spaceMono.variable}`}>
         <RainbotKitProvider>
           <LoggerReactProvider>
             <Navbar />

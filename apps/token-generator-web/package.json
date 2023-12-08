@@ -22,7 +22,7 @@
     "autoprefixer": "^10.0.1",
     "config-tailwind": "workspace:*",
     "config-tsconfig": "workspace:*",
-    "eslint-config-next": "workspace:*",
+    "eslint-config-next-workspace": "workspace:*",
     "postcss": "^8",
     "@jventures-jdn/react-rainbowkit-provider": "workspace:*",
     "@jventures-jdn/react-logger-provider": "workspace:*"

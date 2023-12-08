@@ -2,14 +2,7 @@
 
 import { useLoggerReact } from '../provider/LoggerReactProvider';
 import { useEffect, useRef } from 'react';
-import { Space_Mono } from '@next/font/google';
 import React from 'react';
-
-export const mono = Space_Mono({
-  subsets: ['latin'],
-  variable: '--font-space-mono',
-  weight: ['400', '700'],
-});
 
 export function LoggerReact(props: {
   className?: JSX.IntrinsicElements['div']['className'];
@@ -49,10 +42,7 @@ export function LoggerReact(props: {
   );
 
   const LoggerReactBody = (
-    <div
-      className="logger-react-body p-5 overflow-y-auto overflow-x-clip h-[calc(100vh_-_208px)]"
-      style={mono.style}
-    >
+    <div className="logger-react-body p-5 overflow-y-auto overflow-x-clip h-[calc(100vh_-_208px)] font-spacemono">
       <div className="text-sm text-gray-300 break-all">
         {logs.map((log, index) => (
           <React.Fragment key={index}>{log}</React.Fragment>

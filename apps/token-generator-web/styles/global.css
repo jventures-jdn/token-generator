@@ -4,7 +4,7 @@
 @import './layout';
 
 :root {
-  --nav-height: 73px;
+  --nav-height: 76px;
   --footer-height: 52px;
 }
 
@@ -13,8 +13,9 @@ body {
   background-size: 100%;
   background-position: top;
   background-repeat: no-repeat;
-  @apply bg-base-300;
+  @apply bg-base-300 text-white;
+  font-family: var(--font-plex-sans-thai);
 }
-body * {
-  @apply text-white;
+
+body {
 }
