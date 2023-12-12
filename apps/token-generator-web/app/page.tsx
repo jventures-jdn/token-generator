@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export default function HomePage() {
   return (
-    <div className="home-page page">
+    <div className="home-page page py-5">
       <div className="container min-h-screen-nav flex items-center justify-center">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 container text-primary-content">
           <div className="lg:col-span-3 lg:pb-[5vh] flex justify-center flex-col items-center">
@@ -17,7 +17,7 @@ export default function HomePage() {
             </span>
           </div>
           <Link
-            href="/ERC20"
+            href="/erc20"
             className="card shadow-xl bg-gradient-to-br from-primary to-secondary"
           >
             <div className="card-body">
@@ -27,7 +27,7 @@ export default function HomePage() {
           </Link>
 
           <Link
-            href="/ERC721"
+            href="/erc721"
             className="card shadow-xl bg-gradient-to-br from-primary to-secondary"
           >
             <div className="card-body">
@@ -37,7 +37,7 @@ export default function HomePage() {
           </Link>
 
           <Link
-            href="/ERC1155"
+            href="/erc1155"
             className="card shadow-xl bg-gradient-to-br from-primary to-secondary"
           >
             <div className="card-body">

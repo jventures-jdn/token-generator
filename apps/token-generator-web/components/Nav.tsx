@@ -18,7 +18,7 @@ export default function Navbar() {
             <Link
               href="/erc20"
               className={`${
-                ['/erc20'].includes(pathname) ? 'text-white' : 'text-gray-400'
+                ['/erc20'].includes(pathname) ? 'text-white' : 'text-gray-300'
               } pl-5`}
             >
               ERC20
@@ -26,7 +26,7 @@ export default function Navbar() {
             <Link
               href="/erc721"
               className={`${
-                pathname === '/erc721' ? 'text-white' : 'text-gray-400'
+                pathname === '/erc721' ? 'text-white' : 'text-gray-300'
               } pl-5`}
             >
               ERC721
@@ -34,7 +34,7 @@ export default function Navbar() {
             <Link
               href="/erc1155"
               className={`${
-                pathname === '/erc1155' ? 'text-white' : 'text-gray-400'
+                pathname === '/erc1155' ? 'text-white' : 'text-gray-300'
               } pl-5`}
             >
               ERC1155

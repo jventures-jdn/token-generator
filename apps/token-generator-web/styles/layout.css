@@ -1,7 +1,11 @@
 .h-screen-nav {
-  height: calc(100svh - var(--nav-height) - var(--footer-height)) !important;
+  height: calc(
+    100svh - var(--nav-height) - var(--footer-height) - 2.5rem
+  ) !important;
 }
 
 .min-h-screen-nav {
-  min-height: calc(100svh - var(--nav-height) - var(--footer-height)) !important;
+  min-height: calc(
+    100svh - var(--nav-height) - var(--footer-height) - 2.5rem
+  ) !important;
 }

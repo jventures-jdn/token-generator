@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { IBM_Plex_Sans_Thai, Space_Mono } from 'next/font/google';
 import RainbotKitProvider from '@jventures-jdn/react-rainbowkit-provider';
-import LoggerReactProvider from '@jventures-jdn/react-logger-provider';
 import '@/styles/global.css';
 import Navbar from '@/components/Nav';
 import Footer from '@/components/Footer';
@@ -34,11 +33,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${plexSans.variable} ${spaceMono.variable}`}>
         <RainbotKitProvider>
-          <LoggerReactProvider>
-            <Navbar />
-            <main>{children}</main>
-            <Footer />
-          </LoggerReactProvider>
+          <Navbar />
+          <main>{children}</main>
+          <Footer />
         </RainbotKitProvider>
       </body>
     </html>
