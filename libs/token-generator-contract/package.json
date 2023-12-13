@@ -14,7 +14,10 @@
   },
   "scripts": {
     "build": "tsup index.ts --format cjs,esm --dts",
-    "hardhat:compile": "pnpm hardhat compile"
+    "hardhat:compile": "pnpm hardhat compile --",
+    "hardhat:flatten:erc20": "pnpm hardhat flatten contracts/erc20/ERC20Generator.sol > contracts/flattens/ERC20Generator.sol",
+    "hardhat:flatten:erc721": "pnpm hardhat flatten contracts/erc721/ERC721Generator.sol > contracts/flattens/ERC721Generator.sol",
+    "hardhat:flatten:erc721-enumerable": "pnpm hardhat flatten contracts/erc721/ERC721EnumerableGenerator.sol > contracts/flattens/ERC721EnumerableGenerator.sol"
   },
   "files": [
     "dist/**"
