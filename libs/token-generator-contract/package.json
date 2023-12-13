@@ -24,19 +24,18 @@
     "dist/**"
   ],
   "devDependencies": {
-    "@nomicfoundation/hardhat-chai-matchers": "^2.0.2",
     "@openzeppelin/contracts": "^4.9.0",
-    "@typechain/ethers-v6": "^0.5.1",
-    "@typechain/hardhat": "^9.1.0",
     "config-tsconfig": "workspace:*",
     "eslint-config-react": "workspace:*",
     "hardhat": "^2.19.2",
     "ts-node": "^10.9.2",
     "tsup": "^8.0.1",
-    "typechain": "^8.3.2"
+    "typechain": "^8.3.2",
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.2",
+    "@typechain/hardhat": "^9.1.0"
   },
   "dependencies": {
     "config-chains": "workspace*",
-    "ethers": "^6.9.0"
+    "ethers": "^5.7.2"
   }
 }
