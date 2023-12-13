@@ -6,9 +6,17 @@ import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { TextInput } from '@/components/Form/TextInput';
 import { RangeInput } from '@/components/Form/RangeInput';
 import { HiInformationCircle } from 'react-icons/hi';
-import { GetAccountResult, getNetwork, watchAccount } from 'wagmi/actions';
+import {
+  GetAccountResult,
+  getNetwork,
+  getPublicClient,
+  getWalletClient,
+  watchAccount,
+} from 'wagmi/actions';
 import { PublicClient } from 'wagmi';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
+import { CHAIN_DECIMAL, InternalChain, getChain } from 'config-chains';
+import { ERC20Generator__factory } from '@jventures-jdn/token-generator-contract';
 
 interface ERC20Form {
   symbol: string;
@@ -94,8 +102,12 @@ export default function ERC20Page() {
   const handleDeploy = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { chain } = getNetwork();
-    setLoading(true);
+    const walletClient = await getWalletClient({ chainId: chain?.id });
+    const publicClient = await getPublicClient({ chainId: chain?.id });
+    const gasPrice = await publicClient.getGasPrice();
+    const transactionFeeDecimal = 10 ** 7;
 
+    setLoading(true);
     newLine();
     add(`🗳️ Deploy : ERC20 [${chain?.name}]`);
     add(
@@ -109,52 +121,93 @@ export default function ERC20Page() {
       </div>,
     );
 
-    // const transaction = await deployContract({
-    //   logger,
-    //   abi: ERC20Generator__factory.abi,
-    //   bytecode: ERC20Generator__factory.bytecode,
-    //   args: [
-    //     {
-    //       symbol: form.symbol,
-    //       name: form.name,
-    //       initialSupply: BigInt(form.initialSupply) * CHAIN_DECIMAL,
-    //       supplyCap: BigInt(form.supplyCap) * CHAIN_DECIMAL,
-    //       mintable: form.mintable,
-    //       burnable: form.burnable,
-    //       pausable: form.pausable,
-    //     },
-    //   ],
-    // });
+    if (!chain) {
+      newLine();
+      add('Chain not found');
+      newLine();
+      setLoading(false);
+      return Promise.reject();
+    }
 
-    // if (!transaction?.contractAddress) return Promise.reject();
+    // deploy contract
+    add('📝 Signing transaction...');
 
-    // await verifyContract({
-    //   logger,
-    //   address: transaction?.contractAddress,
-    //   contractName: 'contracts/ERC20/ERC20Generator.sol:ERC20Generator',
-    //   args: [
-    //     {
-    //       symbol: form.symbol,
-    //       name: form.name,
-    //       initialSupply: (
-    //         BigInt(form.initialSupply) * CHAIN_DECIMAL
-    //       ).toString(),
-    //       supplyCap: (BigInt(form.supplyCap) * CHAIN_DECIMAL).toString(),
-    //       mintable: form.mintable,
-    //       burnable: form.burnable,
-    //       pausable: form.pausable,
-    //     },
-    //   ],
-    // });
+    const hash = await walletClient
+      ?.deployContract({
+        abi: ERC20Generator__factory.abi,
+        bytecode: ERC20Generator__factory.bytecode,
+        args: [
+          {
+            symbol: form.symbol,
+            name: form.name,
+            initialSupply: BigInt(form.initialSupply) * CHAIN_DECIMAL,
+            supplyCap: BigInt(form.supplyCap) * CHAIN_DECIMAL,
+            mintable: form.mintable,
+            burnable: form.burnable,
+            pausable: form.pausable,
+          },
+        ],
+      })
+      .catch((e: { details: any; message: any }) => {
+        newLine();
+        add(e?.details || e?.message || 'Unknown');
+        newLine();
+        setLoading(false);
+        return Promise.reject();
+      });
+
+    // wait deploy contract
+    add(`💫 Deploying...`);
+    try {
+      const transaction = await publicClient.waitForTransactionReceipt({
+        hash: hash || '0x',
+      });
+      newLine();
+      add('🎉 Contract Deployed');
+
+      add(
+        <a
+          href={`${
+            getChain(chain.network as InternalChain).chainExplorer.homePage
+          }/tx/${transaction.transactionHash}`}
+          target="_blank"
+        >
+          Transaction Hash:{' '}
+          <span className="underline">[{transaction.transactionHash}]</span>
+        </a>,
+      );
+      add(
+        <a
+          href={`${
+            getChain(chain.network as InternalChain).chainExplorer.homePage
+          }/address/${transaction.contractAddress}//read-contract`}
+          target="_blank"
+        >
+          Contract Address:{' '}
+          <span className="underline">[{transaction.contractAddress}]</span>
+        </a>,
+      );
+      add(`Type: ${transaction.type}`);
+      add(
+        `Transaction Fee: ${(
+          Number(
+            (transaction.gasUsed * gasPrice * BigInt(transactionFeeDecimal)) /
+              CHAIN_DECIMAL,
+          ) / transactionFeeDecimal
+        ).toLocaleString(undefined, { minimumFractionDigits: 7 })} ${
+          chain.nativeCurrency.symbol
+        }`,
+      );
+    } catch (e: any) {
+      newLine();
+      add(e?.details || e?.message || 'Unknown');
+      setLoading(false);
+    }
   };
 
   /* -------------------------------------------------------------------------- */
   /*                                   Watches                                  */
   /* -------------------------------------------------------------------------- */
-  //   useEffect(() => {
-  //     if (!chain?.id) return;
-  //     setDefaultChain(chain);
-  //   }, [chain]);
 
   useEffect(handleAccountChange, [account?.address]);
   useEffect(() => {

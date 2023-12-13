@@ -75,3 +75,20 @@ export const jfint: Chain = {
 };
 
 export const chains = [jfin, jfint];
+
+export const getChainExplorer = (chain: InternalChain) => {
+  const selectExplorer = CHAIN_EXPLORER[chain];
+  return {
+    homePage: `${selectExplorer}`,
+  };
+};
+
+export const getChain = (chain: InternalChain) => {
+  return {
+    chainId: CHAIN_ID[chain],
+    chainName: CHAIN_NAME[chain],
+    chainRpc: CHAIN_RPC[chain],
+    chainExplorer: getChainExplorer(chain),
+    chainSymbol: CHAIN_SYMBOL[chain] as InternalChain,
+  };
+};
