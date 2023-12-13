@@ -11,11 +11,12 @@ import {
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { mainnet, polygon, optimism, arbitrum } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
+import { jfin, jfint } from 'config-chains';
 /* -------------------------------------------------------------------------- */
 /*                                   States                                   */
 /* -------------------------------------------------------------------------- */
 const { chains, publicClient } = configureChains(
-  [mainnet, polygon, optimism, arbitrum],
+  [mainnet, polygon, optimism, arbitrum, jfin, jfint],
   [publicProvider()],
 );
 
@@ -48,7 +49,11 @@ export default function RainbotKitProvider({
 }) {
   return (
     <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={chains} theme={themeConfig}>
+      <RainbowKitProvider
+        chains={chains}
+        theme={themeConfig}
+        initialChain={jfin}
+      >
         {children}
       </RainbowKitProvider>
     </WagmiConfig>

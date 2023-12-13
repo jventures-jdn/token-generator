@@ -253,6 +253,9 @@ importers:
       '@types/react-dom':
         specifier: ^18
         version: 18.2.17
+      config-chains:
+        specifier: workspace:*
+        version: link:../../config/config-chains
       config-tsconfig:
         specifier: workspace:*
         version: link:../../config/config-tsconfig
