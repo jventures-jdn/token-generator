@@ -36,6 +36,7 @@
     "typechain": "^8.3.2"
   },
   "dependencies": {
+    "config-chains": "workspace*",
     "ethers": "^6.9.0"
   }
 }
