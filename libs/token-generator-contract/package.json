@@ -1,0 +1,37 @@
+{
+  "private": true,
+  "name": "@jventures-jdn/token-generator-contract",
+  "author": "J Ventures Co., Ltd.",
+  "version": "0.0.0",
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jventures-jdn/token-generator.git",
+    "directory": "packages/token-generator-contract"
+  },
+  "scripts": {
+    "build": "tsup index.ts --format cjs,esm --dts",
+    "hardhat:compile": "pnpm hardhat compile"
+  },
+  "files": [
+    "dist/**"
+  ],
+  "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.2",
+    "@openzeppelin/contracts": "4.9.0",
+    "@typechain/ethers-v6": "^0.5.1",
+    "@typechain/hardhat": "^9.1.0",
+    "config-tsconfig": "workspace:*",
+    "eslint-config-react": "workspace:*",
+    "hardhat": "^2.19.2",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.0.1",
+    "typechain": "^8.3.2"
+  },
+  "dependencies": {
+    "ethers": "^6.9.0"
+  }
+}
