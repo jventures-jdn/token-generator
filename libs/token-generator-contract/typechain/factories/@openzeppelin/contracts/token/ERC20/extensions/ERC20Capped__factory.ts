@@ -2,7 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Interface, type ContractRunner } from "ethers";
+import { Contract, Signer, utils } from "ethers";
+import type { Provider } from "@ethersproject/providers";
 import type {
   ERC20Capped,
   ERC20CappedInterface,
@@ -297,9 +298,12 @@ const _abi = [
 export class ERC20Capped__factory {
   static readonly abi = _abi;
   static createInterface(): ERC20CappedInterface {
-    return new Interface(_abi) as ERC20CappedInterface;
+    return new utils.Interface(_abi) as ERC20CappedInterface;
   }
-  static connect(address: string, runner?: ContractRunner | null): ERC20Capped {
-    return new Contract(address, _abi, runner) as unknown as ERC20Capped;
+  static connect(
+    address: string,
+    signerOrProvider: Signer | Provider
+  ): ERC20Capped {
+    return new Contract(address, _abi, signerOrProvider) as ERC20Capped;
   }
 }

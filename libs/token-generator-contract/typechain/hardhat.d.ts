@@ -4,10 +4,9 @@
 
 import { ethers } from "ethers";
 import {
-  DeployContractOptions,
   FactoryOptions,
   HardhatEthersHelpers as HardhatEthersHelpersBase,
-} from "@nomicfoundation/hardhat-ethers/types";
+} from "@nomiclabs/hardhat-ethers/types";
 
 import * as Contracts from ".";
 
@@ -108,327 +107,118 @@ declare module "hardhat/types/runtime" {
 
     getContractAt(
       name: "Ownable",
-      address: string | ethers.Addressable,
+      address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Ownable>;
     getContractAt(
       name: "IERC4906",
-      address: string | ethers.Addressable,
+      address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC4906>;
     getContractAt(
       name: "Pausable",
-      address: string | ethers.Addressable,
+      address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Pausable>;
     getContractAt(
       name: "ERC20",
-      address: string | ethers.Addressable,
+      address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC20>;
     getContractAt(
       name: "ERC20Burnable",
-      address: string | ethers.Addressable,
+      address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC20Burnable>;
     getContractAt(
       name: "ERC20Capped",
-      address: string | ethers.Addressable,
+      address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC20Capped>;
     getContractAt(
       name: "ERC20Pausable",
-      address: string | ethers.Addressable,
+      address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC20Pausable>;
     getContractAt(
       name: "IERC20Metadata",
-      address: string | ethers.Addressable,
+      address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20Metadata>;
     getContractAt(
       name: "IERC20",
-      address: string | ethers.Addressable,
+      address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20>;
     getContractAt(
       name: "ERC721",
-      address: string | ethers.Addressable,
+      address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC721>;
     getContractAt(
       name: "ERC721Burnable",
-      address: string | ethers.Addressable,
+      address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC721Burnable>;
     getContractAt(
       name: "ERC721Enumerable",
-      address: string | ethers.Addressable,
+      address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC721Enumerable>;
     getContractAt(
       name: "ERC721Pausable",
-      address: string | ethers.Addressable,
+      address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC721Pausable>;
     getContractAt(
       name: "ERC721URIStorage",
-      address: string | ethers.Addressable,
+      address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC721URIStorage>;
     getContractAt(
       name: "IERC721Enumerable",
-      address: string | ethers.Addressable,
+      address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC721Enumerable>;
     getContractAt(
       name: "IERC721Metadata",
-      address: string | ethers.Addressable,
+      address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC721Metadata>;
     getContractAt(
       name: "IERC721",
-      address: string | ethers.Addressable,
+      address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC721>;
     getContractAt(
       name: "IERC721Receiver",
-      address: string | ethers.Addressable,
+      address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC721Receiver>;
     getContractAt(
       name: "ERC165",
-      address: string | ethers.Addressable,
+      address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC165>;
     getContractAt(
       name: "IERC165",
-      address: string | ethers.Addressable,
+      address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC165>;
     getContractAt(
       name: "ERC20Generator",
-      address: string | ethers.Addressable,
+      address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC20Generator>;
     getContractAt(
       name: "ERC721EnumerableGenerator",
-      address: string | ethers.Addressable,
+      address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC721EnumerableGenerator>;
     getContractAt(
       name: "ERC721Generator",
-      address: string | ethers.Addressable,
+      address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.ERC721Generator>;
-
-    deployContract(
-      name: "Ownable",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Ownable>;
-    deployContract(
-      name: "IERC4906",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IERC4906>;
-    deployContract(
-      name: "Pausable",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Pausable>;
-    deployContract(
-      name: "ERC20",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC20>;
-    deployContract(
-      name: "ERC20Burnable",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC20Burnable>;
-    deployContract(
-      name: "ERC20Capped",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC20Capped>;
-    deployContract(
-      name: "ERC20Pausable",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC20Pausable>;
-    deployContract(
-      name: "IERC20Metadata",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IERC20Metadata>;
-    deployContract(
-      name: "IERC20",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IERC20>;
-    deployContract(
-      name: "ERC721",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC721>;
-    deployContract(
-      name: "ERC721Burnable",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC721Burnable>;
-    deployContract(
-      name: "ERC721Enumerable",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC721Enumerable>;
-    deployContract(
-      name: "ERC721Pausable",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC721Pausable>;
-    deployContract(
-      name: "ERC721URIStorage",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC721URIStorage>;
-    deployContract(
-      name: "IERC721Enumerable",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IERC721Enumerable>;
-    deployContract(
-      name: "IERC721Metadata",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IERC721Metadata>;
-    deployContract(
-      name: "IERC721",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IERC721>;
-    deployContract(
-      name: "IERC721Receiver",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IERC721Receiver>;
-    deployContract(
-      name: "ERC165",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC165>;
-    deployContract(
-      name: "IERC165",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IERC165>;
-    deployContract(
-      name: "ERC20Generator",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC20Generator>;
-    deployContract(
-      name: "ERC721EnumerableGenerator",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC721EnumerableGenerator>;
-    deployContract(
-      name: "ERC721Generator",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC721Generator>;
-
-    deployContract(
-      name: "Ownable",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Ownable>;
-    deployContract(
-      name: "IERC4906",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IERC4906>;
-    deployContract(
-      name: "Pausable",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Pausable>;
-    deployContract(
-      name: "ERC20",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC20>;
-    deployContract(
-      name: "ERC20Burnable",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC20Burnable>;
-    deployContract(
-      name: "ERC20Capped",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC20Capped>;
-    deployContract(
-      name: "ERC20Pausable",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC20Pausable>;
-    deployContract(
-      name: "IERC20Metadata",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IERC20Metadata>;
-    deployContract(
-      name: "IERC20",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IERC20>;
-    deployContract(
-      name: "ERC721",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC721>;
-    deployContract(
-      name: "ERC721Burnable",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC721Burnable>;
-    deployContract(
-      name: "ERC721Enumerable",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC721Enumerable>;
-    deployContract(
-      name: "ERC721Pausable",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC721Pausable>;
-    deployContract(
-      name: "ERC721URIStorage",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC721URIStorage>;
-    deployContract(
-      name: "IERC721Enumerable",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IERC721Enumerable>;
-    deployContract(
-      name: "IERC721Metadata",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IERC721Metadata>;
-    deployContract(
-      name: "IERC721",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IERC721>;
-    deployContract(
-      name: "IERC721Receiver",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IERC721Receiver>;
-    deployContract(
-      name: "ERC165",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC165>;
-    deployContract(
-      name: "IERC165",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IERC165>;
-    deployContract(
-      name: "ERC20Generator",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC20Generator>;
-    deployContract(
-      name: "ERC721EnumerableGenerator",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC721EnumerableGenerator>;
-    deployContract(
-      name: "ERC721Generator",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ERC721Generator>;
 
     // default types
@@ -438,22 +228,13 @@ declare module "hardhat/types/runtime" {
     ): Promise<ethers.ContractFactory>;
     getContractFactory(
       abi: any[],
-      bytecode: ethers.BytesLike,
+      bytecode: ethers.utils.BytesLike,
       signer?: ethers.Signer
     ): Promise<ethers.ContractFactory>;
     getContractAt(
       nameOrAbi: string | any[],
-      address: string | ethers.Addressable,
+      address: string,
       signer?: ethers.Signer
-    ): Promise<ethers.Contract>;
-    deployContract(
-      name: string,
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<ethers.Contract>;
-    deployContract(
-      name: string,
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<ethers.Contract>;
   }
 }
