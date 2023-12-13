@@ -18,7 +18,7 @@
     "react-icons": "^4.12.0"
   },
   "devDependencies": {
-    "@jventures-jdn/react-logger-provider": "workspace:*",
+    "@jventures-jdn/react-logger": "workspace:*",
     "@jventures-jdn/react-rainbowkit-provider": "workspace:*",
     "@types/node": "^20",
     "@types/react": "^18",
