@@ -4,7 +4,6 @@ import '@nomicfoundation/hardhat-ethers';
 import '@nomicfoundation/hardhat-chai-matchers';
 import { chains } from 'config-chains';
 
-
 const config: HardhatUserConfig = {
   solidity: '0.8.17',
   typechain: {
@@ -16,7 +15,7 @@ const config: HardhatUserConfig = {
   },
   networks: chains.reduce((chains, chain) => {
     return { ...chains, [chain.id]: { url: chain.rpcUrls.default.http[0] } };
-  }, {})
+  }, {}),
 };
 
 export default config;
