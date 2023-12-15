@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@jventures-jdn/config-prettier": "*",
-    "@jventures-jdn/react-logger": "workspace*",
+    "@jventures-jdn/react-logger": "workspace:*",
     "@jventures-jdn/react-rainbowkit-provider": "workspace:*",
     "@jventures-jdn/token-generator-contract": "workspace:*",
     "@types/node": "^20",

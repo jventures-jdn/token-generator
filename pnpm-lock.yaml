@@ -161,7 +161,7 @@ importers:
         specifier: '*'
         version: link:../../config/eslint-config-next
       '@jventures-jdn/react-logger':
-        specifier: workspace*
+        specifier: workspace:*
         version: link:../../libs/react-logger
       '@jventures-jdn/react-rainbowkit-provider':
         specifier: workspace:*
