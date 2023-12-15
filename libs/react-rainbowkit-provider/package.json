@@ -5,9 +5,6 @@
   "version": "0.1.0",
   "type": "module",
   "license": "MIT",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
@@ -31,6 +28,7 @@
     "wagmi": "^1.4.7"
   },
   "devDependencies": {
+    "config-chains": "workspace:*",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

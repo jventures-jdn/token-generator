@@ -6,9 +6,20 @@ import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { TextInput } from '@/components/Form/TextInput';
 import { RangeInput } from '@/components/Form/RangeInput';
 import { HiInformationCircle } from 'react-icons/hi';
-import { GetAccountResult, getNetwork, watchAccount } from 'wagmi/actions';
+import {
+  GetAccountResult,
+  getAccount,
+  getNetwork,
+  getPublicClient,
+  getWalletClient,
+  watchAccount,
+} from 'wagmi/actions';
 import { PublicClient } from 'wagmi';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
+import { CHAIN_DECIMAL, InternalChain, getChain } from 'config-chains';
+import { ERC20Generator__factory } from '@jventures-jdn/token-generator-contract';
+import { useErc20 } from './hooks';
+import { deployContract } from './deploy';
 
 interface ERC20Form {
   symbol: string;
@@ -34,136 +45,43 @@ export default function ERC20Page() {
   /* -------------------------------------------------------------------------- */
   /*                                   States                                   */
   /* -------------------------------------------------------------------------- */
-  watchAccount((account) => setAccount(account));
-
+  const {
+    form,
+    account,
+    handleInitialSupplyChange,
+    handleSupplyCapChange,
+    handleAccountChange,
+    setForm,
+    isDisabled,
+    minSupply,
+    maxSupply,
+    stepSupply,
+  } = useErc20();
   const { openConnectModal } = useConnectModal();
-  const { loading, logSelectId, initiating, newLine } = LoggerStore();
   const { add, clear, setLoading, setInitiating } = LoggerStore.getState();
-  const [account, setAccount] = useState<GetAccountResult<PublicClient>>();
-  const [form, setForm] = useState(ERC20FormDefaultState);
-  const minSupply = 0;
-  const maxSupply = 1000000;
-  const stepSupply = 10000;
-  const isDisabled = loading[logSelectId] || initiating[logSelectId];
 
   /* -------------------------------------------------------------------------- */
   /*                                   Methods                                  */
   /* -------------------------------------------------------------------------- */
-  const handleInitialSupplyChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = +e.target.value;
-    if (value > maxSupply || value < minSupply) return;
-    if (value > form.supplyCap)
-      setForm((form) => ({
-        ...form,
-        supplyCap: value,
-      }));
-
-    setForm((form) => ({
-      ...form,
-      initialSupply: value,
-    }));
-  };
-
-  const handleSupplyCapChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = +e.target.value;
-    if (value > maxSupply || value < minSupply) return;
-    if (value < form.initialSupply)
-      setForm((form) => ({
-        ...form,
-        initialSupply: value,
-      }));
-
-    setForm((form) => ({
-      ...form,
-      supplyCap: value,
-    }));
-  };
-
-  const handleAccountChange = () => {
-    clear();
-    !account?.address
-      ? add(<span className="text-warning">Please connect your wallet</span>)
-      : add(
-          <span>
-            <span>🔗 Connected: </span>
-            <span className="underline font-bold">{account?.address}</span>
-          </span>,
-        );
-  };
-
-  const handleDeploy = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const { chain } = getNetwork();
-    setLoading(true);
-
-    newLine();
-    add(`🗳️ Deploy : ERC20 [${chain?.name}]`);
-    add(
-      <div className="flex flex-col gap-2 text-info">
-        {Object.entries(form).map(([field, value]) => (
-          <div key={field}>
-            <span className="capitalize">{field}: </span>
-            <span>{`${value}`}</span>
-          </div>
-        ))}
-      </div>,
-    );
-
-    // const transaction = await deployContract({
-    //   logger,
-    //   abi: ERC20Generator__factory.abi,
-    //   bytecode: ERC20Generator__factory.bytecode,
-    //   args: [
-    //     {
-    //       symbol: form.symbol,
-    //       name: form.name,
-    //       initialSupply: BigInt(form.initialSupply) * CHAIN_DECIMAL,
-    //       supplyCap: BigInt(form.supplyCap) * CHAIN_DECIMAL,
-    //       mintable: form.mintable,
-    //       burnable: form.burnable,
-    //       pausable: form.pausable,
-    //     },
-    //   ],
-    // });
-
-    // if (!transaction?.contractAddress) return Promise.reject();
-
-    // await verifyContract({
-    //   logger,
-    //   address: transaction?.contractAddress,
-    //   contractName: 'contracts/ERC20/ERC20Generator.sol:ERC20Generator',
-    //   args: [
-    //     {
-    //       symbol: form.symbol,
-    //       name: form.name,
-    //       initialSupply: (
-    //         BigInt(form.initialSupply) * CHAIN_DECIMAL
-    //       ).toString(),
-    //       supplyCap: (BigInt(form.supplyCap) * CHAIN_DECIMAL).toString(),
-    //       mintable: form.mintable,
-    //       burnable: form.burnable,
-    //       pausable: form.pausable,
-    //     },
-    //   ],
-    // });
-  };
 
   /* -------------------------------------------------------------------------- */
   /*                                   Watches                                  */
   /* -------------------------------------------------------------------------- */
-  //   useEffect(() => {
-  //     if (!chain?.id) return;
-  //     setDefaultChain(chain);
-  //   }, [chain]);
-
-  useEffect(handleAccountChange, [account?.address]);
-  useEffect(() => {
-    setLoading(false);
-    return () => {
-      setLoading(false);
-      setInitiating(false);
-    };
-  }, []);
+  const handleDeploy = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    clear();
+    deployContract('ERC20', {
+      abi: ERC20Generator__factory.abi,
+      bytecode: ERC20Generator__factory.bytecode,
+      args: {
+        initialSupply: BigInt(form.initialSupply) * CHAIN_DECIMAL,
+        supplyCap: BigInt(form.supplyCap) * CHAIN_DECIMAL,
+        mintable: form.mintable,
+        burnable: form.burnable,
+        pausable: form.pausable,
+      },
+    });
+  };
 
   /* ---------------------------------- Doms ---------------------------------- */
   const ERC20Form = (
@@ -265,7 +183,7 @@ export default function ERC20Page() {
       </div>
 
       <button
-        type={!account?.address ? 'button' : 'submit'}
+        type={!account ? 'button' : 'submit'}
         className="btn btn-primary  w-full mt-10 disabled:bg-primary/25"
         disabled={isDisabled}
         onClick={() => !account?.address && openConnectModal?.()}

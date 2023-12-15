@@ -1,0 +1,44 @@
+{
+  "private": true,
+  "name": "@jventures-jdn/token-generator-contract",
+  "author": "J Ventures Co., Ltd.",
+  "version": "0.0.0",
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jventures-jdn/token-generator.git",
+    "directory": "packages/token-generator-contract"
+  },
+  "scripts": {
+    "build": "pnpm hardhat:compile && tsup index.ts --format cjs,esm --dts",
+    "hardhat:compile": "pnpm hardhat compile",
+    "hardhat:flatten": "pnpm hardhat:flatten:erc20 && pnpm hardhat:flatten:erc721 && pnpm hardhat:flatten:erc721-enumerable",
+    "hardhat:flatten:erc20": "pnpm hardhat flatten contracts/erc20/ERC20Generator.sol > flattens/ERC20Generator.sol",
+    "hardhat:flatten:erc721": "pnpm hardhat flatten contracts/erc721/ERC721Generator.sol > flattens/ERC721Generator.sol",
+    "hardhat:flatten:erc721-enumerable": "pnpm hardhat flatten contracts/erc721/ERC721EnumerableGenerator.sol > flattens/ERC721EnumerableGenerator.sol"
+  },
+  "files": [
+    "dist/**"
+  ],
+  "devDependencies": {
+    "@ethersproject/abi": "^5.7.0",
+    "@ethersproject/providers": "^5.7.2",
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.2",
+    "@openzeppelin/contracts": "^4.9.0",
+    "@typechain/ethers-v5": "^11.1.2",
+    "@typechain/hardhat": "^9.1.0",
+    "config-tsconfig": "workspace:*",
+    "eslint-config-react": "workspace:*",
+    "hardhat": "^2.19.2",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.0.1",
+    "typechain": "^8.3.2"
+  },
+  "dependencies": {
+    "config-chains": "workspace*",
+    "ethers": "^5.7.2"
+  }
+}
