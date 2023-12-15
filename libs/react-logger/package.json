@@ -17,7 +17,9 @@
     "dist/**"
   ],
   "scripts": {
-    "build": "tsup index.ts --format cjs,esm --dts"
+    "lint": "eslint \"./**/*.{ts,tsx}\"",
+    "build": "tsup index.ts --format cjs,esm --dts",
+    "clean": "rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
     "@next/font": "^14.0.4",
@@ -31,8 +33,8 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
-    "config-tsconfig": "workspace:*",
-    "eslint-config-react": "workspace:*",
+    "@jventures-jdn/config-tsconfig": "*",
+    "@jventures-jdn/eslint-config-react": "*",
     "postcss": "^8",
     "tsup": "^8.0.1"
   }

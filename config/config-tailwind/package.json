@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "config-tailwind",
+  "name": "@jventures-jdn/config-tailwind",
   "author": "J Ventures Co., Ltd.",
   "version": "0.0.1",
   "license": "MIT",

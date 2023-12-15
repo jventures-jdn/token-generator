@@ -11,7 +11,7 @@ import {
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { mainnet, polygon, optimism, arbitrum } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
-import { jfin, jfint } from 'config-chains';
+import { jfin, jfint } from '@jventures-jdn/config-chains';
 /* -------------------------------------------------------------------------- */
 /*                                   States                                   */
 /* -------------------------------------------------------------------------- */

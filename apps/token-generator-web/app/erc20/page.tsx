@@ -16,7 +16,11 @@ import {
 } from 'wagmi/actions';
 import { PublicClient } from 'wagmi';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
-import { CHAIN_DECIMAL, InternalChain, getChain } from 'config-chains';
+import {
+  CHAIN_DECIMAL,
+  InternalChain,
+  getChain,
+} from '@jventures-jdn/config-chains';
 import { ERC20Generator__factory } from '@jventures-jdn/token-generator-contract';
 import { useErc20 } from './hooks';
 import { deployContract } from './deploy';

@@ -1,29 +1,33 @@
 module.exports = {
   dependencyTypes: ['dev', 'peer', 'prod'],
   semverRange: '^',
-  source: [
-    'package.json',
-    'app/*/package.json',
-    'config/*/package.json',
-    'libs/*/package.json',
-  ],
+  source: ['package.json', 'config/*/package.json', 'libs/*/package.json'],
   versionGroups: [
     {
-      label: 'Internal Workspace Version Group',
+      label:
+        'Internal config packages should be pinned to "*" (meaning any version is acceptable)',
       packages: ['**'],
       dependencies: [
-        'config-chains',
-        'config-prettier',
-        'config-tsconfig',
-        'config-tailwind',
-        'eslint-config-react',
-        'eslint-config-next-workspace',
-        '@jventures-jdn/token-generator-web',
-        '@jventures-jdn/token-generator-contract',
-        '@jventures-jdn/react-rainbowkit-provider',
-        '@jventures-jdn/react-logger',
+        '@jventures-jdn/config-chains',
+        '@jventures-jdn/config-prettier',
+        '@jventures-jdn/config-tsconfig',
+        '@jventures-jdn/config-tailwind',
+        '@jventures-jdn/eslint-config-react',
+        '@jventures-jdn/eslint-config-next',
+        '@jventures-jdn/eslint-config-nest',
       ],
       dependencyTypes: ['dev'],
+      pinVersion: '*',
+    },
+    {
+      label:
+        'Internal libary packages should be pinned to "workspace:*" (meaning any version of workspace is acceptable)',
+      packages: ['**'],
+      dependencies: [
+        '@jventures-jdn/react-logger',
+        '@jventures-jdn/react-rainbowkit-provider',
+      ],
+      dependencyTypes: ['prod'],
       pinVersion: 'workspace:*',
     },
   ],

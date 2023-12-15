@@ -1,11 +1,12 @@
 {
   "private": true,
-  "name": "config-tsconfig",
+  "name": "@jventures-jdn/config-tsconfig",
   "author": "J Ventures Co., Ltd.",
   "version": "0.0.1",
   "license": "MIT",
   "files": [
     "base.json",
+    "nestjs.json",
     "nestjs.json",
     "react.json"
   ]

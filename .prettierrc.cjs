@@ -1,3 +1,3 @@
 module.exports = {
-  ...require("config-prettier"),
+  ...require("@jventures-jdn/config-prettier"),
 };
