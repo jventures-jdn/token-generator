@@ -1,7 +1,7 @@
 {
   "name": "@jventures-jdn/config-prettier",
   "author": "J Ventures Co., Ltd.",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "main": "index.js",
   "description": "",

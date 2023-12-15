@@ -2,7 +2,7 @@
   "private": true,
   "name": "@jventures-jdn/token-generator-web",
   "author": "J Ventures Co., Ltd.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "scripts": {
     "build": "pnpm dotenv -e .env -- next build",

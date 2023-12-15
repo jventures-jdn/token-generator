@@ -2,7 +2,7 @@
   "private": true,
   "name": "@jventures-jdn/eslint-config-react",
   "author": "J Ventures Co., Ltd.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "MIT",
   "main": "index.js",
   "dependencies": {
