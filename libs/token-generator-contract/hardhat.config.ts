@@ -2,7 +2,7 @@ import { HardhatUserConfig } from 'hardhat/config';
 import '@typechain/hardhat';
 import '@nomicfoundation/hardhat-ethers';
 import '@nomicfoundation/hardhat-chai-matchers';
-import { chains } from 'config-chains';
+import { chains } from '@jventures-jdn/config-chains';
 
 const config: HardhatUserConfig = {
   solidity: '0.8.17',

@@ -13,9 +13,7 @@ module.exports = {
     'plugin:react/jsx-runtime',
     'prettier',
   ],
-  rules: {
-    'react/jsx-key': 'off',
-  },
+  rules: {},
   settings: {
     react: {
       version: 'detect',

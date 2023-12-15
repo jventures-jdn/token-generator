@@ -1,4 +1,4 @@
-const tailwindConfig = require('config-tailwind');
+const tailwindConfig = require('@jventures-jdn/config-tailwind');
 const config = {
   ...tailwindConfig,
   mode: 'jit',

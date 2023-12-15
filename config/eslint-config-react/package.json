@@ -1,9 +1,8 @@
 {
   "private": true,
-  "name": "eslint-config-react",
+  "name": "@jventures-jdn/eslint-config-react",
   "author": "J Ventures Co., Ltd.",
   "version": "0.0.2",
-  "description": "test patch dunp",
   "license": "MIT",
   "main": "index.js",
   "dependencies": {
@@ -14,9 +13,6 @@
     "eslint-plugin-react": "^7.29.4"
   },
   "devDependencies": {
-    "config-prettier": "workspace:*"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "@jventures-jdn/config-prettier": "*"
   }
 }

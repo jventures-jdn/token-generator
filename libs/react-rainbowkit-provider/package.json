@@ -17,7 +17,9 @@
     "dist/**"
   ],
   "scripts": {
-    "build": "tsup index.tsx --format cjs,esm --dts"
+    "lint": "eslint \"./**/*.{ts,tsx}\"",
+    "build": "tsup index.tsx --format cjs,esm --dts",
+    "clean": "rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
     "@rainbow-me/rainbowkit": "^1.3.0",
@@ -28,12 +30,12 @@
     "wagmi": "^1.4.7"
   },
   "devDependencies": {
-    "config-chains": "workspace:*",
+    "@jventures-jdn/config-chains": "*",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "config-tsconfig": "workspace:*",
-    "eslint-config-react": "workspace:*",
+    "@jventures-jdn/config-tsconfig": "*",
+    "@jventures-jdn/eslint-config-react": "*",
     "tsup": "^8.0.1"
   }
 }

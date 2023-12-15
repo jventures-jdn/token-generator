@@ -1,5 +1,9 @@
 import { LoggerStore } from '@jventures-jdn/react-logger';
-import { CHAIN_DECIMAL, InternalChain, getChain } from 'config-chains';
+import {
+  CHAIN_DECIMAL,
+  InternalChain,
+  getChain,
+} from '@jventures-jdn/config-chains';
 import { getNetwork, getPublicClient, getWalletClient } from 'wagmi/actions';
 
 export async function deployContract(

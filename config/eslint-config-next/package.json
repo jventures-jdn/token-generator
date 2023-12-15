@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "eslint-config-next-workspace",
+  "name": "@jventures-jdn/eslint-config-next",
   "author": "J Ventures Co., Ltd.",
   "version": "0.0.2",
   "license": "MIT",
@@ -15,9 +15,6 @@
     "typescript": "^5.3.2"
   },
   "devDependencies": {
-    "config-prettier": "workspace:*"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "@jventures-jdn/config-prettier": "*"
   }
 }
