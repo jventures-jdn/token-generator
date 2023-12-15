@@ -2,7 +2,7 @@
   "private": true,
   "name": "@jventures-jdn/config-tsconfig",
   "author": "J Ventures Co., Ltd.",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "license": "MIT",
   "files": [
     "base.json",

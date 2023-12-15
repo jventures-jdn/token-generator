@@ -2,7 +2,7 @@
   "private": true,
   "name": "@jventures-jdn/token-generator-contract",
   "author": "J Ventures Co., Ltd.",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "license": "MIT",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"

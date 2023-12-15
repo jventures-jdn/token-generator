@@ -2,7 +2,7 @@
   "private": true,
   "name": "@jventures-jdn/config-tailwind",
   "author": "J Ventures Co., Ltd.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "main": "index.js",
   "dependencies": {

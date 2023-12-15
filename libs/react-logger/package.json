@@ -2,7 +2,7 @@
   "private": true,
   "name": "@jventures-jdn/react-logger",
   "author": "J Ventures Co., Ltd.",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "license": "MIT",
   "publishConfig": {
