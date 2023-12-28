@@ -29,6 +29,7 @@
     "lint": "turbo run lint && pnpm lint:format",
     "lint:format": "prettier --check \"**/*.{js,ts,tsx,md,mdx,json}\"",
     "lint:format:fix": "pnpm lint:format --write",
+    "syncpack:format": "pnpm syncpack format",
     "syncpack:sync": "npm-run-all --parallel --print-label --continue-on-error syncpack:sync:*",
     "syncpack:sync:mismatches": "syncpack list-mismatches",
     "syncpack:sync:semver": "syncpack lint-semver-ranges",
