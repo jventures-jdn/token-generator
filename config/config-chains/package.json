@@ -1,11 +1,11 @@
 {
   "name": "@jventures-jdn/config-chains",
-  "private": true,
-  "author": "J Ventures Co., Ltd.",
   "version": "0.0.1",
-  "license": "MIT",
+  "author": "J Ventures Co., Ltd.",
   "devDependencies": {
-    "viem": "^1.19.10",
-    "@jventures-jdn/config-tsconfig": "*"
-  }
+    "@jventures-jdn/config-tsconfig": "*",
+    "viem": "^1.19.10"
+  },
+  "license": "MIT",
+  "private": true
 }

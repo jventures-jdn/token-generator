@@ -1,26 +1,7 @@
 {
-  "private": true,
   "name": "@jventures-jdn/react-logger",
-  "author": "J Ventures Co., Ltd.",
   "version": "0.0.1",
-  "type": "module",
-  "license": "MIT",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/jventures-jdn/token-generator.git",
-    "directory": "packages/react-logger"
-  },
-  "files": [
-    "dist/**"
-  ],
-  "scripts": {
-    "lint": "eslint \"./**/*.{ts,tsx}\"",
-    "build": "tsup index.ts --format cjs,esm --dts",
-    "clean": "rm -rf node_modules && rm -rf dist"
-  },
+  "author": "J Ventures Co., Ltd.",
   "dependencies": {
     "@next/font": "^14.0.4",
     "immer": "^10.0.3",
@@ -29,13 +10,32 @@
     "zustand": "^4.4.7"
   },
   "devDependencies": {
+    "@jventures-jdn/config-tsconfig": "*",
+    "@jventures-jdn/eslint-config-react": "*",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
-    "@jventures-jdn/config-tsconfig": "*",
-    "@jventures-jdn/eslint-config-react": "*",
     "postcss": "^8",
     "tsup": "^8.0.1"
-  }
+  },
+  "files": [
+    "dist/**"
+  ],
+  "license": "MIT",
+  "private": true,
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jventures-jdn/token-generator.git",
+    "directory": "packages/react-logger"
+  },
+  "scripts": {
+    "build": "tsup index.ts --format cjs,esm --dts",
+    "clean": "rm -rf node_modules && rm -rf dist",
+    "lint": "eslint \"./**/*.{ts,tsx}\""
+  },
+  "type": "module"
 }

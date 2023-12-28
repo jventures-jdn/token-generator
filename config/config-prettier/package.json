@@ -1,9 +1,9 @@
 {
   "name": "@jventures-jdn/config-prettier",
-  "author": "J Ventures Co., Ltd.",
-  "version": "0.0.1",
-  "private": true,
-  "main": "index.js",
   "description": "",
-  "license": "MIT"
+  "version": "0.0.1",
+  "author": "J Ventures Co., Ltd.",
+  "license": "MIT",
+  "main": "index.js",
+  "private": true
 }

@@ -1,13 +1,13 @@
 {
-  "private": true,
   "name": "@jventures-jdn/config-tailwind",
-  "author": "J Ventures Co., Ltd.",
   "version": "0.0.2",
-  "license": "MIT",
-  "main": "index.js",
+  "author": "J Ventures Co., Ltd.",
   "dependencies": {
     "@tailwindcss/typography": "^0.5.10",
     "daisyui": "^4.4.14",
     "tailwindcss": "^3.3.0"
-  }
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "private": true
 }

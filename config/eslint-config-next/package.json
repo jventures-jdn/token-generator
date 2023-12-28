@@ -1,10 +1,7 @@
 {
-  "private": true,
   "name": "@jventures-jdn/eslint-config-next",
-  "author": "J Ventures Co., Ltd.",
   "version": "0.0.3",
-  "license": "MIT",
-  "main": "index.js",
+  "author": "J Ventures Co., Ltd.",
   "dependencies": {
     "@next/eslint-plugin-next": "^14.0.3",
     "@typescript-eslint/eslint-plugin": "^6.13.1",
@@ -16,5 +13,8 @@
   },
   "devDependencies": {
     "@jventures-jdn/config-prettier": "*"
-  }
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "private": true
 }
