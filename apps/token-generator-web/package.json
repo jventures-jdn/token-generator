@@ -23,7 +23,7 @@
     "@jventures-jdn/config-prettier": "*",
     "@jventures-jdn/react-logger": "workspace:*",
     "@jventures-jdn/react-rainbowkit-provider": "workspace:*",
-    "@jventures-jdn/token-generator-contract": "workspace:*",
+    "@jventures-jdn/contract-token-generator": "workspace:*",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

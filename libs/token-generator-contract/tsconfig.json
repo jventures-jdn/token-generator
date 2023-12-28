@@ -1,9 +1,0 @@
-{
-  "extends": "@jventures-jdn/config-tsconfig/react.json",
-  "include": ["./**/*.ts", "./**/*.tsx"],
-  "exclude": ["node_modules"],
-  "compilerOptions": {
-    "module": "CommonJS",
-    "moduleResolution": "Node"
-  }
-}
