@@ -1,7 +1,12 @@
 module.exports = {
   dependencyTypes: ['dev', 'peer', 'prod'],
   semverRange: '^',
-  source: ['package.json', 'config/*/package.json', 'libs/*/package.json'],
+  source: [
+    'package.json',
+    'config/*/package.json',
+    'libs/*/package.json',
+    'apps/*/package.json',
+  ],
   versionGroups: [
     {
       label:
