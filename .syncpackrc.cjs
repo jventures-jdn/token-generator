@@ -9,6 +9,17 @@ module.exports = {
   ],
   versionGroups: [
     {
+      dependencies: ['viem'],
+      pinVersion: '^1.19.10',
+      label: 'Viem Dependencies should all have the same version',
+    },
+    {
+      dependencies: ['@types/**'],
+      dependencyTypes: ['!dev'],
+      isBanned: true,
+      label: '@types packages should only be under devDependencies',
+    },
+    {
       label:
         'Internal config packages should be pinned to "*" (meaning any version is acceptable)',
       packages: ['**'],
