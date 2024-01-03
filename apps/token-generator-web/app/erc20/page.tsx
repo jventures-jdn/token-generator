@@ -21,7 +21,7 @@ import {
   InternalChain,
   getChain,
 } from '@jventures-jdn/config-chains';
-import { ERC20Generator__factory } from '@jventures-jdn/token-generator-contract';
+import { ERC20Generator__factory } from '@jventures-jdn/contract-token-generator';
 import { useErc20 } from './hooks';
 import { deployContract } from './deploy';
 
