@@ -1,5 +1,5 @@
 {
-  "extends": "@jventures-jdn/config-tsconfig/nestjs.json",
+  "extends": "@jventures-jdn/config-tsconfig/module.json",
   "include": ["./src/**/*.ts"],
   "exclude": ["node_modules"],
   "compilerOptions": {
