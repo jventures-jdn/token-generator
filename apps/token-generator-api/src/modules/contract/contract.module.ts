@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
+import { ContractController } from './contract.controller';
+import { ContractService } from './contract.service';
 
 @Module({
-  providers: [],
+  controllers: [ContractController],
+  providers: [ContractService],
   exports: [],
 })
 export class ContractModule {}

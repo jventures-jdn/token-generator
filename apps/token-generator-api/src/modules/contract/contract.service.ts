@@ -1,76 +1,103 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { spawn } from 'child_process';
-import { createReadStream, existsSync, readFileSync, writeFileSync } from 'fs';
-import { join } from 'path';
-import { split, mapSync } from 'event-stream';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { emptyDirSync } from 'fs-extra';
+import { join } from 'path';
+import {
+  GeneratedContractDto,
+  OriginalContractDto,
+} from '@jventures-jdn/config-consts';
 
 @Injectable()
 export class ContractService {
   constructor() {}
 
-  generateContractPath = '../../../contracts/generator';
-  originalContractPath = '../../../contracts/original';
-  compiledContractPath = '../../../contracts/compiled';
+  generateContractPath = '../contracts/generated';
+  originalContractPath = '../contracts/original';
+  compiledContractPath = '../contracts/compiled';
 
-  async readOriginalContract(contractType: 'ERC20'): Promise<string> {
-    return new Promise((resolve, reject) => {
-      // path to contract file
-      const contractPath = join(
-        __dirname,
-        `${this.originalContractPath}/${contractType}/${contractType}Generator.sol`,
-      );
-
-      // read file line by line
-      let newFile = '';
-      const readStream = createReadStream(contractPath)
-        .pipe(split())
-        .pipe(
-          mapSync(function (line) {
-            readStream.pause();
-            // assign line to `newFile`
-            newFile += `${line}\n`;
-            readStream.resume();
-          })
-            .on('end', function () {
-              return resolve(newFile);
-            })
-            .on('error', function (err) {
-              reject(err);
-            }),
-        );
-    });
-  }
-
-  async readGeneratedContract(name, contractType: 'ERC20') {
+  /**
+   * Reads the original contract file based on the contract type.
+   * @param contractType - The type of contract.
+   * @returns The content of the original contract file as a string, or undefined if the file does not exist.
+   */
+  async readOriginalContract({
+    contractType,
+  }: OriginalContractDto): Promise<string> {
     const existPath = join(
       __dirname,
-      `${this.generateContractPath}/${contractType}/${name}.sol`,
+      `${this.originalContractPath}/${contractType}/${contractType}Generator.sol`,
     );
-    return existsSync(existPath)
-      ? readFileSync(existPath).toString()
-      : undefined;
+
+    if (existsSync(existPath)) {
+      return readFileSync(existPath).toString();
+    } else {
+      throw new NotFoundException(undefined, {
+        cause: 'This original contract type does not exist',
+      });
+    }
   }
 
-  async generateNewContract(name: string, contractType: 'ERC20') {
-    // if giving generated contract name is already exist, return it
-    const isExist = await this.readGeneratedContract(name, contractType);
-    if (isExist) return isExist;
+  /**
+   * Reads the generated contract file based on the provided name and contract type.
+   * @param {GeneratedContractDto} options - The options object containing the name and contract type.
+   * @returns {string | undefined} - The content of the contract file if it exists, otherwise undefined.
+   */
+  async readGeneratedContract({
+    contractName,
+    contractType,
+  }: GeneratedContractDto) {
+    const existPath = join(
+      __dirname,
+      `${this.generateContractPath}/${contractType}/${contractName}.sol`,
+    );
+
+    if (existsSync(existPath)) {
+      return readFileSync(existPath).toString();
+    } else {
+      throw new NotFoundException(undefined, {
+        cause: 'This generated contract does not exist',
+      });
+    }
+  }
+
+  /**
+   * Generates a new contract based on the provided payload.
+   * If a contract with the same name already exists, it returns the existing contract.
+   * Otherwise, it reads the original contract, replaces the contract name, generates the new contract,
+   * and writes it to the specified path.
+   * @param payload - The payload containing the necessary information to generate the contract.
+   * @returns The generated contract as a string.
+   */
+  async generateContract(payload: GeneratedContractDto) {
+    const filePath = `${payload.contractType}/${payload.contractName}.sol`;
+
+    // if giving generated contract name is already exist, throw error
+    const generatedContractPath = this.readGeneratedContract(payload);
+    const isExist = await generatedContractPath.catch(() => false);
+    if (isExist)
+      throw new ConflictException(filePath, {
+        cause: 'This contact name is already in use',
+      });
 
     // read orignal contract and replace contract name
-    const originalContractRaw = await this.readOriginalContract(contractType);
+    const originalContractRaw = await this.readOriginalContract(payload);
     const generatedContractRaw = originalContractRaw.replaceAll(
-      `${contractType}Generator`,
-      name,
+      `${payload.contractType.toUpperCase()}Generator`,
+      payload.contractName,
     );
 
-    // generator new contract
+    // write new contract
     const writePath = join(
       __dirname,
-      `${this.generateContractPath}/${contractType}/${name}.sol`,
+      `${this.generateContractPath}/${filePath}`,
     );
     writeFileSync(writePath, generatedContractRaw);
-    return generatedContractRaw;
+    return filePath;
   }
 
   async compileGeneratedContract() {
@@ -85,5 +112,5 @@ export class ContractService {
     emptyDirSync(join(__dirname, this.generateContractPath));
   }
 
-  async verifyContract() {}
+  // async verifyContract() {}
 }

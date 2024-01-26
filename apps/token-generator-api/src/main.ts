@@ -1,8 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { VersioningType } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import helmet from 'helmet';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { TransformInterceptor } from './interceptors/transform.interceptor';
+import { ErrorsInterceptor } from './interceptors/errors.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -28,6 +30,12 @@ async function bootstrap() {
   app.use(helmet.permittedCrossDomainPolicies());
   app.use(helmet.referrerPolicy());
   app.use(helmet.xssFilter());
+
+  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalInterceptors(
+    new TransformInterceptor(),
+    new ErrorsInterceptor(),
+  );
 
   // Swagger
   const config = new DocumentBuilder()
