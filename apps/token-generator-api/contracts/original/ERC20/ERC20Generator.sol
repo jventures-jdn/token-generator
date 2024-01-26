@@ -24,19 +24,15 @@ contract ERC20Generator is ERC20Capped, ERC20Pausable, ERC20Burnable, Ownable {
         bool pausable;
     }
 
-    constructor(Args memory args_) ERC20(args_.name, args_.symbol) ERC20Capped(args_.supplyCap) {
+    constructor(
+        Args memory args_
+    ) ERC20(args_.name, args_.symbol) ERC20Capped(args_.supplyCap) {
         // mint the value of the `initialSupply` to the owner
         _mint(_msgSender(), args_.initialSupply);
 
         mintable = args_.mintable;
         burnable = args_.burnable;
         pausable = args_.pausable;
-
-        // console.log('mintable is: %s', mintable);
-        // console.log('burnable is: %s', burnable);
-        // console.log('pausable is: %s', pausable);
-        // console.log('supplyCap is: %s', cap());
-        // console.log('initialSupply is: %s', balanceOf(_msgSender()));
     }
 
     /* -------------------------------------------------------------------------- */
@@ -77,8 +73,14 @@ contract ERC20Generator is ERC20Capped, ERC20Pausable, ERC20Burnable, Ownable {
     /**
      * @dev See {ERC20-_mint}.
      */
-    function _mint(address account, uint256 amount) internal override(ERC20Capped, ERC20) {
-        require(ERC20.totalSupply() + amount <= cap(), 'ERC20Capped: cap exceeded');
+    function _mint(
+        address account,
+        uint256 amount
+    ) internal override(ERC20Capped, ERC20) {
+        require(
+            ERC20.totalSupply() + amount <= cap(),
+            'ERC20Capped: cap exceeded'
+        );
         super._mint(account, amount);
     }
 
@@ -95,7 +97,10 @@ contract ERC20Generator is ERC20Capped, ERC20Pausable, ERC20Burnable, Ownable {
      * - the caller must be owner
      * - the contract must enabled mintable
      */
-    function mint(address to, uint256 amount) public virtual onlyOwner whenMintable {
+    function mint(
+        address to,
+        uint256 amount
+    ) public virtual onlyOwner whenMintable {
         _mint(to, amount);
     }
 
@@ -126,7 +131,10 @@ contract ERC20Generator is ERC20Capped, ERC20Pausable, ERC20Burnable, Ownable {
      * - the caller must have allowance for ``accounts``'s tokens of at least `amount`.
      * - the contract must enabled burnable
      */
-    function burnFrom(address account, uint256 amount) public virtual override whenBurnable {
+    function burnFrom(
+        address account,
+        uint256 amount
+    ) public virtual override whenBurnable {
         _spendAllowance(account, _msgSender(), amount);
         _burn(account, amount);
     }
