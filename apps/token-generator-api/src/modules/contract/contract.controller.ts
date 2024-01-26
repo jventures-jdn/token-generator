@@ -1,18 +1,11 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
-import {
-  ApiBody,
-  ApiConflictResponse,
-  ApiConsumes,
-  ApiCreatedResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
+import { Controller, Get, Post, Query } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ContractService } from './contract.service';
 import {
-  ContractTypeEnum,
   GeneratedContractDto,
   OriginalContractDto,
 } from '@jventures-jdn/config-consts';
+import { Throttle } from '@nestjs/throttler';
 
 @ApiTags('contract')
 @Controller({
@@ -34,6 +27,7 @@ export class ContractController {
     return this.contractService.readGeneratedContract(payload);
   }
 
+  @Throttle({ default: { limit: 1, ttl: 60000 } }) // 1 req/1min
   @Post('generate')
   @ApiOperation({ summary: 'Generated contract' })
   async generateContract(@Query() payload: GeneratedContractDto) {

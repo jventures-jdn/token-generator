@@ -9,13 +9,13 @@ import { ErrorsInterceptor } from './interceptors/errors.interceptor';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Version
+  /* --------------------------------- Version -------------------------------- */
   app.enableVersioning({
     type: VersioningType.URI,
     defaultVersion: '1',
   });
 
-  // Helmet
+  /* --------------------------------- Helmet --------------------------------- */
   app.use(helmet.contentSecurityPolicy());
   app.use(helmet.crossOriginEmbedderPolicy());
   app.use(helmet.crossOriginOpenerPolicy());
@@ -30,14 +30,13 @@ async function bootstrap() {
   app.use(helmet.permittedCrossDomainPolicies());
   app.use(helmet.referrerPolicy());
   app.use(helmet.xssFilter());
-
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(
     new TransformInterceptor(),
     new ErrorsInterceptor(),
   );
 
-  // Swagger
+  /* --------------------------------- Swagger -------------------------------- */
   const config = new DocumentBuilder()
     .addBearerAuth()
     .setTitle('Token Generator API')
@@ -46,7 +45,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
-  // Listen
+  /* --------------------------------- Listen --------------------------------- */
   await app.listen(4000);
 }
 bootstrap();
