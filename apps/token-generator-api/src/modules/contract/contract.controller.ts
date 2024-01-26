@@ -6,6 +6,7 @@ import {
   OriginalContractDto,
 } from '@jventures-jdn/config-consts';
 import { Throttle } from '@nestjs/throttler';
+import { environmentConfig } from '@jventures-jdn/config-consts';
 
 @ApiTags('contract')
 @Controller({
@@ -27,7 +28,9 @@ export class ContractController {
     return this.contractService.readGeneratedContract(payload);
   }
 
-  @Throttle({ default: { limit: 1, ttl: 60000 } }) // 1 req/1min
+  @Throttle({
+    default: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 60000 },
+  }) // 1 req/1min
   @Post('generate')
   @ApiOperation({ summary: 'Generated contract' })
   async generateContract(@Query() payload: GeneratedContractDto) {
