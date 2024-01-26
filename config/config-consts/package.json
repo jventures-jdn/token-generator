@@ -1,0 +1,21 @@
+{
+  "name": "@jventures-jdn/config-consts",
+  "version": "0.0.0",
+  "author": "J Ventures Co., Ltd.",
+  "dependencies": {
+    "@jventures-jdn/eslint-config-nest": "*",
+    "@nestjs/swagger": "^7.1.17",
+    "class-validator": "^0.14.0"
+  },
+  "devDependencies": {
+    "@jventures-jdn/config-tsconfig": "*",
+    "tsup": "^8.0.1"
+  },
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "tsup index.ts --format cjs,esm --dts",
+    "clean": "rm -rf node_modules && rm -rf dist",
+    "lint": "eslint \"./**/*.ts\""
+  }
+}
