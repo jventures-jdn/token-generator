@@ -42,6 +42,7 @@ build
 *.tsbuildinfo
 next-env.d.ts
 
-# hardhat
+# generated & compiled contracts
+**/contracts/generated/**/*.sol
 artifacts
 cache
