@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Query } from '@nestjs/common';
+import { Controller, Delete, Get, Post, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ContractService } from './contract.service';
 import {
@@ -35,5 +35,14 @@ export class ContractController {
   @ApiOperation({ summary: 'Generated contract' })
   async generateContract(@Query() payload: GeneratedContractDto) {
     return this.contractService.generateContract(payload);
+  }
+
+  @Throttle({
+    default: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 60000 },
+  }) // 1 req/1min
+  @Delete('generate')
+  @ApiOperation({ summary: 'Remove contract' })
+  async removeContract(@Query() payload: GeneratedContractDto) {
+    return this.contractService.removeContract(payload);
   }
 }
