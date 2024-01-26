@@ -21,5 +21,6 @@
     },
     "lint": {},
     "clean": {}
-  }
+  },
+  "globalEnv": ["NODE_ENV"]
 }
