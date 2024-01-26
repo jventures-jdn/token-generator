@@ -13,14 +13,18 @@ export class ErrorsInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     return next.handle().pipe(
       catchError((err) => {
-        const data = err?.message || null;
-        const error = err?.error || null;
+        const data = err?.response?.data || null;
+        const message =
+          err?.options?.description ||
+          err?.response?.message ||
+          err?.message ||
+          null;
+        const error = err?.error || err?.response?.error || null;
         const status = err?.status || 500;
         const timestamp = new Date().valueOf();
-        const cause = err?.cause || null;
-        const from = err?.options?.description || (status ? 'nest' : 'unknown');
+        const cause = err?.cause || (status ? 'nestjs' : 'unknown');
         throw new HttpException(
-          { data, status, timestamp, error, cause, from },
+          { data, status, timestamp, error, cause, message },
           status,
         );
       }),

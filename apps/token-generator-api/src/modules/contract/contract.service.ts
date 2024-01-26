@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -37,7 +38,7 @@ export class ContractService {
       return readFileSync(existPath).toString();
     } else {
       throw new NotFoundException(undefined, {
-        cause: 'This original contract type does not exist',
+        description: 'This original contract type does not exist',
       });
     }
   }
@@ -60,29 +61,39 @@ export class ContractService {
       return readFileSync(existPath).toString();
     } else {
       throw new NotFoundException(undefined, {
-        cause: 'This generated contract does not exist',
+        description: 'This generated contract does not exist',
       });
     }
   }
 
   /**
    * Generates a new contract based on the provided payload.
+   * If contract name is not alphanumeric, then throws an error.
    * If a contract with the same name already exists, it returns the existing contract.
    * Otherwise, it reads the original contract, replaces the contract name, generates the new contract,
    * and writes it to the specified path.
    * @param payload - The payload containing the necessary information to generate the contract.
-   * @returns The generated contract as a string.
+   * @returns The path of the generated contract.
    */
   async generateContract(payload: GeneratedContractDto) {
+    // validate contract name
+    if (payload.contractName.match(/[^A-Za-z0-9_]/g))
+      throw new BadRequestException(undefined, {
+        description: 'Contract name must be alphanumeric',
+      });
+
     const filePath = `${payload.contractType}/${payload.contractName}.sol`;
 
     // if giving generated contract name is already exist, throw error
     const generatedContractPath = this.readGeneratedContract(payload);
     const isExist = await generatedContractPath.catch(() => false);
     if (isExist)
-      throw new ConflictException(filePath, {
-        cause: 'This contact name is already in use',
-      });
+      throw new ConflictException(
+        { data: filePath },
+        {
+          description: 'This contact name is already in use',
+        },
+      );
 
     // read orignal contract and replace contract name
     const originalContractRaw = await this.readOriginalContract(payload);
