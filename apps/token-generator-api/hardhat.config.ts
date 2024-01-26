@@ -8,7 +8,7 @@ const config: HardhatUserConfig = {
     return { ...chains, [chain.id]: { url: chain.rpcUrls.default.http[0] } };
   }, {}),
   paths: {
-    sources: './contracts/original',
+    sources: './contracts/generated',
     artifacts: './contracts/compiled/artifacts',
     cache: './contracts/compiled/cache',
   },

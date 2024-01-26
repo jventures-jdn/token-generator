@@ -21,6 +21,7 @@ export class ContractService {
   originalContractPath = '../contracts/original';
   compiledContractPath = '../contracts/compiled';
 
+  /* ------------------------- Read Original Contract ------------------------- */
   /**
    * Read a original contract file based on the contract type.
    *
@@ -42,6 +43,7 @@ export class ContractService {
     }
   }
 
+  /* ------------------------- Read Generated Contract ------------------------ */
   /**
    * Read a generated contract file based on the provided name and contract type.
    *
@@ -67,6 +69,7 @@ export class ContractService {
     }
   }
 
+  /* ---------------------------- GenerateContract ---------------------------- */
   /**
    * Generates a new contract based on the provided payload.
    * if contract name is not alphanumeric, then throws an error.
@@ -81,13 +84,15 @@ export class ContractService {
     const filePath = `${payload.contractType}/${payload.contractName}.sol`;
 
     // validate contract name
-    if (payload.contractName.match(/[^A-Za-z0-9_]/g))
+    if (
+      payload.contractName.match(/[^A-Za-z0-9_]/g) ||
+      payload.contractName.match(/^[0-9]+$/g)
+    )
       throw new BadRequestException(undefined, {
-        description: 'Contract name must be alphanumeric',
+        description: 'Contract name must be alphanumeric or all numberic',
       });
 
     // if giving generated contract name is already exist, throw error
-
     if (await this.readGeneratedContract(payload).catch(() => {})) {
       throw new ConflictException(
         { data: filePath },
@@ -113,6 +118,7 @@ export class ContractService {
     return filePath;
   }
 
+  /* ----------------------------- Remove Contract ---------------------------- */
   /**
    * Removes a contract.
    * if providing contract name is not exist, then throws an error.
@@ -137,14 +143,46 @@ export class ContractService {
     }
   }
 
-  async compileGeneratedContract() {
+  /* ---------------------------- Compile Contract ---------------------------- */
+  /**
+   * Compiles the generated contract.
+   * @param payload The payload containing `contractName` and `contractType` of contract
+   * @returns Compiled output
+   */
+  async compileContract(payload: GeneratedContractDto): Promise<string> {
+    // if giving generated contract name is not exist, throw error
+    await this.readGeneratedContract(payload);
+
+    // create execute streams
     const command = spawn('npx hardhat compile', {
-      cwd: join(__dirname, '../../../'),
+      cwd: join(__dirname, '../'), // TODO!: need to be check in production runtime
       shell: true,
     });
-    command.stdout.on('data', (data) => console.log(data.toString()));
-    command.stderr.on('data', (data) => console.error(data.toString()));
-  }
 
-  // async verifyContract() {}
+    return new Promise((resolve, reject) => {
+      let output = '';
+
+      // log in data
+      command.stdout.on('data', (data) => {
+        output += `\n${data.toString()}`;
+        console.log(data.toString());
+      });
+
+      // reject on error
+      command.stderr.on('data', (data) => {
+        console.error(data.toString());
+        reject(
+          new InternalServerErrorException({
+            error: data.toString(),
+            cause: 'hardhat',
+          }),
+        );
+      });
+
+      // resolve on exit
+      command.on('exit', () => {
+        resolve(output);
+      });
+    });
+  }
 }

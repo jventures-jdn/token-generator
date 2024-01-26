@@ -32,7 +32,7 @@ export class ContractController {
     default: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 60000 },
   }) // 1 req/1min
   @Post('generate')
-  @ApiOperation({ summary: 'Generated contract' })
+  @ApiOperation({ summary: 'Generate contract' })
   async generateContract(@Query() payload: GeneratedContractDto) {
     return this.contractService.generateContract(payload);
   }
@@ -40,8 +40,17 @@ export class ContractController {
   @Throttle({
     default: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 60000 },
   }) // 1 req/1min
-  @Delete('generate')
-  @ApiOperation({ summary: 'Remove contract' })
+  @Post('compile')
+  @ApiOperation({ summary: 'Compile contract' })
+  async compileContract(@Query() payload: GeneratedContractDto) {
+    return this.contractService.compileContract(payload);
+  }
+
+  @Throttle({
+    default: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 60000 },
+  }) // 1 req/1min
+  @Delete('generated')
+  @ApiOperation({ summary: 'Remove generated contract' })
   async removeContract(@Query() payload: GeneratedContractDto) {
     return this.contractService.removeContract(payload);
   }

@@ -44,5 +44,6 @@ next-env.d.ts
 
 # generated & compiled contracts
 **/contracts/generated/**/*.sol
+!**/contracts/generated/**/ERC721Libs.sol
 artifacts
 cache
