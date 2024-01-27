@@ -1,0 +1,13 @@
+.git
+.changeset
+.github
+.husky
+
+# dependencies
+**/node_modules
+
+# next.js
+**/.next
+
+# misc
+.DS_Store
