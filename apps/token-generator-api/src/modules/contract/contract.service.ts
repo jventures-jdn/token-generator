@@ -25,13 +25,14 @@ export class ContractService {
   /**
    * Read a original contract file based on the contract type.
    *
-   * @param {OriginalContractDto} contractType - type of contract
+   * @param {OriginalContractDto} payload - Type of contract
    * @returns Content and path of the contract file
+   * @throws NotFoundException if the compiled contract does not exist.
    */
-  async readOriginalContract({ contractType }: OriginalContractDto) {
+  async readOriginalContract(payload: OriginalContractDto) {
     const existPath = join(
       __dirname,
-      `${this.originalContractPath}/${contractType}/${contractType}Generator.sol`,
+      `${this.originalContractPath}/${payload.contractType}/${payload.contractType}Generator.sol`,
     );
 
     if (existsSync(existPath)) {
@@ -47,24 +48,50 @@ export class ContractService {
   /**
    * Read a generated contract file based on the provided name and contract type.
    *
-   * @param {GeneratedContractDto} contractName - Type of contract
-   * @param {GeneratedContractDto} contractType - Name of contract
+   * @param {GeneratedContractDto} payload - Type and name of contract
    * @returns Content and path of the contract file
+   * @throws NotFoundException if the compiled contract does not exist.
    */
-  async readGeneratedContract({
-    contractName,
-    contractType,
-  }: GeneratedContractDto) {
+  async readGeneratedContract(payload: GeneratedContractDto) {
     const existPath = join(
       __dirname,
-      `${this.generateContractPath}/${contractType}/${contractName}.sol`,
+      `${this.generateContractPath}/${payload.contractType}/${payload.contractName}.sol`,
     );
 
     if (existsSync(existPath)) {
-      return { data: readFileSync(existPath).toString(), path: existPath };
+      return { raw: readFileSync(existPath).toString(), path: existPath };
     } else {
       throw new NotFoundException(undefined, {
         description: 'This generated contract does not exist',
+      });
+    }
+  }
+
+  /* ------------------------- Read Compiled Contract ------------------------- */
+  /**
+   * Reads the compiled contract file based on the provided name and contract type.
+   *
+   * @param {GeneratedContractDto} payload - Type and name of contract
+   * @returns Content and path of the contract file
+   * @throws NotFoundException if the compiled contract does not exist.
+   */
+  async readCompiledContract(payload: GeneratedContractDto) {
+    const existPath = join(
+      __dirname,
+      `${this.compiledContractPath}/artifacts/contracts/generated/${payload.contractType}/${payload.contractName}.sol/${payload.contractName}.json`,
+    );
+
+    if (existsSync(existPath)) {
+      return {
+        raw: JSON.parse(readFileSync(existPath).toString()) as Record<
+          string,
+          unknown
+        >,
+        path: existPath,
+      };
+    } else {
+      throw new NotFoundException(undefined, {
+        description: 'This compiled contract does not exist',
       });
     }
   }
@@ -77,7 +104,7 @@ export class ContractService {
    * otherwise, it reads the original contract, replaces the contract name, generates the new contract,
    * and writes it to the specified path.
    *
-   * @param payload - The payload containing `contractName` and `contractType` of contract
+   * @param {GeneratedContractDto} payload - The payload containing `contractName` and `contractType` of contract
    * @returns The path of the generated contract.
    */
   async generateContract(payload: GeneratedContractDto) {
@@ -123,7 +150,7 @@ export class ContractService {
    * Removes a contract.
    * if providing contract name is not exist, then throws an error.
    *
-   * @param payload - `contractType` and `contractName` of contract
+   * @param {GeneratedContractDto} payload - `contractType` and `contractName` of contract
    * @returns void
    * @throws InternalServerErrorException if there is an error removing the contract.
    */
@@ -146,7 +173,7 @@ export class ContractService {
   /* ---------------------------- Compile Contract ---------------------------- */
   /**
    * Compiles the generated contract.
-   * @param payload The payload containing `contractName` and `contractType` of contract
+   * @param {GeneratedContractDto} payload The payload containing `contractName` and `contractType` of contract
    * @returns Compiled output
    */
   async compileContract(payload: GeneratedContractDto): Promise<string> {
@@ -155,7 +182,7 @@ export class ContractService {
 
     // create execute streams
     const command = spawn('npx hardhat compile', {
-      cwd: join(__dirname, '../'), // TODO!: need to be check in production runtime
+      cwd: join(__dirname, '../'),
       shell: true,
     });
 
@@ -184,5 +211,20 @@ export class ContractService {
         resolve(output);
       });
     });
+  }
+
+  /* -------------------------------- Read ABI -------------------------------- */
+  /**
+   * Reads the ABI and bytecode of a generated contract.
+   * @param {GeneratedContractDto} payload - The payload containing the generated contract information.
+   * @returns An object containing the ABI and bytecode of the contract.
+   */
+  async readAbi(payload: GeneratedContractDto) {
+    // if giving generated contract name is not exist, throw error
+    const { raw } = await this.readCompiledContract(payload);
+    return {
+      abi: raw.abi as Record<string, unknown>[],
+      bytecode: raw.bytecode as string,
+    };
   }
 }
