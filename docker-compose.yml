@@ -6,7 +6,24 @@ services:
       dockerfile: ./apps/token-generator-api/Dockerfile
       args:
         - PROJECT=@jventures-jdn/token-generator-api
-    container_name: "token-generator-api"
+    container_name: 'token-generator-api'
     ports:
       - 4000:4000
+    depends_on:
+      - redis
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_HOST=redis
+      - REDIS_PORT=${REDIS_PORT}
+  redis:
+    image: redis:7.2-alpine
+    container_name: 'token-generator-redis'
+    ports:
+      - '${REDIS_PORT}:6379'
+    command: redis-server --save 60 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - cache:/data
 
+volumes:
+  cache:
+    driver: local
