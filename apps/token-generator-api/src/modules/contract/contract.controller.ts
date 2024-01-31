@@ -28,6 +28,18 @@ export class ContractController {
     return this.contractService.readGeneratedContract(payload);
   }
 
+  @Get('compiled')
+  @ApiOperation({ summary: 'Get compiled contract' })
+  async getCompiledContract(@Query() payload: GeneratedContractDto) {
+    return this.contractService.readCompiledContract(payload);
+  }
+
+  @Get('abi')
+  @ApiOperation({ summary: 'Get compiled contract' })
+  async getCompiledAbi(@Query() payload: GeneratedContractDto) {
+    return this.contractService.readAbi(payload);
+  }
+
   @Throttle({
     default: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 60000 },
   }) // 1 req/1min
