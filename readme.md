@@ -17,6 +17,41 @@
     Official <a href="https://github.com/jventures-jdn/project-staking-ui">Token Generator</a> Monorepo
 </p>
 
+## Setup
+
+### Redis
+
+You need to configure these environments on your local machine to run `redis`, which is required for runing project
+
+- Create an .env file at the root of the project.
+- Declare these variables to .env file
+  ```json
+  REDIS_HOST="localhost"
+  REDIS_PASSWORD="SECRET"
+  REDIS_PORT="6379"
+  ```
+- Run `redis` with docker (you need to install `docker` and `docker-compose`)
+  ```
+  pnpm redis
+  ```
+
+### API
+
+You need to configure these environments on your local machine so that API can connect to redis
+
+- Create an .env.local file at `apps/token-generator-api`
+- Declare these variables to .env.local file
+  ```json
+  REDIS_HOST="localhost"
+  REDIS_PASSWORD="SECRET"
+  REDIS_PORT="6379"
+  ```
+- In or to start api, go to `token-generator-api` directory and run
+  ```
+  pnpm install (install dependencies)
+  pnpm dev (run project)
+  ```
+
 ## Roadmap
 
 ### Project Structure
@@ -35,8 +70,8 @@
 - [x] make changeset release version when merge to main
 - [ ] make changeset publish to npm when merge to main
 - [ ] github actions for build, test, deploy
-- [x] github actions for release
-- [ ] github actions for publish
+- [x] github actions for release package
+- [ ] github actions for publish package
 
 ### Backend
 
@@ -45,9 +80,9 @@
 - [x] endpoint for compile generated smart contract
 - [x] endpoint for verify generated smart contract
 - [x] endpoint for remove generated & compile smart contract
-- [ ] endpoint for read abi, bytecode from compiled smart contract
+- [x] endpoint for read abi, bytecode from compiled smart contract
 - [ ] setup queue system when user call compile & verify
-- [ ] setup push notification to frontend when comsumer processing complete
+- [ ] setup push notification (or pulling) to frontend when comsumer processing complete
 - [ ] setup test for contract endpoints
 
 ## Team
