@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumberString, IsString } from 'class-validator';
 import { ContractTypeEnum } from './enum';
 
 export class OriginalContractDto {
@@ -19,4 +19,13 @@ export class GeneratedContractDto extends OriginalContractDto {
     example: 'TOKEN_GENERATOR',
   })
   contractName: string;
+}
+
+export class JobDto {
+  @IsNumberString()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: '1',
+  })
+  jobId: number;
 }
