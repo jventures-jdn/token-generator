@@ -82,6 +82,7 @@ export class ContractProducer {
       isStuck,
       isActive,
       failedReason,
+      completedMessage,
     ] = await Promise.all([
       payload.getState(),
       payload.progress(),
@@ -91,7 +92,9 @@ export class ContractProducer {
       payload.isStuck(),
       payload.isActive(),
       payload.failedReason,
+      payload.returnvalue,
     ]);
+
     return {
       state,
       progress,
@@ -100,7 +103,8 @@ export class ContractProducer {
       isFailed,
       isStuck,
       isActive,
-      failedReason: isFailed ? failedReason : undefined,
+      failedReason: isFailed ? failedReason : null,
+      completedMessage: completedMessage,
     };
   }
 }

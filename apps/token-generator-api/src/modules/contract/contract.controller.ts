@@ -67,8 +67,8 @@ export class ContractController {
   @Throttle({
     short: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 10000 },
   }) // 1 req/ 10s
-  @Post('compile-job')
-  @ApiOperation({ summary: 'Add compile contract job' })
+  @Post('compile')
+  @ApiOperation({ summary: 'Compile contract' })
   async compileContractJob(@Query() payload: GeneratedContractDto) {
     return { jobId: await this.contractProducer.addCompileJob(payload) };
   }
@@ -77,30 +77,10 @@ export class ContractController {
   @Throttle({
     short: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 10000 },
   }) // 1 req/10s
-  @Post('verify-job')
-  @ApiOperation({ summary: 'Add compile contract job' })
+  @Post('verify')
+  @ApiOperation({ summary: 'Verify contract' })
   async verifyContractJob(@Query() payload: GeneratedContractDto) {
     return { jobId: await this.contractProducer.addVerifyJob(payload) };
-  }
-
-  /* -------------------------- Generate New Contract ------------------------- */
-  @Throttle({
-    short: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 10000 },
-  }) // 1 req/10s
-  @Post('generate')
-  @ApiOperation({ summary: 'Generate contract' })
-  async generateContract(@Query() payload: GeneratedContractDto) {
-    return this.contractService.generateContract(payload);
-  }
-
-  /* ----------------------- Compile Generated Contract ----------------------- */
-  @Throttle({
-    short: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 10000 },
-  }) // 1 req/10s
-  @Post('compile')
-  @ApiOperation({ summary: 'Compile contract' })
-  async compileContract(@Query() payload: GeneratedContractDto) {
-    return this.contractService.compileContract(payload);
   }
 
   /* -------------------------------------------------------------------------- */

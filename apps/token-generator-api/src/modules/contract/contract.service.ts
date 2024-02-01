@@ -170,49 +170,6 @@ export class ContractService {
     }
   }
 
-  /* ---------------------------- Compile Contract ---------------------------- */
-  /**
-   * Compiles the generated contract.
-   * @param {GeneratedContractDto} payload The payload containing `contractName` and `contractType` of contract
-   * @returns Compiled output
-   */
-  async compileContract(payload: GeneratedContractDto): Promise<string> {
-    // if giving generated contract name is not exist, throw error
-    await this.readGeneratedContract(payload);
-
-    // create execute streams
-    const command = spawn('npx hardhat compile', {
-      cwd: join(__dirname, '../'),
-      shell: true,
-    });
-
-    return new Promise((resolve, reject) => {
-      let output = '';
-
-      // log in data
-      command.stdout.on('data', (data) => {
-        output += `\n${data.toString()}`;
-        console.log(data.toString());
-      });
-
-      // reject on error
-      command.stderr.on('data', (data) => {
-        console.error(data.toString());
-        reject(
-          new InternalServerErrorException({
-            error: data.toString(),
-            cause: 'hardhat',
-          }),
-        );
-      });
-
-      // resolve on exit
-      command.on('exit', () => {
-        resolve(output);
-      });
-    });
-  }
-
   /* -------------------------------- Read ABI -------------------------------- */
   /**
    * Reads the ABI and bytecode of a generated contract.
