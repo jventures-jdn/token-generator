@@ -11,12 +11,6 @@ import { ContractConsumer } from './contract.consumer';
   imports: [
     BullModule.registerQueue({
       name: 'contract',
-      defaultJobOptions: {
-        removeOnComplete: 60,
-        removeOnFail: 60,
-        timeout: 60 * 60 * 1000, // 1hr,
-        lifo: true,
-      },
     }),
   ],
 })

@@ -21,7 +21,9 @@
 
 ### Redis
 
-You need to configure these environments on your local machine to run `redis`, which is required for runing project
+You need to run `redis` before developing. There are two ways you can run redis
+
+#### 1. Use docker
 
 - Create an .env file at the root of the project.
 - Declare these variables to .env file
@@ -33,6 +35,23 @@ You need to configure these environments on your local machine to run `redis`, w
 - Run `redis` with docker (you need to install `docker` and `docker-compose`)
   ```
   pnpm redis
+  ```
+
+#### 2. Use In-memory redis server
+
+- Create an .env file at the root of the project.
+- Declare these variables to .env file
+  ```json
+  REDIS_HOST="localhost"
+  REDIS_PASSWORD="SECRET"
+  REDIS_PORT="6379"
+  USED_IN_MEMORY_REDIS=true
+  ```
+- Now you can start `token-generator-api` with build-in redis
+  (⚠️ Note Redis in-memory server queues will disappear after restarting or hot-reloading server)
+  ```
+  cd ./apps/token-generator-api
+  pnpm dev
   ```
 
 ### API
