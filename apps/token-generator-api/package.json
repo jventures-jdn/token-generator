@@ -49,23 +49,6 @@
     "typescript": "^5.3.2",
     "webpack-node-externals": "^3.0.0"
   },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
-  },
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -77,7 +60,7 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "start": "node dist/main",
     "start:debug": "nest start --debug --watch",
-    "test": "jest --passWithNoTests",
+    "test": "jest --passWithNoTests --forceExit",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
