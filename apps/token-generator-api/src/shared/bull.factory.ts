@@ -42,6 +42,7 @@ export class BullUsingInMemoryRedisFactory
     logger.verbose(
       `⚠️  Note that Redis in-memory server queues will disappear after restarting or hot-reloading server`,
     );
+
     this.redisServer = new RedisMemoryServer({
       instance: {
         port,

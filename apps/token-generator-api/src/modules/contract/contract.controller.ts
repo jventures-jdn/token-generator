@@ -79,7 +79,7 @@ export class ContractController {
   }) // 1 req/ 10s
   @Post('compile')
   @ApiOperation({ summary: 'Compile contract' })
-  async compileContractJob(@Query() payload: GeneratedContractDto) {
+  async compileContractJob(@Body() payload: GeneratedContractDto) {
     return { jobId: await this.contractProducer.addCompileJob(payload) };
   }
 
@@ -89,7 +89,7 @@ export class ContractController {
   }) // 1 req/10s
   @Post('verify')
   @ApiOperation({ summary: 'Verify contract' })
-  async verifyContractJob(@Query() payload: GeneratedContractDto) {
+  async verifyContractJob(@Body() payload: GeneratedContractDto) {
     return { jobId: await this.contractProducer.addVerifyJob(payload) };
   }
 

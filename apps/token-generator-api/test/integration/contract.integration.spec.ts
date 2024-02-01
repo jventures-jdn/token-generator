@@ -8,16 +8,28 @@ import {
   OriginalContractDto,
 } from '@jventures-jdn/config-consts';
 import { ContractModule } from '../../src/modules/contract/contract.module';
+import { AppModule } from '../../src/app.module';
+import { compileTest } from './helper';
 
 describe('ContractController (integration)', () => {
   const prefix = '/contract';
   let app: INestApplication;
   let supertest: Supertest.SuperTest<Supertest.Test>;
+  process.env.USED_IN_MEMORY_REDIS = 'true';
+  process.env.REDIS_PASSWORD = '';
+  const payloadERC20 = {
+    contractType: ContractTypeEnum.ERC20,
+    contractName: 'TEST',
+  };
+  const payloadERC721 = {
+    contractType: ContractTypeEnum.ERC721,
+    contractName: 'TEST',
+  };
 
   beforeEach(async () => {
     // setup instance
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [ContractModule],
+      imports: [ContractModule, AppModule],
       providers: [],
     }).compile();
 
@@ -31,6 +43,11 @@ describe('ContractController (integration)', () => {
     await new Promise((resolve) => setTimeout(() => resolve(true), 1000));
     await app.close();
     jest.clearAllMocks();
+  });
+
+  afterEach(async () => {
+    await supertest.delete(`${prefix}/generated`).query(payloadERC20).send();
+    await supertest.delete(`${prefix}/generated`).query(payloadERC721).send();
   });
 
   /* ----------------------------- GET / Original ----------------------------- */
@@ -82,7 +99,7 @@ describe('ContractController (integration)', () => {
     });
   });
 
-  /* ----------------------------- Get / Generated ---------------------------- */
+  /* ----------------------------- GET / Generated ---------------------------- */
   describe('GET / generated', () => {
     it('should response 404 when no file match with giving `contractName` and `contractType`', async () => {
       const payload: GeneratedContractDto = {
@@ -114,9 +131,6 @@ describe('ContractController (integration)', () => {
         .query(payload)
         .send();
 
-      // remove generated file
-      await supertest.delete(`${prefix}/generated`).query(payload).send();
-
       expect(response.status).toEqual(200);
     });
 
@@ -133,13 +147,30 @@ describe('ContractController (integration)', () => {
         .query(payload)
         .send();
 
-      // remove generated file
-      await supertest.delete(`${prefix}/generated`).query(payload).send();
-
       expect(response.status).toEqual(200);
     });
   });
 
-  /* ----------------------------- Get / Compiled ----------------------------- */
+  /* ----------------------------- POST / Compile ----------------------------- */
+  describe('POST / compile', () => {
+    it('Should response 200 with `jobId` when giving payload which is `erc20`', async () => {
+      const payload: GeneratedContractDto = {
+        contractType: ContractTypeEnum.ERC20,
+        contractName: 'TEST',
+      };
+
+      await compileTest(supertest, { payload, prefix });
+    });
+
+    it('Should response 200 with `jobId` when giving payload which is `erc721`', async () => {
+      const payload: GeneratedContractDto = {
+        contractType: ContractTypeEnum.ERC721,
+        contractName: 'TEST',
+      };
+      await compileTest(supertest, { payload, prefix });
+    });
+  });
+
+  /* ----------------------------- GET / Compiled ----------------------------- */
   describe('GET / compiled', () => {});
 });
