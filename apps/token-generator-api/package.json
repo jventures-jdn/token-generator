@@ -61,7 +61,7 @@
     "start": "node dist/main",
     "start:debug": "nest start --debug --watch",
     "test": "jest --verbose --passWithNoTests --detectOpenHandles --forceExit",
-    "test:cov": "pnpm jest --coverage",
+    "test:cov": "pnpm test -- --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:watch": "jest --watch"
   }
