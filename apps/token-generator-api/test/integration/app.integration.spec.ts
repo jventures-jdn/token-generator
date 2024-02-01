@@ -30,7 +30,7 @@ describe('AppController (integration)', () => {
   });
 
   it('/health (GET)', async () => {
-    return true
+    return true;
     // return supertest.get('/health').expect(200).expect('Hello World!');
   });
 });
