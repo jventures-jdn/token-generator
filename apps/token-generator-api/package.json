@@ -60,10 +60,9 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "start": "node dist/main",
     "start:debug": "nest start --debug --watch",
-    "test": "jest --passWithNoTests --forceExit",
-    "test:cov": "jest --coverage",
+    "test": "jest --verbose --passWithNoTests --detectOpenHandles --forceExit",
+    "test:cov": "pnpm jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
     "test:watch": "jest --watch"
   }
 }

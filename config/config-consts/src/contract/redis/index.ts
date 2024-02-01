@@ -4,7 +4,7 @@ export const RedisConfig = () => ({
     host: process.env.REDIS_HOST || 'localhost',
     password: process.env.REDIS_PASSWORD || 'SECRET',
     port: +(process.env.REDIS_PORT || 6379),
-    useInMemoryRedis: !!process.env.USED_IN_MEMORY_REDIS,
+    useInMemoryRedis: process.env.USED_IN_MEMORY_REDIS === 'true',
   },
   bull: {
     defaultJobOptions: {

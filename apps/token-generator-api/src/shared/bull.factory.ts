@@ -49,6 +49,10 @@ export class BullUsingInMemoryRedisFactory
       },
     });
 
+    if (this.redisServer.getInstanceInfo()) {
+      await this.redisServer.stop();
+    }
+
     // Starts and binds new RedisMemoryServer to specified host and port in instance{}
     await this.redisServer.getHost();
     await this.redisServer.getPort();

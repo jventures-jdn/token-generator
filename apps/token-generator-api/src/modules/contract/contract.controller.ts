@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ContractService } from './contract.service';
 import {
@@ -69,7 +69,7 @@ export class ContractController {
   }) // 1 req/10s
   @Post('generate')
   @ApiOperation({ summary: 'Generate contract' })
-  async generateContract(@Query() payload: GeneratedContractDto) {
+  async generateContract(@Body() payload: GeneratedContractDto) {
     return this.contractService.generateContract(payload);
   }
 
