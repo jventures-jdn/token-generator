@@ -2,12 +2,12 @@ import { Module } from '@nestjs/common';
 import { ContractModule } from './modules/contract/contract.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EnvironmentConfig } from '@jventures-jdn/config-consts';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { BullModule } from '@nestjs/bull';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
-    ContractModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env.local'],
@@ -36,6 +36,13 @@ import { BullModule } from '@nestjs/bull';
       }),
       inject: [ConfigService],
     }),
+    ContractModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule {}

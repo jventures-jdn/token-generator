@@ -21,30 +21,38 @@ export class ContractController {
     private readonly contractProducer: ContractProducer,
   ) {}
 
+  /* -------------------------------------------------------------------------- */
+  /*                                     Get                                    */
+  /* -------------------------------------------------------------------------- */
+  /* -------------------------- Get Original Contract ------------------------- */
   @Get('original')
   @ApiOperation({ summary: 'Get original contract' })
   async getOriginalContract(@Query() payload: OriginalContractDto) {
     return this.contractService.readOriginalContract(payload);
   }
 
+  /* ------------------------- Get Generated Contract ------------------------- */
   @Get('generated')
   @ApiOperation({ summary: 'Get generated contract' })
   async getGeneratedContract(@Query() payload: GeneratedContractDto) {
     return this.contractService.readGeneratedContract(payload);
   }
 
+  /* -------------------------- Get Compiled Contract ------------------------- */
   @Get('compiled')
   @ApiOperation({ summary: 'Get compiled contract' })
   async getCompiledContract(@Query() payload: GeneratedContractDto) {
     return this.contractService.readCompiledContract(payload);
   }
 
+  /* ---------------------------- Get Compiled ABI ---------------------------- */
   @Get('abi')
   @ApiOperation({ summary: 'Get compiled contract' })
   async getCompiledAbi(@Query() payload: GeneratedContractDto) {
     return this.contractService.readAbi(payload);
   }
 
+  /* --------------------------------- Get Job -------------------------------- */
   @Get('job')
   @ApiOperation({ summary: 'Get job' })
   async getJob(@Query() payload: JobDto) {
@@ -52,26 +60,22 @@ export class ContractController {
     return this.contractProducer.getJobStatus(job);
   }
 
-  @Delete('job')
-  @ApiOperation({ summary: 'Remove job' })
-  async removeJob(@Query() payload: JobDto) {
-    const job = await this.contractProducer.removeJob(payload);
-    return {
-      state: await job.getState(),
-    };
-  }
-
+  /* -------------------------------------------------------------------------- */
+  /*                                    Post                                    */
+  /* -------------------------------------------------------------------------- */
+  /* ----------------------------- Add Compile Job ---------------------------- */
   @Throttle({
-    default: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 1000 },
-  }) // 1 req/10s
+    short: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 10000 },
+  }) // 1 req/ 10s
   @Post('compile-job')
   @ApiOperation({ summary: 'Add compile contract job' })
   async compileContractJob(@Query() payload: GeneratedContractDto) {
     return { jobId: await this.contractProducer.addCompileJob(payload) };
   }
 
+  /* ----------------------------- Add Verify Job ----------------------------- */
   @Throttle({
-    default: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 1000 },
+    short: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 10000 },
   }) // 1 req/10s
   @Post('verify-job')
   @ApiOperation({ summary: 'Add compile contract job' })
@@ -79,8 +83,9 @@ export class ContractController {
     return { jobId: await this.contractProducer.addVerifyJob(payload) };
   }
 
+  /* -------------------------- Generate New Contract ------------------------- */
   @Throttle({
-    default: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 1000 },
+    short: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 10000 },
   }) // 1 req/10s
   @Post('generate')
   @ApiOperation({ summary: 'Generate contract' })
@@ -88,8 +93,9 @@ export class ContractController {
     return this.contractService.generateContract(payload);
   }
 
+  /* ----------------------- Compile Generated Contract ----------------------- */
   @Throttle({
-    default: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 1000 },
+    short: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 10000 },
   }) // 1 req/10s
   @Post('compile')
   @ApiOperation({ summary: 'Compile contract' })
@@ -97,12 +103,26 @@ export class ContractController {
     return this.contractService.compileContract(payload);
   }
 
+  /* -------------------------------------------------------------------------- */
+  /*                                   Delete                                   */
+  /* -------------------------------------------------------------------------- */
+  /* ------------------------ Remove Generated Contract ----------------------- */
   @Throttle({
-    default: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 1000 },
+    short: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 10000 },
   }) // 1 req/10s
   @Delete('generated')
   @ApiOperation({ summary: 'Remove generated contract' })
   async removeContract(@Query() payload: GeneratedContractDto) {
     return this.contractService.removeContract(payload);
+  }
+
+  /* ------------------------------- Remove Job ------------------------------- */
+  @Delete('job')
+  @ApiOperation({ summary: 'Remove job' })
+  async removeJob(@Query() payload: JobDto) {
+    const job = await this.contractProducer.removeJob(payload);
+    return {
+      state: await job.getState(),
+    };
   }
 }
