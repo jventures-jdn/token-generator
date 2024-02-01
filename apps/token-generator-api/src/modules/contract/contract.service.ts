@@ -16,9 +16,9 @@ import {
 export class ContractService {
   constructor() {}
 
-  generateContractPath = '../contracts/generated';
-  originalContractPath = '../contracts/original';
-  compiledContractPath = '../contracts/compiled';
+  generateContractPath = `${process.cwd()}/contracts/generated`;
+  originalContractPath = `${process.cwd()}/contracts/original`;
+  compiledContractPath = `${process.cwd()}/contracts/compiled`;
 
   /* ------------------------- Read Original Contract ------------------------- */
   /**
@@ -29,10 +29,7 @@ export class ContractService {
    * @throws NotFoundException if the compiled contract does not exist.
    */
   async readOriginalContract(payload: OriginalContractDto) {
-    const existPath = join(
-      __dirname,
-      `${this.originalContractPath}/${payload.contractType}/${payload.contractType}Generator.sol`,
-    );
+    const existPath = `${this.originalContractPath}/${payload.contractType}/${payload.contractType}Generator.sol`;
 
     if (existsSync(existPath)) {
       return { data: readFileSync(existPath).toString(), path: existPath };
@@ -52,10 +49,7 @@ export class ContractService {
    * @throws NotFoundException if the compiled contract does not exist.
    */
   async readGeneratedContract(payload: GeneratedContractDto) {
-    const existPath = join(
-      __dirname,
-      `${this.generateContractPath}/${payload.contractType}/${payload.contractName}.sol`,
-    );
+    const existPath = `${this.generateContractPath}/${payload.contractType}/${payload.contractName}.sol`;
 
     if (existsSync(existPath)) {
       return { raw: readFileSync(existPath).toString(), path: existPath };
@@ -75,10 +69,7 @@ export class ContractService {
    * @throws NotFoundException if the compiled contract does not exist.
    */
   async readCompiledContract(payload: GeneratedContractDto) {
-    const existPath = join(
-      __dirname,
-      `${this.compiledContractPath}/artifacts/contracts/generated/${payload.contractType}/${payload.contractName}.sol/${payload.contractName}.json`,
-    );
+    const existPath = `${this.compiledContractPath}/artifacts/contracts/generated/${payload.contractType}/${payload.contractName}.sol/${payload.contractName}.json`;
 
     if (existsSync(existPath)) {
       return {
@@ -130,16 +121,14 @@ export class ContractService {
 
     // read orignal contract and replace contract name
     const { data } = await this.readOriginalContract(payload);
+
     const generatedContractRaw = data.replaceAll(
       `${payload.contractType.toUpperCase()}Generator`,
       payload.contractName,
     );
 
     // write new contract
-    const writePath = join(
-      __dirname,
-      `${this.generateContractPath}/${filePath}`,
-    );
+    const writePath = `${this.generateContractPath}/${filePath}`;
     writeFileSync(writePath, generatedContractRaw);
     return filePath;
   }
