@@ -63,6 +63,16 @@ export class ContractController {
   /* -------------------------------------------------------------------------- */
   /*                                    Post                                    */
   /* -------------------------------------------------------------------------- */
+  /* ---------------------------- Generate contract --------------------------- */
+  @Throttle({
+    default: { limit: environmentConfig.isProduction ? 1 : 1, ttl: 10000 },
+  }) // 1 req/10s
+  @Post('generate')
+  @ApiOperation({ summary: 'Generate contract' })
+  async generateContract(@Query() payload: GeneratedContractDto) {
+    return this.contractService.generateContract(payload);
+  }
+
   /* ----------------------------- Add Compile Job ---------------------------- */
   @Throttle({
     short: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 10000 },

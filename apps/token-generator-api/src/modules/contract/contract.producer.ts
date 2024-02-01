@@ -2,10 +2,14 @@ import { GeneratedContractDto, JobDto } from '@jventures-jdn/config-consts';
 import { InjectQueue } from '@nestjs/bull';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Job, Queue } from 'bull';
+import { ContractService } from './contract.service';
 
 @Injectable()
 export class ContractProducer {
-  constructor(@InjectQueue('contract') private contractQueue: Queue) {}
+  constructor(
+    @InjectQueue('contract') private contractQueue: Queue,
+    private readonly contractService: ContractService,
+  ) {}
 
   /* ----------------------------- Add Compile Job ---------------------------- */
   /**
@@ -15,6 +19,9 @@ export class ContractProducer {
    * @returns Job id
    */
   async addCompileJob(payload: GeneratedContractDto) {
+    // if giving generated contract name is not exist, throw error
+    await this.contractService.readGeneratedContract(payload);
+
     return (await this.contractQueue.add('compile', payload))?.id;
   }
 
@@ -26,6 +33,9 @@ export class ContractProducer {
    * @returns Job id
    */
   async addVerifyJob(payload: GeneratedContractDto) {
+    // if giving generated contract name is not exist, throw error
+    await this.contractService.readGeneratedContract(payload);
+
     return (await this.contractQueue.add('verify', payload))?.id;
   }
 

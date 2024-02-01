@@ -1,14 +1,14 @@
 import { GeneratedContractDto } from '@jventures-jdn/config-consts';
 import { Process, Processor } from '@nestjs/bull';
 import { Job } from 'bull';
-import { ContractService } from './contract.service';
 import { spawn } from 'child_process';
 import { join } from 'path';
-import { InternalServerErrorException } from '@nestjs/common';
+import { InternalServerErrorException, Logger } from '@nestjs/common';
 
 @Processor('contract')
 export class ContractConsumer {
-  constructor(private readonly contractService: ContractService) {}
+  constructor() {}
+  private readonly logger = new Logger('ContractConsumer');
 
   /**
    * Compiles the generated contract.
@@ -17,9 +17,6 @@ export class ContractConsumer {
    */
   @Process({ name: 'compile', concurrency: 1 })
   async compileContract(job: Job<GeneratedContractDto>) {
-    // if giving generated contract name is not exist, throw error
-    await this.contractService.readGeneratedContract(job.data);
-
     // create execute streams
     const command = spawn('npx hardhat compile', {
       cwd: join(__dirname, '../'),
@@ -32,12 +29,16 @@ export class ContractConsumer {
       // log in data
       command.stdout.on('data', (data) => {
         output += `\n${data.toString()}`;
-        console.log(data.toString());
+        this.logger.verbose(
+          `[compileContract] ${data.toString()?.replaceAll('\n', '')}`,
+        );
       });
-
       // reject on error
       command.stderr.on('data', async (data) => {
-        console.error(data.toString());
+        console.log('err');
+        this.logger.error(
+          `[compileContract] ${data.toString()?.replaceAll('\n', '')}`,
+        );
         await Promise.all([
           job.moveToFailed({ message: data.toString() }),
           job.progress(100),
