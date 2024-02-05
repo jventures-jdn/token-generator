@@ -65,8 +65,8 @@ export class ContractController {
   /* -------------------------------------------------------------------------- */
   /* ---------------------------- Generate contract --------------------------- */
   @Throttle({
-    default: { limit: environmentConfig.isProduction ? 1 : 1, ttl: 10000 },
-  }) // 1 req/10s
+    default: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 10000 },
+  }) // 1 req/1s
   @Post('generate')
   @ApiOperation({ summary: 'Generate contract' })
   async generateContract(@Body() payload: GeneratedContractDto) {
@@ -75,20 +75,30 @@ export class ContractController {
 
   /* ----------------------------- Add Compile Job ---------------------------- */
   @Throttle({
-    short: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 10000 },
-  }) // 1 req/ 10s
-  @Post('compile')
-  @ApiOperation({ summary: 'Compile contract' })
+    short: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 1000 },
+  }) // 1 req/ 1s
+  @Post('compile-job')
+  @ApiOperation({ summary: 'Compile contract job' })
   async compileContractJob(@Body() payload: GeneratedContractDto) {
     return { jobId: await this.contractProducer.addCompileJob(payload) };
   }
 
+  /* ---------------------------- Compile Contract ---------------------------- */
+  @Throttle({
+    short: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 1000 },
+  }) // 1 req/ 1s
+  @Post('compile')
+  @ApiOperation({ summary: 'Compile contract' })
+  async compileContract(@Body() payload: GeneratedContractDto) {
+    return await this.contractService.compileContract(payload);
+  }
+
   /* ----------------------------- Add Verify Job ----------------------------- */
   @Throttle({
-    short: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 10000 },
-  }) // 1 req/10s
-  @Post('verify')
-  @ApiOperation({ summary: 'Verify contract' })
+    short: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 1000 },
+  }) // 1 req/1s
+  @Post('verify-job')
+  @ApiOperation({ summary: 'Verify contract job' })
   async verifyContractJob(@Body() payload: GeneratedContractDto) {
     return { jobId: await this.contractProducer.addVerifyJob(payload) };
   }
@@ -98,8 +108,8 @@ export class ContractController {
   /* -------------------------------------------------------------------------- */
   /* ------------------------ Remove Generated Contract ----------------------- */
   @Throttle({
-    short: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 10000 },
-  }) // 1 req/10s
+    short: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 1000 },
+  }) // 1 req/1s
   @Delete('generated')
   @ApiOperation({ summary: 'Remove generated contract' })
   async removeContract(@Query() payload: GeneratedContractDto) {
