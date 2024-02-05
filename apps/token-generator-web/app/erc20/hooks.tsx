@@ -95,7 +95,6 @@ export function useErc20() {
   /* -------------------------------------------------------------------------- */
   /*                                   Watches                                  */
   /* -------------------------------------------------------------------------- */
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(handleAccountChange, [account.address]);
   useEffect(() => {
     setLoading(undefined);

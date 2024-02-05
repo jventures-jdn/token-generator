@@ -24,6 +24,8 @@ import {
 import { ERC20Generator__factory } from '@jventures-jdn/contract-token-generator';
 import { useErc20 } from './hooks';
 import { deployContract } from './deploy';
+import { contractFetcherApi } from '@jventures-jdn/fetcher';
+import { ContractTypeEnum } from '@jventures-jdn/config-consts';
 
 interface ERC20Form {
   symbol: string;
@@ -63,6 +65,12 @@ export default function ERC20Page() {
   } = useErc20();
   const { openConnectModal } = useConnectModal();
   const { add, clear, setLoading, setInitiating } = LoggerStore.getState();
+  const { data, isLoading } = contractFetcherApi.getCompiledContract({
+    contractType: ContractTypeEnum.ERC20,
+    contractName: 'TOKEN_GENERATOR',
+  });
+
+  if (!isLoading) console.log(data);
 
   /* -------------------------------------------------------------------------- */
   /*                                   Methods                                  */
