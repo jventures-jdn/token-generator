@@ -31,6 +31,15 @@ describe('ContractController (integration)', () => {
     contractName: 'TEST',
   };
 
+  const removeGenerated = async () => {
+    await Promise.all([
+      supertest.delete(`${prefix}/generated`).query(payloadERC20).send(),
+      supertest.delete(`${prefix}/generated`).query(payloadERC721).send(),
+      supertest.delete(`${prefix}/generated`).query(payload2ERC20).send(),
+      supertest.delete(`${prefix}/generated`).query(payload3ERC20).send(),
+    ]);
+  };
+
   beforeEach(async () => {
     // setup instance
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -45,16 +54,17 @@ describe('ContractController (integration)', () => {
 
   afterAll(async () => {
     // wait bull client disconnect before close instance
-    await new Promise((resolve) => setTimeout(() => resolve(true), 1000));
+    await new Promise((resolve) => setTimeout(() => resolve(true), 250));
     await app.close();
     jest.clearAllMocks();
   });
 
   afterEach(async () => {
-    await supertest.delete(`${prefix}/generated`).query(payloadERC20).send();
-    await supertest.delete(`${prefix}/generated`).query(payloadERC721).send();
-    await supertest.delete(`${prefix}/generated`).query(payload2ERC20).send();
-    await supertest.delete(`${prefix}/generated`).query(payload3ERC20).send();
+    await removeGenerated();
+  });
+
+  afterAll(async () => {
+    await removeGenerated();
   });
 
   /* ----------------------------- GET / Original ----------------------------- */

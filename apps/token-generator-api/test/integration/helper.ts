@@ -1,4 +1,4 @@
-import { GeneratedContractDto } from '@jventures-jdn/config-consts';
+import { GeneratedContractDto } from '../../src/modules/contract/contract.dto';
 import Supertest from 'supertest';
 
 export async function compileJobTest(
