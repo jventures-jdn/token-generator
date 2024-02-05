@@ -59,7 +59,7 @@ export function LoggerWindow(
       <div className="text-sm break-all grid grid-cols-10 gap-y-2 text-gray-200">
         {logs[logSelectId].map((log, index) =>
           log.type === 'MESSAGE' ? (
-            <React.Fragment>
+            <React.Fragment key={index}>
               <div className="font-bold col-span-2 hidden xl:block">
                 [{log.provider}]
               </div>
