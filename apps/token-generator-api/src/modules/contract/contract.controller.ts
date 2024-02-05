@@ -1,14 +1,14 @@
 import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ContractService } from './contract.service';
+import { Throttle } from '@nestjs/throttler';
+import { environmentConfig } from '@jventures-jdn/config-consts';
+import { ContractProducer } from './contract.producer';
 import {
   GeneratedContractDto,
   JobDto,
   OriginalContractDto,
-} from '@jventures-jdn/config-consts';
-import { Throttle } from '@nestjs/throttler';
-import { environmentConfig } from '@jventures-jdn/config-consts';
-import { ContractProducer } from './contract.producer';
+} from './contract.dto';
 
 @ApiTags('contract')
 @Controller({

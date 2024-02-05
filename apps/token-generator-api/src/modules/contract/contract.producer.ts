@@ -1,8 +1,8 @@
-import { GeneratedContractDto, JobDto } from '@jventures-jdn/config-consts';
 import { InjectQueue } from '@nestjs/bull';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Job, Queue } from 'bull';
 import { ContractService } from './contract.service';
+import { GeneratedContractDto, JobDto } from './contract.dto';
 
 @Injectable()
 export class ContractProducer {

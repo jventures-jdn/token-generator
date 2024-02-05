@@ -8,12 +8,9 @@ import {
 } from '@nestjs/common';
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs';
 import { join } from 'path';
-import {
-  GeneratedContractDto,
-  OriginalContractDto,
-} from '@jventures-jdn/config-consts';
 import { spawn } from 'child_process';
 import { Job } from 'bull';
+import { GeneratedContractDto, OriginalContractDto } from './contract.dto';
 
 @Injectable()
 export class ContractService {
@@ -36,7 +33,7 @@ export class ContractService {
     const existPath = `${this.originalContractPath}/${payload.contractType}/${payload.contractType}Generator.sol`;
 
     if (existsSync(existPath)) {
-      return { data: readFileSync(existPath).toString(), path: existPath };
+      return { raw: readFileSync(existPath).toString(), path: existPath };
     } else {
       throw new NotFoundException(undefined, {
         description: 'This original contract type does not exist',
@@ -124,9 +121,9 @@ export class ContractService {
     }
 
     // read orignal contract and replace contract name
-    const { data } = await this.readOriginalContract(payload);
+    const { raw } = await this.readOriginalContract(payload);
 
-    const generatedContractRaw = data.replaceAll(
+    const generatedContractRaw = raw.replaceAll(
       `${payload.contractType.toUpperCase()}Generator`,
       payload.contractName,
     );

@@ -2,13 +2,11 @@
 import Supertest from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-  ContractTypeEnum,
-  OriginalContractDto,
-} from '@jventures-jdn/config-consts';
 import { ContractModule } from '../../src/modules/contract/contract.module';
 import { AppModule } from '../../src/app.module';
 import { compileJobTest, compileTest } from './helper';
+import { ContractTypeEnum } from '@jventures-jdn/config-consts';
+import { OriginalContractDto } from '@/src/modules/contract/contract.dto';
 
 describe('ContractController (integration)', () => {
   const prefix = '/contract';

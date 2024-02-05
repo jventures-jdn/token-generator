@@ -1,8 +1,8 @@
-import { GeneratedContractDto } from '@jventures-jdn/config-consts';
 import { Process, Processor } from '@nestjs/bull';
 import { Job } from 'bull';
 import { Logger } from '@nestjs/common';
 import { ContractService } from './contract.service';
+import { GeneratedContractDto } from './contract.dto';
 
 @Processor('contract')
 export class ContractConsumer {
