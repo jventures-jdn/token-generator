@@ -14,9 +14,7 @@ module.exports = {
     'prettier',
   ],
   ignorePatterns: ['**/dist'],
-  rules: {
-    '@typescript-eslint/no-explicit-any': 'warn',
-  },
+  rules: {},
   settings: {
     react: {
       version: 'detect',
