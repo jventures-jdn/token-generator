@@ -101,8 +101,9 @@ You need to configure these environments on your local machine so that API can c
 - [x] endpoint for remove generated & compile smart contract
 - [x] endpoint for read abi, bytecode from compiled smart contract
 - [ ] setup queue system when user call compile & verify
-- [ ] setup push notification (or pulling) to frontend when comsumer processing complete
+- [ ] setup SSE (Server Sent Event) or pulling system
 - [ ] setup test for contract endpoints
+- [x] setup in-memory redis for testing & development
 
 ## Team
 
