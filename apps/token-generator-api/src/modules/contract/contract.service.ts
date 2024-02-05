@@ -3,6 +3,7 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs';
@@ -11,11 +12,14 @@ import {
   GeneratedContractDto,
   OriginalContractDto,
 } from '@jventures-jdn/config-consts';
+import { spawn } from 'child_process';
+import { Job } from 'bull';
 
 @Injectable()
 export class ContractService {
   constructor() {}
 
+  private readonly logger = new Logger('ContractService');
   generateContractPath = `${process.cwd()}/contracts/generated`;
   originalContractPath = `${process.cwd()}/contracts/original`;
   compiledContractPath = `${process.cwd()}/contracts/compiled`;
@@ -131,6 +135,126 @@ export class ContractService {
     const writePath = `${this.generateContractPath}/${filePath}`;
     writeFileSync(writePath, generatedContractRaw);
     return filePath;
+  }
+
+  /* ---------------------------- Compile Contract ---------------------------- */
+  /**
+   * Compiles the generated contract.
+   *
+   * @param {Job<GeneratedContractDto> | GeneratedContractDto} payload Job or payload with containing `contractName` and `contractType` of contract
+   * @returns Compiled output
+   */
+  async compileContract(
+    payload: GeneratedContractDto | Job<GeneratedContractDto>,
+  ) {
+    const isJob = payload.hasOwnProperty('id');
+
+    // create execute streams
+    const command = spawn('npx hardhat compile', {
+      cwd: join(__dirname, '../'),
+      shell: true,
+    });
+
+    return new Promise((resolve, reject) => {
+      let output = '';
+
+      // log in data
+      command.stdout.on('data', (data) => {
+        output += `\n${data.toString()}`;
+        this.logger.verbose(
+          `[compileContract] ${data.toString()?.replaceAll('\n', '')}`,
+        );
+      });
+      // reject on error
+      command.stderr.on('data', async (data) => {
+        this.logger.error(
+          `[compileContract] ${data.toString()?.replaceAll('\n', '')}`,
+        );
+        if (isJob) {
+          const job = payload as Job<GeneratedContractDto>;
+          await Promise.all([
+            job.moveToFailed({ message: data.toString() }),
+            job.progress(100),
+          ]);
+        }
+        reject(
+          new InternalServerErrorException({
+            error: data.toString(),
+            cause: 'hardhat',
+          }),
+        );
+      });
+
+      // resolve on exit
+      command.on('exit', async () => {
+        if (isJob) {
+          const job = payload as Job<GeneratedContractDto>;
+          await Promise.all([job.moveToCompleted(output), job.progress(100)]);
+        }
+        await new Promise((resolve) => setTimeout(() => resolve(true), 3000));
+        resolve(output);
+      });
+    });
+  }
+
+  /* ---------------------------- Compile Contract ---------------------------- */
+  /**
+   * Verify the generated contract.
+   *
+   * @param {Job<GeneratedContractDto> | GeneratedContractDto} payload Job or payload with containing `contractName` and `contractType` of contract
+   * @returns Verify output
+   */
+  async verifyContract(
+    payload: GeneratedContractDto | Job<GeneratedContractDto>,
+  ) {
+    const isJob = payload.hasOwnProperty('id');
+
+    // create execute streams
+    const command = spawn('npx hardhat compile', {
+      cwd: join(__dirname, '../'),
+      shell: true,
+    });
+
+    return new Promise((resolve, reject) => {
+      let output = '';
+
+      // log in data
+      command.stdout.on('data', (data) => {
+        output += `\n${data.toString()}`;
+        this.logger.verbose(
+          `[compileContract] ${data.toString()?.replaceAll('\n', '')}`,
+        );
+      });
+      // reject on error
+      command.stderr.on('data', async (data) => {
+        this.logger.error(
+          `[compileContract] ${data.toString()?.replaceAll('\n', '')}`,
+        );
+        if (isJob) {
+          const job = payload as Job<GeneratedContractDto>;
+          await Promise.all([
+            job.moveToFailed({ message: data.toString() }),
+            job.progress(100),
+          ]);
+        }
+        reject(
+          new InternalServerErrorException({
+            error: data.toString(),
+            cause: 'hardhat',
+          }),
+        );
+      });
+
+      // resolve on exit
+      command.on('exit', async () => {
+        if (isJob) {
+          const job = payload as Job<GeneratedContractDto>;
+          await Promise.all([job.moveToCompleted(output), job.progress(100)]);
+        }
+        await new Promise((resolve) => setTimeout(() => resolve(true), 3000));
+        resolve(output);
+      });
+    });
   }
 
   /* ----------------------------- Remove Contract ---------------------------- */
