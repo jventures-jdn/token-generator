@@ -13,7 +13,10 @@ module.exports = {
     'plugin:react/jsx-runtime',
     'prettier',
   ],
-  rules: {},
+  ignorePatterns: ['**/dist'],
+  rules: {
+    '@typescript-eslint/no-explicit-any': 'warn',
+  },
   settings: {
     react: {
       version: 'detect',

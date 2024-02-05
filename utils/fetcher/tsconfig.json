@@ -1,5 +1,5 @@
 {
-  "extends": "@jventures-jdn/config-tsconfig/nextjs.json",
+  "extends": "@jventures-jdn/config-tsconfig/module",
   "include": ["./src/**/*.ts"],
   "exclude": ["node_modules"],
   "compilerOptions": {

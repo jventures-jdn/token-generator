@@ -1,5 +1,5 @@
 import { environmentConfig } from '@jventures-jdn/config-consts';
-import axios, { AxiosRequestConfig, AxiosResponse, Method } from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 
 export class FetcherAPI {
   constructor(version?: number, endpoint?: string, baseUrl?: string) {
