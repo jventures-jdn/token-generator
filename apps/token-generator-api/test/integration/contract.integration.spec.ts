@@ -4,22 +4,29 @@ import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   ContractTypeEnum,
-  GeneratedContractDto,
   OriginalContractDto,
 } from '@jventures-jdn/config-consts';
 import { ContractModule } from '../../src/modules/contract/contract.module';
 import { AppModule } from '../../src/app.module';
-import { compileTest } from './helper';
+import { compileJobTest, compileTest } from './helper';
 
 describe('ContractController (integration)', () => {
   const prefix = '/contract';
   let app: INestApplication;
   let supertest: Supertest.SuperTest<Supertest.Test>;
   process.env.USED_IN_MEMORY_REDIS = 'true';
-  process.env.REDIS_PASSWORD = '';
+
   const payloadERC20 = {
     contractType: ContractTypeEnum.ERC20,
     contractName: 'TEST',
+  };
+  const payload2ERC20 = {
+    contractType: ContractTypeEnum.ERC20,
+    contractName: 'TEST2',
+  };
+  const payload3ERC20 = {
+    contractType: ContractTypeEnum.ERC20,
+    contractName: 'TEST3',
   };
   const payloadERC721 = {
     contractType: ContractTypeEnum.ERC721,
@@ -48,6 +55,8 @@ describe('ContractController (integration)', () => {
   afterEach(async () => {
     await supertest.delete(`${prefix}/generated`).query(payloadERC20).send();
     await supertest.delete(`${prefix}/generated`).query(payloadERC721).send();
+    await supertest.delete(`${prefix}/generated`).query(payload2ERC20).send();
+    await supertest.delete(`${prefix}/generated`).query(payload3ERC20).send();
   });
 
   /* ----------------------------- GET / Original ----------------------------- */
@@ -102,14 +111,9 @@ describe('ContractController (integration)', () => {
   /* ----------------------------- GET / Generated ---------------------------- */
   describe('GET / generated', () => {
     it('should response 404 when no file match with giving `contractName` and `contractType`', async () => {
-      const payload: GeneratedContractDto = {
-        contractType: ContractTypeEnum.ERC20,
-        contractName: 'TEST',
-      };
-
       const response = await supertest
         .get(`${prefix}/generated`)
-        .query(payload)
+        .query(payloadERC20)
         .send();
 
       expect(response.status).toEqual(404);
@@ -119,55 +123,65 @@ describe('ContractController (integration)', () => {
     });
 
     it('should response 200 when giving payload which is `erc20`', async () => {
-      const payload: GeneratedContractDto = {
-        contractType: ContractTypeEnum.ERC20,
-        contractName: 'TEST',
-      };
-
-      await supertest.post(`${prefix}/generate`).send(payload);
+      await supertest.post(`${prefix}/generate`).send(payloadERC20);
 
       const response = await supertest
         .get(`${prefix}/generated`)
-        .query(payload)
+        .query(payloadERC20)
         .send();
 
       expect(response.status).toEqual(200);
     });
 
     it('should response 200 when giving payload which is `erc721`', async () => {
-      const payload: GeneratedContractDto = {
-        contractType: ContractTypeEnum.ERC721,
-        contractName: 'TEST',
-      };
-
-      await supertest.post(`${prefix}/generate`).send(payload);
+      await supertest.post(`${prefix}/generate`).send(payloadERC721);
 
       const response = await supertest
         .get(`${prefix}/generated`)
-        .query(payload)
+        .query(payloadERC721)
         .send();
 
       expect(response.status).toEqual(200);
     });
   });
 
-  /* ----------------------------- POST / Compile ----------------------------- */
-  describe('POST / compile', () => {
+  /* ----------------------------- POST / Compile Job ----------------------------- */
+  describe('POST / compile-job', () => {
     it('Should response 200 with `jobId` when giving payload which is `erc20`', async () => {
-      const payload: GeneratedContractDto = {
-        contractType: ContractTypeEnum.ERC20,
-        contractName: 'TEST',
-      };
-
-      await compileTest(supertest, { payload, prefix });
+      await compileJobTest(supertest, { payload: payloadERC20, prefix });
     });
 
     it('Should response 200 with `jobId` when giving payload which is `erc721`', async () => {
-      const payload: GeneratedContractDto = {
-        contractType: ContractTypeEnum.ERC721,
-        contractName: 'TEST',
-      };
-      await compileTest(supertest, { payload, prefix });
+      await compileJobTest(supertest, { payload: payloadERC721, prefix });
+    });
+
+    it('Should work normally when multiple user generate & compile at the same time', async () => {
+      await Promise.all([
+        compileJobTest(supertest, { payload: payloadERC20, prefix }),
+        compileJobTest(supertest, { payload: payload2ERC20, prefix }),
+        compileJobTest(supertest, { payload: payload3ERC20, prefix }),
+        compileJobTest(supertest, { payload: payloadERC721, prefix }),
+      ]);
+    });
+  });
+
+  /* ----------------------------- POST / Compile ----------------------------- */
+  describe('POST / compile', () => {
+    it('Should response 200 with `jobId` when giving payload which is `erc20`', async () => {
+      await compileTest(supertest, { payload: payloadERC20, prefix });
+    });
+
+    it('Should response 200 with `jobId` when giving payload which is `erc721`', async () => {
+      await compileTest(supertest, { payload: payloadERC721, prefix });
+    });
+
+    it('Should work normally when multiple user generate & compile at the same time', async () => {
+      await Promise.all([
+        compileTest(supertest, { payload: payloadERC20, prefix }),
+        compileTest(supertest, { payload: payload2ERC20, prefix }),
+        compileTest(supertest, { payload: payload3ERC20, prefix }),
+        compileTest(supertest, { payload: payloadERC721, prefix }),
+      ]);
     });
   });
 

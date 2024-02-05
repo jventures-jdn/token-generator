@@ -1,7 +1,7 @@
 import { GeneratedContractDto } from '@jventures-jdn/config-consts';
 import Supertest from 'supertest';
 
-export async function compileTest(
+export async function compileJobTest(
   supertest: Supertest.SuperTest<Supertest.Test>,
   options: {
     prefix: string;
@@ -13,7 +13,7 @@ export async function compileTest(
 
   // compile contract
   const response = await supertest
-    .post(`${options.prefix}/compile`)
+    .post(`${options.prefix}/compile-job`)
     .send(options.payload);
 
   // get compile job suddenly
@@ -36,4 +36,22 @@ export async function compileTest(
     .send();
 
   expect(jobResponse2.body.state).toEqual('completed');
+}
+
+export async function compileTest(
+  supertest: Supertest.SuperTest<Supertest.Test>,
+  options: {
+    prefix: string;
+    payload: GeneratedContractDto;
+  },
+) {
+  // generate contract
+  await supertest.post(`${options.prefix}/generate`).send(options.payload);
+
+  // compile contract
+  const response = await supertest
+    .post(`${options.prefix}/compile`)
+    .send(options.payload);
+
+  expect(response.status).toEqual(201);
 }

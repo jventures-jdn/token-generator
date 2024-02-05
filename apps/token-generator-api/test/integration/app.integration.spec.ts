@@ -1,9 +1,11 @@
+/* eslint-disable turbo/no-undeclared-env-vars */
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../../src/app.module';
 
 describe('AppController (integration)', () => {
   let app: INestApplication;
+  process.env.USED_IN_MEMORY_REDIS = 'false';
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
