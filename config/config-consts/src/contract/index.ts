@@ -1,6 +1,6 @@
 export * from './enum';
-export * from './dto';
 export * from './const';
+export * from './types';
 export * from '../environment';
 export * from '../redis';
 export * from '../system';
