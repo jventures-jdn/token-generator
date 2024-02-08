@@ -22,10 +22,11 @@ export class ErrorsInterceptor implements NestInterceptor {
         const error = err?.error || err?.response?.error || null;
         const status = err?.status || 500;
         const timestamp = new Date().valueOf();
+        const isSuccess = false;
         const cause =
           err?.response?.cause || err?.cause || (status ? 'nestjs' : 'unknown');
         throw new HttpException(
-          { data, status, timestamp, error, cause, message },
+          { data, status, timestamp, error, cause, message, isSuccess },
           status,
         );
       }),
