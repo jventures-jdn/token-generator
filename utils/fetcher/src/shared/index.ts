@@ -12,19 +12,34 @@ export class FetcherAPI {
   protected readonly endpoint: string;
   protected readonly baseUrl: string;
 
-  protected fetch = <T extends Record<string, unknown>>(
+  public fetch = <Response>(
     method: 'get' | 'post' | 'patch' | 'delete',
     path: string,
-    config?: AxiosRequestConfig,
-  ) =>
-    axios[method]<T>(`${path}`, { baseURL: this.baseUrl, ...config })
+    options?: {
+      body?: any;
+      config?: AxiosRequestConfig;
+    },
+  ) => {
+    return (
+      ['post', 'patch'].includes(method)
+        ? axios[method]<Response>(`${path}`, options?.body || {}, {
+            baseURL: this.baseUrl,
+            ...options?.config,
+          })
+        : axios[method]<Response>(`${path}`, {
+            baseURL: this.baseUrl,
+            ...options?.config,
+          })
+    )
       .then((res) => res.data)
       .catch((err) => {
-        return new Error(
-          `[${path}] An error occurred while fetching the data`,
-          {
-            cause: err?.message || 'Unknown error',
-          },
-        );
+        console.warn(`[${path}] An error occurred while fetching the data`, {
+          cause:
+            err?.response?.data?.message || err?.message || 'Unknown error',
+        });
+        return err.response.data;
       });
+  };
 }
+
+export const fetcherAPI = new FetcherAPI();
