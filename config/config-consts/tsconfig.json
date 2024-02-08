@@ -1,5 +1,5 @@
 {
-  "extends": "@jventures-jdn/config-tsconfig/node-module.json",
+  "extends": "@jventures-jdn/config-tsconfig/node-lib.json",
   "include": ["./src/**/*.ts"],
   "exclude": ["node_modules"],
   "compilerOptions": {
