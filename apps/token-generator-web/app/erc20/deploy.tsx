@@ -42,6 +42,7 @@ export async function deployContract(
       abi: options.abi,
       bytecode: options.bytecode,
       args: [options.args],
+      chain: chain,
     })
     .catch((e) => {
       add(e?.details || e?.message || 'Unknown', {
