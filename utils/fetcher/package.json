@@ -8,9 +8,25 @@
     "axios": "^1.6.7",
     "swr": "^2.2.4"
   },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js"
+    }
+  },
   "devDependencies": {
     "@jventures-jdn/config-tsconfig": "*",
     "tsup": "^8.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jventures-jdn/token-generator.git",
+    "directory": "utils/fetcher"
   },
   "license": "MIT",
   "private": true,
