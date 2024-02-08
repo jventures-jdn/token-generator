@@ -22,7 +22,7 @@ export class BullConfigFactory implements SharedBullConfigurationFactory {
 export class BullUsingInMemoryRedisFactory
   implements SharedBullConfigurationFactory
 {
-  private redisServer;
+  private redisServer: RedisMemoryServer;
 
   async createSharedConfiguration(): Promise<BullModuleOptions> {
     // Use common setting. Same Redis will be used for CachingModule and Bull

@@ -18,7 +18,8 @@
     "strict": true,
     "strictPropertyInitialization": false,
     "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "strictNullChecks": false
   },
   "exclude": ["node_modules"]
 }
