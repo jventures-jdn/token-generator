@@ -2,37 +2,16 @@
 
 import { LoggerStore, LoggerWindow } from '../../../../libs/react-logger';
 import { ERC20CheckboxInput } from '@/components/Form/Input';
-import React, {
-  ChangeEvent,
-  FormEvent,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import React, { FormEvent } from 'react';
 import { TextInput } from '@/components/Form/TextInput';
 import { RangeInput } from '@/components/Form/RangeInput';
 import { HiInformationCircle } from 'react-icons/hi';
-import {
-  GetAccountResult,
-  getAccount,
-  getNetwork,
-  getPublicClient,
-  getWalletClient,
-  watchAccount,
-} from 'wagmi/actions';
-import { PublicClient } from 'wagmi';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
-import {
-  CHAIN_DECIMAL,
-  InternalChain,
-  getChain,
-} from '@jventures-jdn/config-chains';
-import { ERC20Generator__factory } from '@jventures-jdn/contract-token-generator';
+import { CHAIN_DECIMAL } from '@jventures-jdn/config-chains';
 import { useErc20 } from './hooks';
 import { deployContract } from './deploy';
 import { contractFetcherApi } from '@jventures-jdn/fetcher';
 import { ContractTypeEnum } from '@jventures-jdn/config-consts';
-import { fetcherAPI } from '@jventures-jdn/fetcher/src/shared';
 
 interface ERC20Form {
   symbol: string;

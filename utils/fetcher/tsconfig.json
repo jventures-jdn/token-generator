@@ -1,5 +1,5 @@
 {
-  "extends": "@jventures-jdn/config-tsconfig/nextjs",
+  "extends": "@jventures-jdn/config-tsconfig/browser-module",
   "include": ["./src/**/*.ts"],
   "exclude": ["node_modules"],
   "compilerOptions": {
