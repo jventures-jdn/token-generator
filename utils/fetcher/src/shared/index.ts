@@ -37,7 +37,18 @@ export class FetcherAPI {
           cause:
             err?.response?.data?.message || err?.message || 'Unknown error',
         });
-        return err.response.data;
+
+        // return server response body if exists, otherwise return mockup server response object
+        return (
+          err?.response?.data || {
+            status: 500,
+            isSuccess: false,
+            message: err?.response?.data || err?.message || 'Unknown error',
+            data: null,
+            error: null,
+            cause: 'network',
+          }
+        );
       });
   };
 }

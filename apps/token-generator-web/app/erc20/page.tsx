@@ -70,15 +70,20 @@ export default function ERC20Page() {
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
     pop();
-    if (generateContractResp.isSuccess) {
-      add(`✅ Generate contract successfully`, {
-        color: 'success',
-      });
-    } else {
+    if (generateContractResp.status === 409) {
       add('🚫 Contract name is already in used, Please try again', {
         color: 'warning',
       });
       return;
+    } else if (generateContractResp.status === 500) {
+      add(`🚫 ${generateContractResp.message}`, {
+        color: 'warning',
+      });
+      return;
+    } else {
+      add(`✅ Generate contract successfully`, {
+        color: 'success',
+      });
     }
 
     /* ---------------------------- Compile contract ---------------------------- */
