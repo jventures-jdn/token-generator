@@ -14,7 +14,7 @@ export async function deployContract(
     bytecode: `0x${string}`;
   },
 ) {
-  const { add, setLoading } = LoggerStore.getState();
+  const { add, setLoading, pop } = LoggerStore.getState();
   const { chain } = getNetwork();
   const walletClient = await getWalletClient({ chainId: chain?.id });
   const publicClient = await getPublicClient({ chainId: chain?.id });
@@ -22,7 +22,7 @@ export async function deployContract(
   const transactionFeeDecimal = 10 ** 7;
 
   /* ------------------------------- Initialize ------------------------------- */
-  add(`🗳️ Deploy : ${type} [${chain?.name}]`);
+  add(`🗳️ Deploying ${type} to ${chain?.name}`, { color: 'info' });
   add(
     <div className="flex flex-col gap-2">
       {Object.entries(options.args).map(([arg, value]) => (
@@ -45,7 +45,6 @@ export async function deployContract(
     })
     .catch((e) => {
       add(e?.details || e?.message || 'Unknown', {
-        newLine: true,
         color: 'warning',
       });
       setLoading(undefined);
@@ -61,32 +60,43 @@ export async function deployContract(
     const transaction = await publicClient.waitForTransactionReceipt({
       hash: hash || '0x',
     });
-    add('🎉 Contract Deployed', { newLine: true, color: 'success' });
+    pop();
+    pop();
+    add(`✅  Deploying ${type} to ${chain?.name} successfully`, {
+      color: 'success',
+    });
+
+    console.log(chain, getChain(`${chain?.name}` as InternalChain));
     add(
       <a
         href={`${
-          getChain(`${chain?.id}` as InternalChain).chainExplorer.homePage
+          getChain(`${chain?.network}` as InternalChain).chainExplorer.homePage
         }/tx/${transaction.transactionHash}`}
         target="_blank"
       >
-        Transaction Hash:{' '}
-        <span className="underline">[{transaction.transactionHash}]</span>
+        🌍 Transaction Hash:{' '}
+        <span className="underline">
+          [`${transaction.transactionHash.slice(0, 10)}...$
+          {transaction.transactionHash.slice(-10)}`]
+        </span>
       </a>,
     );
     add(
       <a
         href={`${
-          getChain(`${chain?.id}` as InternalChain).chainExplorer.homePage
+          getChain(`${chain?.network}` as InternalChain).chainExplorer.homePage
         }/address/${transaction.contractAddress}//read-contract`}
         target="_blank"
       >
-        Contract Address:{' '}
-        <span className="underline">[{transaction.contractAddress}]</span>
+        🌍 Contract Address:{' '}
+        <span className="underline">
+          [`${transaction.contractAddress?.slice(0, 10)}...$
+          {transaction.contractAddress?.slice(-10)}`]
+        </span>
       </a>,
     );
-    add(`Type: ${transaction.type}`);
     add(
-      `Transaction Fee: ${(
+      `🧾 Transaction Fee: ${(
         Number(
           (transaction.gasUsed * gasPrice * BigInt(transactionFeeDecimal)) /
             CHAIN_DECIMAL,
@@ -96,7 +106,6 @@ export async function deployContract(
     );
   } catch (e: any) {
     add(e?.details || e?.message || 'Unknown', {
-      newLine: true,
       color: 'danger',
     });
   } finally {

@@ -2,7 +2,13 @@
 
 import { LoggerStore, LoggerWindow } from '../../../../libs/react-logger';
 import { ERC20CheckboxInput } from '@/components/Form/Input';
-import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { TextInput } from '@/components/Form/TextInput';
 import { RangeInput } from '@/components/Form/RangeInput';
 import { HiInformationCircle } from 'react-icons/hi';
@@ -26,6 +32,7 @@ import { useErc20 } from './hooks';
 import { deployContract } from './deploy';
 import { contractFetcherApi } from '@jventures-jdn/fetcher';
 import { ContractTypeEnum } from '@jventures-jdn/config-consts';
+import { fetcherAPI } from '@jventures-jdn/fetcher/src/shared';
 
 interface ERC20Form {
   symbol: string;
@@ -64,28 +71,82 @@ export default function ERC20Page() {
     stepSupply,
   } = useErc20();
   const { openConnectModal } = useConnectModal();
-  const { add, clear, setLoading, setInitiating } = LoggerStore.getState();
-  const { data, isLoading } = contractFetcherApi.getCompiledContract({
-    contractType: ContractTypeEnum.ERC20,
-    contractName: 'TOKEN_GENERATOR',
-  });
-
-  if (!isLoading) console.log(data);
+  const { add, clear, setLoading, setInitiating, pop } = LoggerStore.getState();
+  const generateContract = contractFetcherApi.generateContract();
+  const compileContract = contractFetcherApi.compileContract();
 
   /* -------------------------------------------------------------------------- */
   /*                                   Methods                                  */
   /* -------------------------------------------------------------------------- */
-
-  /* -------------------------------------------------------------------------- */
-  /*                                   Watches                                  */
-  /* -------------------------------------------------------------------------- */
-  const handleDeploy = (e: FormEvent<HTMLFormElement>) => {
+  const handleDeploy = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     clear();
+
+    /* ---------------------------- Generate Cotnract --------------------------- */
+    add(`✨ Generating contract ...`, { color: 'info' });
+    const generateContractResp = await generateContract.trigger({
+      contractType: ContractTypeEnum.ERC20,
+      contractName: form.name,
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    pop();
+    if (generateContractResp.isSuccess) {
+      add(`✅ Generate contract successfully`, {
+        color: 'success',
+      });
+    } else {
+      add('🚫 Contract name is already in used, Please try again', {
+        color: 'warning',
+      });
+      return;
+    }
+
+    /* ---------------------------- Compile contract ---------------------------- */
+    add(`⚙️ Compiling contract ...`, { color: 'info' });
+    const compileContractResp = await compileContract.trigger({
+      contractType: ContractTypeEnum.ERC20,
+      contractName: form.name,
+    });
+
+    pop();
+    if (compileContractResp.isSuccess) {
+      add(`✅ Compiled contract successfully`, {
+        color: 'success',
+      });
+    } else {
+      add(`⚠️ ${compileContractResp?.message}`, {
+        color: 'warning',
+      });
+    }
+
+    /* --------------------------------- Get ABI -------------------------------- */
+    add(`📝 Processing Bytecode & ABI ...`, { color: 'info' });
+    const getABIResp = await contractFetcherApi.fetch('get', '/abi', {
+      config: {
+        params: {
+          contractType: ContractTypeEnum.ERC20,
+          contractName: form.name,
+        },
+      },
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    pop();
+    if (compileContractResp.isSuccess) {
+      add(`✅ Processing Bytecode & ABI successfully`, { color: 'success' });
+    } else {
+      add(`⚠️ ${compileContractResp?.message}`, {
+        color: 'warning',
+      });
+    }
+
     deployContract('ERC20', {
-      abi: ERC20Generator__factory.abi,
-      bytecode: ERC20Generator__factory.bytecode,
+      abi: getABIResp.data.abi,
+      bytecode: getABIResp.data.bytecode,
       args: {
+        symbol: form.symbol,
+        name: form.name,
         initialSupply: BigInt(form.initialSupply) * CHAIN_DECIMAL,
         supplyCap: BigInt(form.supplyCap) * CHAIN_DECIMAL,
         mintable: form.mintable,
@@ -95,9 +156,26 @@ export default function ERC20Page() {
     });
   };
 
-  /* ---------------------------------- Doms ---------------------------------- */
+  /* -------------------------------------------------------------------------- */
+  /*                                   Watches                                  */
+  /* -------------------------------------------------------------------------- */
+
+  /* -------------------------------------------------------------------------- */
+  /*                                    Doms                                    */
+  /* -------------------------------------------------------------------------- */
   const ERC20Form = (
     <form className="p-5" onSubmit={handleDeploy}>
+      <TextInput
+        options={{
+          key: 'name',
+          title: 'Name',
+          tooltip: 'Contract Name',
+          setter: setForm,
+          value: form.name,
+          disabled: isDisabled,
+          icon: <HiInformationCircle />,
+        }}
+      />
       <TextInput
         options={{
           key: 'symbol',
@@ -105,17 +183,6 @@ export default function ERC20Page() {
           tooltip: 'Token Symbol',
           setter: setForm,
           value: form.symbol,
-          disabled: isDisabled,
-          icon: <HiInformationCircle />,
-        }}
-      />
-      <TextInput
-        options={{
-          key: 'name',
-          title: 'Name',
-          tooltip: 'Token Name',
-          setter: setForm,
-          value: form.name,
           disabled: isDisabled,
           icon: <HiInformationCircle />,
         }}
