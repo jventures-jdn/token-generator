@@ -38,10 +38,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: 🚪 Login to github registry
+      - name: 🚪 Login to github
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
