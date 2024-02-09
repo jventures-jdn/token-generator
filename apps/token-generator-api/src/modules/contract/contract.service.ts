@@ -30,7 +30,9 @@ export class ContractService {
    * @throws NotFoundException if the compiled contract does not exist.
    */
   async readOriginalContract(payload: OriginalContractDto) {
-    const existPath = `${this.originalContractPath}/${payload.contractType}/${payload.contractType}Generator.sol`;
+    const existPath = `${this.originalContractPath}/${
+      payload.contractType
+    }/${payload.contractType.toUpperCase()}Generator.sol`;
 
     if (existsSync(existPath)) {
       return { raw: readFileSync(existPath).toString(), path: existPath };
@@ -102,12 +104,10 @@ export class ContractService {
     const filePath = `${payload.contractType}/${payload.contractName}.sol`;
 
     // validate contract name
-    if (
-      payload.contractName.match(/[^A-Za-z0-9_]/g) ||
-      payload.contractName.match(/^[0-9]+$/g)
-    )
+    if (!payload.contractName.match(/^[a-zA-Z][A-Za-z0-9_]*$/g))
       throw new BadRequestException(undefined, {
-        description: 'Contract name must be alphanumeric or all numberic',
+        description:
+          'Contract name must be alphanumeric and start with a letter',
       });
 
     // if giving generated contract name is already exist, throw error
