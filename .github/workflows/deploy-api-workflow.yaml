@@ -12,7 +12,7 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 env:
   GITHUB_TOKEN: ${{ secrets.GH_TOKEN || github.token }}
-  REGISTRY: ghcr.io
+  REGISTRY: asia.gcr.io
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
@@ -51,14 +51,25 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: 🏗️ Build and push docker
-        uses: docker/build-push-action@v4
-        with:
-          file: Dockerfile.API
-          context: .
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+      - name: 🏗️ Build image
+        run: docker build -f Dockerfile.API -t ${{ steps.meta.outputs.tags }} .
+
+      - name: ⚙️ Configure docker client
+        run: gcloud auth configure-docker --quiet
+
+      - name: 🚀 Push image GCR registry
+        run: |-
+          docker tag ${{ steps.meta.outputs.tags }} asia.gcr.io/jdn-token-generator/${{ env.IMAGE_NAME }}
+          docker push asia.gcr.io/jdn-token-generator/${{ env.IMAGE_NAME }}
+
+      # - name: 🏗️ Build and push docker
+      #   uses: docker/build-push-action@v4
+      #   with:
+      #     file: Dockerfile.API
+      #     context: .
+      #     push: ${{ github.event_name != 'pull_request' }}
+      #     tags: ${{ steps.meta.outputs.tags }}
+      #     labels: ${{ steps.meta.outputs.labels }}
 
       - name: '🚪 Login to GCloud'
         uses: 'google-github-actions/auth@v2'
@@ -71,7 +82,7 @@ jobs:
         with:
           service: 'token-generator-api'
           image: ${{ steps.meta.outputs.tags }}
-
+          region: 'asia-southeast1'
 
   #         gcloud iam service-accounts add-iam-policy-binding "github-action-cloudrun@jdn-token-generator.iam.gserviceaccount.com" \
   # --project=jdn-token-generator \
