@@ -3,7 +3,9 @@ name: 🎉 Deploy API
 on:
   push:
     branches:
-      - dev/message-queue
+      - '*' # all branches
+      - '*/*' # all branches containing a single '/'
+      - '!master' # ignore master branch
     paths:
       [
         'apps/token-generator-api/**',
