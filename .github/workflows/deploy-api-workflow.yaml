@@ -13,7 +13,7 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 env:
   GITHUB_TOKEN: ${{ secrets.GH_TOKEN || github.token }}
   REGISTRY: asia.gcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: token-generator-api
 
 jobs:
   deploy-api:
@@ -26,7 +26,7 @@ jobs:
         node-version: [lts/*]
         pnpm-version: [latest]
 
-    permissions:
+    permissions: # for docker/login-action
       contents: read
       packages: write
       id-token: write
@@ -57,16 +57,8 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/jdn-token-generator/${{ env.IMAGE_NAME }}
 
-      # - name: 🏗️ Build image
-      #   run: docker build -f Dockerfile.API -t ${{ steps.meta.outputs.tags }} .
-
       - name: ⚙️ Configure docker client
         run: gcloud auth configure-docker --quiet
-
-      # - name: 🚀 Push image to GCR registry
-      #   run: |-
-      #     docker tag ${{ steps.meta.outputs.tags }} asia.gcr.io/jdn-token-generator/${{ env.IMAGE_NAME }}
-      #     docker push asia.gcr.io/jdn-token-generator/${{ env.IMAGE_NAME }}
 
       - name: 🏗️ Build and push docker
         uses: docker/build-push-action@v4
@@ -83,8 +75,3 @@ jobs:
           service: 'token-generator-api'
           image: ${{ steps.meta.outputs.tags }}
           region: 'asia-southeast1'
-
-  #         gcloud iam service-accounts add-iam-policy-binding "github-action-cloudrun@jdn-token-generator.iam.gserviceaccount.com" \
-  # --project=jdn-token-generator \
-  # --role="roles/iam.workloadIdentityUser" \
-  # --member="principalSet://iam.googleapis.com/projects/286836004069/locations/global/workloadIdentityPools/github-action-cloudrun/attribute.repository/jventures-jdn/token-generator"
