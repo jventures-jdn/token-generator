@@ -5,16 +5,7 @@ on:
     branches:
       - '*' # all branches
       - '*/*' # all branches containing a single '/'
-      - '!master' # ignore master branch
-    paths:
-      [
-        'apps/token-generator-api/**',
-        'libs/**',
-        'config/**',
-        'utils/**',
-        'docker-compose.yml',
-        '.github/workflows/deploy-api-workflow.yml',
-      ]
+      - '!main' # ignore main branch
   workflow_dispatch:
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
