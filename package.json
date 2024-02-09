@@ -37,5 +37,8 @@
     "syncpack:sync:semver": "syncpack lint-semver-ranges",
     "syncpack:update": "syncpack update",
     "test": "turbo run test"
+  },
+  "redisMemoryServer": {
+    "disablePostinstall": "1"
   }
 }
