@@ -55,7 +55,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: jdn-token-generator/${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       # - name: 🏗️ Build image
       #   run: docker build -f Dockerfile.API -t ${{ steps.meta.outputs.tags }} .
