@@ -1,4 +1,5 @@
 ARG NODE_VERSION=18.18.0
+
 # ---------------------------------------------------------------------------- #
 #                                     Base                                     #
 # ---------------------------------------------------------------------------- #
@@ -10,6 +11,7 @@ RUN apk add --no-cache libc6-compat
 
 # Setup pnpm and turbo on the alpine base
 FROM alpine as base
+# RUN npm install pnpm turbo --global
 RUN npm install pnpm turbo --global
 RUN pnpm config set store-dir ~/.pnpm-store
 
@@ -19,10 +21,10 @@ RUN pnpm config set store-dir ~/.pnpm-store
 # ---------------------------------------------------------------------------- #
 # Prune projects
 FROM base AS pruner
-ARG PROJECT
-
+ARG PROJECT=@jventures-jdn/token-generator-api
 WORKDIR /app
 COPY . .
+RUN ls -l
 RUN turbo prune --scope=${PROJECT} --docker
 
 # ---------------------------------------------------------------------------- #

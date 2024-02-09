@@ -36,5 +36,6 @@
     "syncpack:sync:semver": "syncpack lint-semver-ranges",
     "syncpack:update": "syncpack update",
     "test": "turbo run test"
-  }
+  },
+  "packageManager": "pnpm@8.11.0"
 }
