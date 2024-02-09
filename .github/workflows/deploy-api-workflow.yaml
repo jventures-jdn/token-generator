@@ -69,5 +69,11 @@ jobs:
       - name: '🎉 Deploy API'
         uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
-          service: 'hello-cloud-run'
+          service: 'token-generator-api'
           image: ${{ steps.meta.outputs.tags }}
+
+
+  #         gcloud iam service-accounts add-iam-policy-binding "github-action-cloudrun@jdn-token-generator.iam.gserviceaccount.com" \
+  # --project=jdn-token-generator \
+  # --role="roles/iam.workloadIdentityUser" \
+  # --member="principalSet://iam.googleapis.com/projects/286836004069/locations/global/workloadIdentityPools/github-action-cloudrun/attribute.repository/jventures-jdn/token-generator"
