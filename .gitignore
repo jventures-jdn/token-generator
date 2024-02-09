@@ -47,3 +47,6 @@ next-env.d.ts
 !**/contracts/generated/**/ERC721Libs.sol
 artifacts
 cache
+
+# Ignore generated credentials from google-github-actions/auth
+gha-creds-*.json
