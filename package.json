@@ -19,6 +19,9 @@
   },
   "packageManager": "pnpm@8.11.0",
   "private": true,
+  "redisMemoryServer": {
+    "disablePostinstall": "1"
+  },
   "scripts": {
     "build": "turbo run build",
     "changeset:gen": "pnpm changeset-conventional",
@@ -37,8 +40,5 @@
     "syncpack:sync:semver": "syncpack lint-semver-ranges",
     "syncpack:update": "syncpack update",
     "test": "turbo run test"
-  },
-  "redisMemoryServer": {
-    "disablePostinstall": "1"
   }
 }

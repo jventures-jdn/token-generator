@@ -32,7 +32,7 @@ RUN turbo prune --scope=${PROJECT} --docker
 # ---------------------------------------------------------------------------- #
 # Build the project
 FROM base AS builder
-ARG PROJECT
+ARG PROJECT=@jventures-jdn/token-generator-api
 WORKDIR /app
 
 # Copy lockfile and package.json's of isolated subworkspace
@@ -58,7 +58,7 @@ RUN rm -rf ./**/*/src
 # ---------------------------------------------------------------------------- #
 # Runner image
 FROM alpine AS runner
-ARG PROJECT
+ARG PROJECT=@jventures-jdn/token-generator-api
 ARG NODE_ENV=production
 
 RUN addgroup --system --gid 1001 nodejs
