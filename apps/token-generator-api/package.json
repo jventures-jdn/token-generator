@@ -51,6 +51,10 @@
   },
   "license": "MIT",
   "private": true,
+  "redisMemoryServer": {
+    "disablePostinstall": "1",
+    "systemBinary": "./redis-stable.tar.gz"
+  },
   "scripts": {
     "build": "nest build && pnpm build:copy",
     "build:copy": "copyfiles ./contracts/**/*.sol dist && copyfiles ./package.json dist && copyfiles ./hardhat.config.ts dist",
@@ -64,9 +68,5 @@
     "test:cov": "pnpm test -- --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:watch": "jest --watch"
-  },
-  "redisMemoryServer": {
-    "disablePostinstall": "1",
-    "systemBinary": "./redis-stable.tar.gz"
   }
 }
