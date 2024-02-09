@@ -53,7 +53,7 @@
   "private": true,
   "redisMemoryServer": {
     "disablePostinstall": "1",
-    "systemBinary": "./redis-stable.tar.gz"
+    "systemBinary": "./redis-server"
   },
   "scripts": {
     "build": "nest build && pnpm build:copy",
