@@ -64,5 +64,9 @@
     "test:cov": "pnpm test -- --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:watch": "jest --watch"
+  },
+  "redisMemoryServer": {
+    "disablePostinstall": "1",
+    "systemBinary": "./redis-stable.tar.gz"
   }
 }
