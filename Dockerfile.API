@@ -64,9 +64,17 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nodejs
 USER nodejs
 
+# Supress npm update notifier
+RUN npm config set update-notifier false
+
+
 WORKDIR /app
 COPY --from=builder --chown=nodejs:nodejs /app .
 WORKDIR /app/apps/token-generator-api
+
+# Copy solc compiler
+RUN cp -r .cache /home/nodejs
+RUN rm -rf .cache
 
 ARG PORT=3000
 ENV PORT=${PORT}

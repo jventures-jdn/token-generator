@@ -3,14 +3,12 @@ services:
   api:
     build:
       context: .
-      dockerfile: ./apps/token-generator-api/Dockerfile
+      dockerfile: ./Dockerfile.API
       args:
         - PROJECT=@jventures-jdn/token-generator-api
     container_name: 'token-generator-api'
     ports:
       - 4000:4000
-    depends_on:
-      - redis
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_HOST=redis

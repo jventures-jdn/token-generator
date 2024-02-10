@@ -51,10 +51,6 @@
   },
   "license": "MIT",
   "private": true,
-  "redisMemoryServer": {
-    "disablePostinstall": "1",
-    "systemBinary": "./redis-server"
-  },
   "scripts": {
     "build": "nest build && pnpm build:copy",
     "build:copy": "copyfiles ./contracts/**/*.sol dist && copyfiles ./package.json dist && copyfiles ./hardhat.config.ts dist",
