@@ -57,6 +57,6 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: token-generator # e.g. 'my-project'
-          directory: ./apps/token-generator-web/.next # e.g. 'dist'
+          projectName: token-generator
+          directory: ./apps/token-generator-web/.next
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
