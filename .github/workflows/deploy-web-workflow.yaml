@@ -1,0 +1,59 @@
+name: 🎉 Deploy Web
+
+on:
+  push:
+    branches:
+      - 'main'
+      - 'dev/message-queue'
+    paths:
+      - 'apps/token-generator-web/**'
+      - 'libs/**'
+      - 'utils/**'
+      - 'Dockerfile.API'
+      - '.github/workflows/deploy-api-workflow.yml'
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GH_TOKEN || github.token }}
+  IMAGE_NAME: token-generator-web
+
+jobs:
+  deploy-web:
+    name: 🎉 Deploy Web
+    # needs: test-web
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node-version: [lts/*]
+        pnpm-version: [latest]
+
+    permissions:
+      contents: read
+      deployments: write
+
+    steps:
+      - name: ⬇️ Checkout
+        id: checkout
+        uses: actions/checkout@v2.3.3
+        with:
+          fetch-depth: 0
+
+      - name: 🟢 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: 🏗️ Install dependencies & Build
+        run: pnpm install && pnpm turbo build --filter=token-generator-web
+
+      - name: 🎉 Publish
+        uses: cloudflare/pages-action@1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: token-generator # e.g. 'my-project'
+          directory: ./apps/token-generator-web/.next # e.g. 'dist'
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

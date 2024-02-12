@@ -5,6 +5,12 @@ on:
     branches:
       - 'main'
       - 'dev/message-queue'
+    paths:
+      - 'apps/token-generator-api/**'
+      - 'libs/**'
+      - 'utils/**'
+      - 'Dockerfile.API'
+      - '.github/workflows/deploy-api-workflow.yml'
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -109,7 +115,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: '🎉 Deploy API'
+      - name: 🎉 Deploy API
         uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
           service: 'token-generator-api'
