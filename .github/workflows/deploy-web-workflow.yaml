@@ -47,12 +47,10 @@ jobs:
       - name: 🏗️ Install dependencies & Build
         run: pnpm install
 
-      - name: Open Web Client Directory
-        run: |
-          ls -la
-
       - name: 🏗️ Build
-        run: pnpm turbo build --filter=token-generator-web
+        run: |
+          cd ./apps/token-generator-web
+          pnpm build
 
       - name: 🎉 Publish
         uses: cloudflare/pages-action@1
