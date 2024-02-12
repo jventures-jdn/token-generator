@@ -46,10 +46,13 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
+  console.log('environmentConfig', environmentConfig);
   app.enableCors({
     origin: environmentConfig.isDevelopment
       ? '*'
-      : [environmentConfig.tokenGeneratorWebEndpoint],
+      : [environmentConfig.tokenGeneratorWebEndpoint, '*'],
+    preflightContinue: false,
+    credentials: true,
   });
 
   /* --------------------------------- Listen --------------------------------- */
