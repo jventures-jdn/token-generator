@@ -4,9 +4,11 @@ export const EnvironmentConfig = () => ({
   isProduction: process.env.NODE_ENV === 'production',
   isDevelopment: process.env.NODE_ENV === 'development',
   tokenGeneratorApiEndpoint:
-    process.env.TOKEN_GENERATOR_API_ENDPOINT || 'http://localhost:4000',
+    process.env.NEXT_PUBLIC_TOKEN_GENERATOR_API_ENDPOINT ||
+    'http://localhost:4000',
   tokenGeneratorWebEndpoint:
-    process.env.TOKEN_GENERATOR_WEB_ENDPOINT || 'http://localhost:3000',
+    process.env.NEXT_PUBLIC_TOKEN_GENERATOR_WEB_ENDPOINT ||
+    'http://localhost:3000',
 });
 
 export type EnvironmentConfig = ReturnType<typeof EnvironmentConfig>;
