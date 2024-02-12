@@ -52,6 +52,8 @@ jobs:
           cd ./apps/token-generator-web
           pnpm turbo build
           pnpm build:page
+        env:
+          NEXT_PUBLIC_TOKEN_GENERATOR_API_ENDPOINT: ${{ vars.NEXT_PUBLIC_TOKEN_GENERATOR_API_ENDPOINT }}
 
       - name: 🎉 Publish
         uses: cloudflare/pages-action@1
