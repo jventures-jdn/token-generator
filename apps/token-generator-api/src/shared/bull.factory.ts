@@ -32,7 +32,7 @@ export class BullUsingInMemoryRedisFactory
     const host = redisConfig.redis.host;
     const useInMemoryRedis = redisConfig.redis.useInMemoryRedis;
 
-    if (!useInMemoryRedis) {
+    if (!useInMemoryRedis || true) {
       logger.log('Using local machine redis...');
       const bullConfigService = new BullConfigFactory();
       return bullConfigService.createSharedConfiguration();

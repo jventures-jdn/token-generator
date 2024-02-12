@@ -12,7 +12,6 @@ describe('ContractController (integration)', () => {
   const prefix = '/contract';
   let app: INestApplication;
   let supertest: Supertest.SuperTest<Supertest.Test>;
-  process.env.USED_IN_MEMORY_REDIS = 'true';
 
   const payloadERC20 = {
     contractType: ContractTypeEnum.ERC20,

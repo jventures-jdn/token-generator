@@ -47,9 +47,6 @@ jobs:
         with:
           redis-version: ${{ matrix.redis-version }}
 
-      - name: 💾 Copy solc cache
-        run: RUN cp -r .cache /home/nodejs
-
       - name: 🏗️ Install dependencies
         run: pnpm install
 
