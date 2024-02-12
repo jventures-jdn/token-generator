@@ -17,55 +17,17 @@
     Official <a href="https://github.com/jventures-jdn/project-staking-ui">Token Generator</a> Monorepo
 </p>
 
-## Setup
+### Web
 
-### Redis
-
-You need to run `redis` before developing. There are two ways you can run redis
-
-#### 1. Use docker
-
-- Create an .env file at the root of the project.
-- Declare these variables to .env file
-  ```json
-  REDIS_HOST="localhost"
-  REDIS_PASSWORD="SECRET"
-  REDIS_PORT="6379"
+- In order to start api, go to `token-generator-web` directory and run
   ```
-- Run `redis` with docker (you need to install `docker` and `docker-compose`)
-  ```
-  pnpm redis
-  ```
-
-#### 2. Use In-memory redis server
-
-- Create an .env file at the root of the project.
-- Declare these variables to .env file
-  ```json
-  REDIS_HOST="localhost"
-  REDIS_PASSWORD="SECRET"
-  REDIS_PORT="6379"
-  USED_IN_MEMORY_REDIS=true
-  ```
-- Now you can start `token-generator-api` with build-in redis
-  (⚠️ Note Redis in-memory server queues will disappear after restarting or hot-reloading server)
-  ```
-  cd ./apps/token-generator-api
-  pnpm dev
+  pnpm install (install dependencies)
+  pnpm dev (run project)
   ```
 
 ### API
 
-You need to configure these environments on your local machine so that API can connect to redis
-
-- Create an .env.local file at `apps/token-generator-api`
-- Declare these variables to .env.local file
-  ```json
-  REDIS_HOST="localhost"
-  REDIS_PASSWORD="SECRET"
-  REDIS_PORT="6379"
-  ```
-- In or to start api, go to `token-generator-api` directory and run
+- In order to start api, go to `token-generator-api` directory and run
   ```
   pnpm install (install dependencies)
   pnpm dev (run project)
@@ -81,14 +43,15 @@ You need to configure these environments on your local machine so that API can c
 
 ### CI/CD
 
-- [ ] setup gcloud, cloudflare configuration
+- [ ] setup cloudflare configuration for web deployment
+- [x] setup glcoud configuration for api for deployment
 - [ ] setup secrets for github actions
 - [ ] setup dockerfile for frontend
 - [x] setup dockerfile for backend
 - [x] make hardhat runable in backend container
 - [x] make changeset release version when merge to main
 - [ ] make changeset publish to npm when merge to main
-- [ ] github actions for build, test, deploy
+- [x] github actions for build, test, deploy
 - [x] github actions for release package
 - [ ] github actions for publish package
 
@@ -97,12 +60,10 @@ You need to configure these environments on your local machine so that API can c
 - [x] endpoint for read original, generated smart contract
 - [x] endpoint for generate smart contract with new name
 - [x] endpoint for compile generated smart contract
-- [x] endpoint for verify generated smart contract
+- [ ] endpoint for verify generated smart contract
 - [x] endpoint for remove generated & compile smart contract
 - [x] endpoint for read abi, bytecode from compiled smart contract
-- [ ] setup queue system when user call compile & verify
-- [ ] setup SSE (Server Sent Event) or pulling system
-- [ ] setup test for contract endpoints
+- [x] setup test for contract endpoints
 - [x] setup in-memory redis for testing & development
 
 ## Team
