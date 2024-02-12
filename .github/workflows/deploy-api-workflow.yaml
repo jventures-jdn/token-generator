@@ -5,9 +5,9 @@ on:
     branches:
       - 'main'
       - 'dev/message-queue'
-    paths:
-      - 'apps/token-generator-api/**'
-      - '.github/workflows/deploy-api-workflow.yml'
+    # paths:
+    #   - 'apps/token-generator-api/**'
+    #   - '.github/workflows/deploy-api-workflow.yml'
     #   - 'libs/**'
     #   - 'utils/**'
     #   - 'Dockerfile.API'
@@ -121,3 +121,5 @@ jobs:
           service: 'token-generator-api'
           image: ${{ steps.meta.outputs.tags }}
           region: 'asia-southeast1'
+          env_vars: |
+            NEXT_PUBLIC_TOKEN_GENERATOR_WEB_ENDPOINT=${{ vars.NEXT_PUBLIC_TOKEN_GENERATOR_WEB_ENDPOINT }}

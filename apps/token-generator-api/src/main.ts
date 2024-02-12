@@ -47,7 +47,9 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
 
   app.enableCors({
-    origin: environmentConfig.isDevelopment ? ['http://localhost:3000'] : [],
+    origin: environmentConfig.isDevelopment
+      ? '*'
+      : [environmentConfig.tokenGeneratorWebEndpoint],
   });
 
   /* --------------------------------- Listen --------------------------------- */
