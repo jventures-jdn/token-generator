@@ -23,7 +23,7 @@ jobs:
         os: [ubuntu-latest]
         node-version: [lts/*]
         pnpm-version: [latest]
-        redis-version: [6, 7]
+        redis-version: [7]
 
     steps:
       - name: ⬇️ Checkout
@@ -37,7 +37,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Setup pnpm
+      - name: 🟢 Setup pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8
@@ -46,6 +46,9 @@ jobs:
         uses: supercharge/redis-github-action@1.7.0
         with:
           redis-version: ${{ matrix.redis-version }}
+
+      - name: 💾 Copy solc cache
+        run: RUN cp -r .cache /home/nodejs
 
       - name: 🏗️ Install dependencies
         run: pnpm install
