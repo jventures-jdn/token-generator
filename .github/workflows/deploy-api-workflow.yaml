@@ -6,10 +6,10 @@ on:
       - 'main'
       - 'dev/message-queue'
     # paths:
-    #   - 'apps/token-generator-api/**'
+    #   - 'apps/token-generator-api/*'
     #   - '.github/workflows/deploy-api-workflow.yml'
-    #   - 'libs/**'
-    #   - 'utils/**'
+    #   - 'libs/*'
+    #   - 'utils/*'
     #   - 'Dockerfile.API'
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}

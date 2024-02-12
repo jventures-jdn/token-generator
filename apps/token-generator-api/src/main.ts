@@ -48,11 +48,11 @@ async function bootstrap() {
 
   console.log('environmentConfig', environmentConfig);
   app.enableCors({
-    origin: environmentConfig.isDevelopment
-      ? '*'
-      : [environmentConfig.tokenGeneratorWebEndpoint, '*'],
-    preflightContinue: false,
     credentials: true,
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT'],
+    origin: environmentConfig.isDevelopment
+      ? ['http://localhost:3000', '*']
+      : [environmentConfig.tokenGeneratorWebEndpoint],
   });
 
   /* --------------------------------- Listen --------------------------------- */
