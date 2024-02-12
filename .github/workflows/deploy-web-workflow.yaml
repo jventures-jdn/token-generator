@@ -51,6 +51,7 @@ jobs:
         working-directory: ./apps/token-generator-web
         run: |
           pnpm turbo build
+          pnpm build:page
         env: 
           NEXT_PUBLIC_TOKEN_GENERATOR_API_ENDPOINT: ${{ vars.NEXT_PUBLIC_TOKEN_GENERATOR_API_ENDPOINT }}
 

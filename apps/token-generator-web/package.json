@@ -31,8 +31,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "pnpm next-on-pages",
-    "build:page": "pnpm next build",
+    "build": "pnpm dotenv -e .env -- next build",
+    "build:page": "pnpm next-on-pages",
     "clean": "rm -rf node_modules && rm -rf .next",
     "dev": "pnpm dotenv -e .env -- next dev",
     "lint": "next lint",
