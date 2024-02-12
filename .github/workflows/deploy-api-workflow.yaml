@@ -3,10 +3,8 @@ name: 🎉 Deploy API
 on:
   push:
     branches:
-      - '*' # all branches
-      - '*/*' # all branches containing a single '/'
-      - '!main' # ignore main branch
-  workflow_dispatch:
+      - 'main'
+      - 'dev/message-queue'
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -16,6 +14,42 @@ env:
   IMAGE_NAME: token-generator-api
 
 jobs:
+  test-api:
+    name: 🎉 Test API
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node-version: [lts/*]
+        pnpm-version: [latest]
+        redis-version: [6, 7]
+
+    steps:
+      - name: ⬇️ Checkout
+        id: checkout
+        uses: actions/checkout@v2.3.3
+        with:
+          fetch-depth: 0
+
+      - name: 🟢 Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: 🟥 Start Redis
+        uses: supercharge/redis-github-action@1.7.0
+        with:
+          redis-version: ${{ matrix.redis-version }}
+
+      - name: 🏗️ Install dependencies
+        run: pnpm install
+
+      - name: 🧪 Test
+        run: cd apps/token-generator-api && pnpm test:e2e
+        env:
+          CI: true
+
   deploy-api:
     name: 🎉 Deploy API
     runs-on: ${{ matrix.os }}
@@ -50,7 +84,7 @@ jobs:
         with:
           workload_identity_provider: 'projects/286836004069/locations/global/workloadIdentityPools/github-action-cloudrun/providers/github-provider'
           service_account: 'github-action-cloudrun@jdn-token-generator.iam.gserviceaccount.com'
-  
+
       - name: 🏷️ Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v4
