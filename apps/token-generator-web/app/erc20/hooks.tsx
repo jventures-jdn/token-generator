@@ -98,6 +98,7 @@ export function useErc20() {
   useEffect(handleAccountChange, [account.address]);
   useEffect(() => {
     setLoading(undefined);
+    setInitiating(false);
     return () => {
       setLoading(undefined);
       setInitiating(false);
