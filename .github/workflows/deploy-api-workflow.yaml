@@ -5,12 +5,12 @@ on:
     branches:
       - 'main'
       - 'dev/message-queue'
-    # paths:
-    #   - 'apps/token-generator-api/**'
+    paths:
+      - 'apps/token-generator-api/**'
+      - '.github/workflows/deploy-api-workflow.yml'
     #   - 'libs/**'
     #   - 'utils/**'
     #   - 'Dockerfile.API'
-    #   - '.github/workflows/deploy-api-workflow.yml'
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 

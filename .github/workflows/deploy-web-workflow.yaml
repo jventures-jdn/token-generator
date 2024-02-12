@@ -47,7 +47,9 @@ jobs:
           version: 8
 
       - name: 🏗️ Install dependencies & Build
-        run: pnpm install && pnpm turbo build --filter=token-generator-web
+        run: |
+          pnpm install
+          pnpm turbo build --filter=token-generator-web
 
       - name: 🎉 Publish
         uses: cloudflare/pages-action@1
