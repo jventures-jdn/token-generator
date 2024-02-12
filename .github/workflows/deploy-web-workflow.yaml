@@ -50,7 +50,7 @@ jobs:
       - name: 🏗️ Build
         run: |
           cd ./apps/token-generator-web
-          pnpm build
+          pnpm turbo build
 
       - name: 🎉 Publish
         uses: cloudflare/pages-action@1
