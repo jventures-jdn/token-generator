@@ -18,17 +18,4 @@ export class ContractConsumer {
   async compileContract(job: Job<GeneratedContractDto>) {
     return await this.contractService.compileContract(job);
   }
-
-  @Process({ name: 'verify', concurrency: 5 })
-  async verifyContract(job: Job<GeneratedContractDto>) {
-    let progress = 0;
-    for (let i = 0; i < 100; i++) {
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      progress += 1;
-      await job.progress(progress);
-      console.log(job.id, progress);
-    }
-    await job.moveToCompleted();
-    return {};
-  }
 }
