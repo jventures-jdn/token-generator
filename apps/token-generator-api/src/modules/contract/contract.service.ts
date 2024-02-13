@@ -3,23 +3,29 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { spawn } from 'child_process';
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs';
 import { join } from 'path';
+import { spawn } from 'child_process';
+import { Job } from 'bull';
 import {
   GeneratedContractDto,
   OriginalContractDto,
-} from '@jventures-jdn/config-consts';
+  VerifyERC20ContractERC2Dto,
+} from './contract.dto';
+import JSON from 'json-bigint';
 
 @Injectable()
 export class ContractService {
   constructor() {}
 
-  generateContractPath = '../contracts/generated';
-  originalContractPath = '../contracts/original';
-  compiledContractPath = '../contracts/compiled';
+  private readonly logger = new Logger('ContractService');
+  generateContractPath = `${process.cwd()}/contracts/generated`;
+  originalContractPath = `${process.cwd()}/contracts/original`;
+  compiledContractPath = `${process.cwd()}/contracts/compiled`;
+  argsContractPath = `${process.cwd()}/contracts/args`;
 
   /* ------------------------- Read Original Contract ------------------------- */
   /**
@@ -30,13 +36,12 @@ export class ContractService {
    * @throws NotFoundException if the compiled contract does not exist.
    */
   async readOriginalContract(payload: OriginalContractDto) {
-    const existPath = join(
-      __dirname,
-      `${this.originalContractPath}/${payload.contractType}/${payload.contractType}Generator.sol`,
-    );
+    const existPath = `${this.originalContractPath}/${
+      payload.contractType
+    }/${payload.contractType.toUpperCase()}Generator.sol`;
 
     if (existsSync(existPath)) {
-      return { data: readFileSync(existPath).toString(), path: existPath };
+      return { raw: readFileSync(existPath).toString(), path: existPath };
     } else {
       throw new NotFoundException(undefined, {
         description: 'This original contract type does not exist',
@@ -53,10 +58,7 @@ export class ContractService {
    * @throws NotFoundException if the compiled contract does not exist.
    */
   async readGeneratedContract(payload: GeneratedContractDto) {
-    const existPath = join(
-      __dirname,
-      `${this.generateContractPath}/${payload.contractType}/${payload.contractName}.sol`,
-    );
+    const existPath = `${this.generateContractPath}/${payload.contractType}/${payload.contractName}.sol`;
 
     if (existsSync(existPath)) {
       return { raw: readFileSync(existPath).toString(), path: existPath };
@@ -76,10 +78,7 @@ export class ContractService {
    * @throws NotFoundException if the compiled contract does not exist.
    */
   async readCompiledContract(payload: GeneratedContractDto) {
-    const existPath = join(
-      __dirname,
-      `${this.compiledContractPath}/artifacts/contracts/generated/${payload.contractType}/${payload.contractName}.sol/${payload.contractName}.json`,
-    );
+    const existPath = `${this.compiledContractPath}/artifacts/contracts/generated/${payload.contractType}/${payload.contractName}.sol/${payload.contractName}.json`;
 
     if (existsSync(existPath)) {
       return {
@@ -111,12 +110,10 @@ export class ContractService {
     const filePath = `${payload.contractType}/${payload.contractName}.sol`;
 
     // validate contract name
-    if (
-      payload.contractName.match(/[^A-Za-z0-9_]/g) ||
-      payload.contractName.match(/^[0-9]+$/g)
-    )
+    if (!payload.contractName.match(/^[a-zA-Z][A-Za-z0-9_]*$/g))
       throw new BadRequestException(undefined, {
-        description: 'Contract name must be alphanumeric or all numberic',
+        description:
+          'Contract name must be alphanumeric and start with a letter',
       });
 
     // if giving generated contract name is already exist, throw error
@@ -130,19 +127,134 @@ export class ContractService {
     }
 
     // read orignal contract and replace contract name
-    const { data } = await this.readOriginalContract(payload);
-    const generatedContractRaw = data.replaceAll(
+    const { raw } = await this.readOriginalContract(payload);
+
+    const generatedContractRaw = raw.replaceAll(
       `${payload.contractType.toUpperCase()}Generator`,
       payload.contractName,
     );
 
     // write new contract
-    const writePath = join(
-      __dirname,
-      `${this.generateContractPath}/${filePath}`,
-    );
+    const writePath = `${this.generateContractPath}/${filePath}`;
     writeFileSync(writePath, generatedContractRaw);
     return filePath;
+  }
+
+  /* ---------------------------- Compile Contract ---------------------------- */
+  /**
+   * Compiles the generated contract.
+   *
+   * @param {Job<GeneratedContractDto> | GeneratedContractDto} payload Job or payload with containing `contractName` and `contractType` of contract
+   * @returns Compiled output
+   */
+  async compileContract(
+    payload: GeneratedContractDto | Job<GeneratedContractDto>,
+  ) {
+    const isJob = payload.hasOwnProperty('id');
+
+    // create execute streams
+    const command = spawn('npx hardhat compile', {
+      cwd: join(__dirname, '../'),
+      shell: true,
+    });
+
+    return new Promise((resolve, reject) => {
+      let output = '';
+
+      // log in data
+      command.stdout.on('data', (data) => {
+        output += `\n${data.toString()}`;
+        this.logger.verbose(
+          `[compileContract] ${data.toString()?.replaceAll('\n', '')}`,
+        );
+      });
+      // reject on error
+      command.stderr.on('data', async (data) => {
+        this.logger.error(
+          `[compileContract] ${data.toString()?.replaceAll('\n', '')}`,
+        );
+        if (isJob) {
+          const job = payload as Job<GeneratedContractDto>;
+          await Promise.all([
+            job.moveToFailed({ message: data.toString() }),
+            job.progress(100),
+          ]);
+        }
+        reject(
+          new InternalServerErrorException({
+            error: data.toString(),
+            cause: 'hardhat',
+          }),
+        );
+      });
+
+      // resolve on exit
+      command.on('exit', async () => {
+        if (isJob) {
+          const job = payload as Job<GeneratedContractDto>;
+          await Promise.all([job.moveToCompleted(output), job.progress(100)]);
+        }
+        await new Promise((resolve) => setTimeout(() => resolve(true), 3000));
+        resolve(output);
+      });
+    });
+  }
+
+  /* ---------------------------- Compile Contract ---------------------------- */
+  /**
+   * Verify the generated contract.
+   *
+   * @param {VerifyERC20ContractERC2Dto} payload payload with containing `contractName`, `contractType`, `address`, `chainName` of contract
+   * @returns Verify output
+   */
+  async verifyContract(payload: VerifyERC20ContractERC2Dto) {
+    // creates an argument file for use in contract verify
+    const argsName = `${payload.contractName}.js`;
+    const argsPath = `${this.argsContractPath}/${argsName}`;
+    writeFileSync(
+      argsPath,
+      `module.exports = ${JSON({ storeAsString: true }).stringify([
+        payload.body,
+      ])}`,
+    );
+
+    // create execute streams
+    const command = spawn(
+      `npx hardhat verify --network ${payload.chainName} ${payload.address} --constructor-args ${argsPath}`,
+      {
+        cwd: join(__dirname, '../'),
+        shell: true,
+      },
+    );
+
+    return new Promise((resolve, reject) => {
+      let output = '';
+
+      // log in data
+      command.stdout.on('data', (data) => {
+        output += `\n${data.toString()}`;
+        this.logger.verbose(
+          `[verifyContract] ${data.toString()?.replaceAll('\n', '')}`,
+        );
+      });
+      // reject on error
+      command.stderr.on('data', async (data) => {
+        this.logger.error(
+          `[verifyContract] ${data.toString()?.replaceAll('\n', '')}`,
+        );
+        reject(
+          new InternalServerErrorException({
+            error: data.toString(),
+            cause: 'hardhat',
+          }),
+        );
+      });
+
+      // resolve on exit
+      command.on('exit', async () => {
+        resolve(output);
+      });
+    });
   }
 
   /* ----------------------------- Remove Contract ---------------------------- */
@@ -170,49 +282,6 @@ export class ContractService {
     }
   }
 
-  /* ---------------------------- Compile Contract ---------------------------- */
-  /**
-   * Compiles the generated contract.
-   * @param {GeneratedContractDto} payload The payload containing `contractName` and `contractType` of contract
-   * @returns Compiled output
-   */
-  async compileContract(payload: GeneratedContractDto): Promise<string> {
-    // if giving generated contract name is not exist, throw error
-    await this.readGeneratedContract(payload);
-
-    // create execute streams
-    const command = spawn('npx hardhat compile', {
-      cwd: join(__dirname, '../'),
-      shell: true,
-    });
-
-    return new Promise((resolve, reject) => {
-      let output = '';
-
-      // log in data
-      command.stdout.on('data', (data) => {
-        output += `\n${data.toString()}`;
-        console.log(data.toString());
-      });
-
-      // reject on error
-      command.stderr.on('data', (data) => {
-        console.error(data.toString());
-        reject(
-          new InternalServerErrorException({
-            error: data.toString(),
-            cause: 'hardhat',
-          }),
-        );
-      });
-
-      // resolve on exit
-      command.on('exit', () => {
-        resolve(output);
-      });
-    });
-  }
-
   /* -------------------------------- Read ABI -------------------------------- */
   /**
    * Reads the ABI and bytecode of a generated contract.
@@ -225,6 +294,7 @@ export class ContractService {
     return {
       abi: raw.abi as Record<string, unknown>[],
       bytecode: raw.bytecode as string,
+      sourceName: raw.sourceName as string,
     };
   }
 }

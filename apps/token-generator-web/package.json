@@ -11,12 +11,15 @@
     "wagmi": "^1.4.7"
   },
   "devDependencies": {
+    "@cloudflare/next-on-pages": "^1.8.6",
     "@jventures-jdn/config-chains": "*",
+    "@jventures-jdn/config-consts": "*",
     "@jventures-jdn/config-prettier": "*",
     "@jventures-jdn/config-tailwind": "*",
     "@jventures-jdn/config-tsconfig": "*",
     "@jventures-jdn/contract-token-generator": "workspace:*",
     "@jventures-jdn/eslint-config-next": "*",
+    "@jventures-jdn/fetcher": "workspace:*",
     "@jventures-jdn/react-logger": "workspace:*",
     "@jventures-jdn/react-rainbowkit-provider": "workspace:*",
     "@types/node": "^20.3.1",
@@ -29,6 +32,7 @@
   "private": true,
   "scripts": {
     "build": "pnpm dotenv -e .env -- next build",
+    "build:page": "pnpm next-on-pages",
     "clean": "rm -rf node_modules && rm -rf .next",
     "dev": "pnpm dotenv -e .env -- next dev",
     "lint": "next lint",

@@ -9,7 +9,7 @@
     "tag": true
   },
   "commit": false,
-  "access": "public",
+  "access": "restricted",
   "baseBranch": "main",
   "fixed": [],
   "linked": [],

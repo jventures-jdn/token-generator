@@ -3,12 +3,9 @@
   "compilerOptions": {
     "lib": ["dom", "dom.iterable", "esnext"],
     "module": "esnext",
-    "target": "es2016",
+    "target": "ES2021",
     "allowJs": true,
     "noEmit": true,
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
     "plugins": [

@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { TransformInterceptor } from './interceptors/transform.interceptor';
 import { ErrorsInterceptor } from './interceptors/errors.interceptor';
+import { environmentConfig } from '@jventures-jdn/config-consts';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -44,6 +45,14 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
+
+  app.enableCors({
+    credentials: true,
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT'],
+    origin: environmentConfig.isDevelopment
+      ? ['http://localhost:3000', '*']
+      : [environmentConfig.tokenGeneratorWebEndpoint],
+  });
 
   /* --------------------------------- Listen --------------------------------- */
   await app.listen(4000);

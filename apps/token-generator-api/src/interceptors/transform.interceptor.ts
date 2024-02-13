@@ -22,6 +22,9 @@ export class TransformInterceptor<T>
     const response = context.switchToHttp().getResponse();
     const status = response.statusCode;
     const timestamp = new Date().valueOf();
-    return next.handle().pipe(map((data) => ({ data, status, timestamp })));
+    const isSuccess = true;
+    return next
+      .handle()
+      .pipe(map((data) => ({ data, status, timestamp, isSuccess })));
   }
 }

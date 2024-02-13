@@ -13,6 +13,7 @@ module.exports = {
     'plugin:react/jsx-runtime',
     'prettier',
   ],
+  ignorePatterns: ['**/dist'],
   rules: {},
   settings: {
     react: {

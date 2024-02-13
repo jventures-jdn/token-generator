@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Browser Module",
+  "extends": "./base.json",
+  "compilerOptions": {
+    "target": "ES2021",
+    "lib": ["esnext", "dom"],
+    "experimentalDecorators": true
+  }
+}

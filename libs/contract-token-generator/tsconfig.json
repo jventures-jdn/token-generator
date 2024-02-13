@@ -1,5 +1,5 @@
 {
-  "extends": "@jventures-jdn/config-tsconfig/react.json",
+  "extends": "@jventures-jdn/config-tsconfig/react-lib.json",
   "include": ["./**/*.ts", "./**/*.tsx"],
   "exclude": ["node_modules"],
   "compilerOptions": {

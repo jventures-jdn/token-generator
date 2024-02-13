@@ -17,6 +17,22 @@
     Official <a href="https://github.com/jventures-jdn/project-staking-ui">Token Generator</a> Monorepo
 </p>
 
+### Web
+
+- In order to start api, go to `token-generator-web` directory and run
+  ```
+  pnpm install (install dependencies)
+  pnpm dev (run project)
+  ```
+
+### API
+
+- In order to start api, go to `token-generator-api` directory and run
+  ```
+  pnpm install (install dependencies)
+  pnpm dev (run project)
+  ```
+
 ## Roadmap
 
 ### Project Structure
@@ -27,28 +43,28 @@
 
 ### CI/CD
 
-- [ ] setup gcloud, cloudflare configuration
+- [ ] setup cloudflare configuration for web deployment
+- [x] setup glcoud configuration for api for deployment
 - [ ] setup secrets for github actions
 - [ ] setup dockerfile for frontend
 - [x] setup dockerfile for backend
 - [x] make hardhat runable in backend container
 - [x] make changeset release version when merge to main
 - [ ] make changeset publish to npm when merge to main
-- [ ] github actions for build, test, deploy
-- [x] github actions for release
-- [ ] github actions for publish
+- [x] github actions for build, test, deploy
+- [x] github actions for release package
+- [ ] github actions for publish package
 
 ### Backend
 
 - [x] endpoint for read original, generated smart contract
 - [x] endpoint for generate smart contract with new name
 - [x] endpoint for compile generated smart contract
-- [x] endpoint for verify generated smart contract
+- [ ] endpoint for verify generated smart contract
 - [x] endpoint for remove generated & compile smart contract
-- [ ] endpoint for read abi, bytecode from compiled smart contract
-- [ ] setup queue system when user call compile & verify
-- [ ] setup push notification to frontend when comsumer processing complete
-- [ ] setup test for contract endpoints
+- [x] endpoint for read abi, bytecode from compiled smart contract
+- [x] setup test for contract endpoints
+- [x] setup in-memory redis for testing & development
 
 ## Team
 

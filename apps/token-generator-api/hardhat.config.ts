@@ -5,13 +5,19 @@ import '@nomicfoundation/hardhat-verify';
 const config: HardhatUserConfig = {
   solidity: '0.8.17',
   networks: chains.reduce((chains, chain) => {
-    return { ...chains, [chain.id]: { url: chain.rpcUrls.default.http[0] } };
+    return {
+      ...chains,
+      [chain.nativeCurrency.symbol]: { url: chain.rpcUrls.default.http[0] },
+    };
   }, {}),
+  sourcify: {
+    enabled: false,
+  },
   etherscan: {
-    apiKey: chains.reduce((chains, chain) => {
+    apiKey: chains.reduce((_chains, _chain) => {
       return {
-        ...chains,
-        [chain.id]: undefined,
+        ..._chains,
+        [_chain.nativeCurrency.symbol]: '_',
       };
     }, {}),
     customChains: chains.map((chain) => ({

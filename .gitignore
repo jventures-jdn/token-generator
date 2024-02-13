@@ -23,7 +23,7 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # testing
-/coverage
+coverage
 
 # build
 dist
@@ -44,6 +44,10 @@ next-env.d.ts
 
 # generated & compiled contracts
 **/contracts/generated/**/*.sol
+**/contracts/args/**/*.js
 !**/contracts/generated/**/ERC721Libs.sol
 artifacts
 cache
+
+# Ignore generated credentials from google-github-actions/auth
+gha-creds-*.json

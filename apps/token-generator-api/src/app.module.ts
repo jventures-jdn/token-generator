@@ -1,29 +1,35 @@
 import { Module } from '@nestjs/common';
 import { ContractModule } from './modules/contract/contract.module';
 import { ConfigModule } from '@nestjs/config';
-import { EnvironmentConfig } from '@jventures-jdn/config-consts';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { BullUsingInMemoryRedisFactory } from './shared/bull.factory';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { BullModule } from '@nestjs/bull';
+import { APP_GUARD } from '@nestjs/core';
+import {
+  EnvironmentConfig,
+  RedisConfig,
+  SystemConfig,
+  systemConfig,
+} from '@jventures-jdn/config-consts';
 
 @Module({
   imports: [
-    ContractModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['.env.development'],
-      load: [EnvironmentConfig],
+      envFilePath: ['.env.local'],
+      load: [EnvironmentConfig, SystemConfig, RedisConfig],
     }),
-    ThrottlerModule.forRoot([
-      {
-        name: 'short', // 10 req/s
-        ttl: 1000,
-        limit: 10,
-      },
-      {
-        name: 'medium',
-        ttl: 10000,
-        limit: 30, // 30 req/10s
-      },
-    ]),
+    ThrottlerModule.forRoot(systemConfig.rateLimit),
+    BullModule.forRootAsync({
+      useClass: BullUsingInMemoryRedisFactory,
+    }),
+    ContractModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule {}

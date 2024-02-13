@@ -1,0 +1,64 @@
+name: 🎉 Deploy Web
+
+on:
+  push:
+    branches:
+      - 'main'
+    # paths:
+    #   - 'apps/token-generator-web/**'
+    #   - 'libs/**'
+    #   - 'utils/**'
+    #   - 'Dockerfile.API'
+    #   - '.github/workflows/deploy-api-workflow.yml'
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GH_TOKEN || github.token }}
+  IMAGE_NAME: token-generator-web
+
+jobs:
+  deploy-web:
+    name: 🎉 Deploy Web
+    # needs: test-web
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node-version: [lts/*]
+        pnpm-version: [latest]
+
+    permissions:
+      contents: read
+      deployments: write
+
+    steps:
+      - name: 🟢 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: ⬇️ Checkout
+        id: checkout
+        uses: actions/checkout@v2.3.3
+
+      - name: 🏗️ Install dependencies & Build
+        run: pnpm install
+
+      - name: 🏗️ Build
+        working-directory: ./apps/token-generator-web
+        run: |
+          pnpm turbo build
+          pnpm build:page
+        env:
+          NEXT_PUBLIC_TOKEN_GENERATOR_API_ENDPOINT: ${{ vars.NEXT_PUBLIC_TOKEN_GENERATOR_API_ENDPOINT }}
+
+      - name: 🎉 Publish
+        uses: cloudflare/pages-action@1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: token-generator
+          directory: ./apps/token-generator-web/.vercel/output/static
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

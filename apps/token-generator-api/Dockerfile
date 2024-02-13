@@ -12,7 +12,6 @@ RUN apk add --no-cache libc6-compat
 FROM alpine as base
 RUN npm install pnpm turbo --global
 RUN pnpm config set store-dir ~/.pnpm-store
-RUN yarn global add pnpm turbo
 
 
 # ---------------------------------------------------------------------------- #

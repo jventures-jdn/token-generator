@@ -1,0 +1,124 @@
+name: 🎉 Deploy API
+
+on:
+  push:
+    branches:
+      - 'main'
+    # paths:
+    #   - 'apps/token-generator-api/*'
+    #   - '.github/workflows/deploy-api-workflow.yml'
+    #   - 'libs/*'
+    #   - 'utils/*'
+    #   - 'Dockerfile.API'
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GH_TOKEN || github.token }}
+  REGISTRY: asia.gcr.io
+  IMAGE_NAME: token-generator-api
+
+jobs:
+  # test-api:
+  #   name: 🎉 Test API
+  #   runs-on: ${{ matrix.os }}
+
+  #   strategy:
+  #     matrix:
+  #       os: [ubuntu-latest]
+  #       node-version: [lts/*]
+  #       pnpm-version: [latest]
+  #       redis-version: [7]
+
+  #   steps:
+  #     - name: ⬇️ Checkout
+  #       id: checkout
+  #       uses: actions/checkout@v2.3.3
+  #       with:
+  #         fetch-depth: 0
+
+  #     - name: 🟢 Use Node.js ${{ matrix.node-version }}
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: ${{ matrix.node-version }}
+
+  #     - name: 🟢 Setup pnpm
+  #       uses: pnpm/action-setup@v2
+  #       with:
+  #         version: 8
+
+  #     - name: 🟥 Start Redis
+  #       uses: supercharge/redis-github-action@1.7.0
+  #       with:
+  #         redis-version: ${{ matrix.redis-version }}
+
+  #     - name: 🏗️ Install dependencies
+  #       run: pnpm install
+
+  #     - name: 🧪 Test
+  #       run: cd apps/token-generator-api && pnpm test:e2e
+  #       env:
+  #         CI: true
+
+  deploy-api:
+    name: 🎉 Deploy API
+    # needs: test-api
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node-version: [lts/*]
+        pnpm-version: [latest]
+
+    permissions: # for docker/login-action
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: ⬇️ Checkout
+        id: checkout
+        uses: actions/checkout@v2.3.3
+        with:
+          fetch-depth: 0
+
+      - name: 🚪 Login to Github
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: '🚪 Login to GCloud'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          workload_identity_provider: 'projects/286836004069/locations/global/workloadIdentityPools/github-action-cloudrun/providers/github-provider'
+          service_account: 'github-action-cloudrun@jdn-token-generator.iam.gserviceaccount.com'
+
+      - name: 🏷️ Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/jdn-token-generator/${{ env.IMAGE_NAME }}
+
+      - name: ⚙️ Configure docker client
+        run: gcloud auth configure-docker --quiet
+
+      - name: 🏗️ Build and push docker
+        uses: docker/build-push-action@v4
+        with:
+          file: Dockerfile.API
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: 🎉 Deploy API
+        uses: 'google-github-actions/deploy-cloudrun@v2'
+        with:
+          service: 'token-generator-api'
+          image: ${{ steps.meta.outputs.tags }}
+          region: 'asia-southeast1'
+          env_vars: |
+            NEXT_PUBLIC_TOKEN_GENERATOR_WEB_ENDPOINT=${{ vars.NEXT_PUBLIC_TOKEN_GENERATOR_WEB_ENDPOINT }}

@@ -102,7 +102,6 @@ export const LoggerStore = create<ILoggerState & ILoggerAction>()(
       pop(options) {
         set((state) => {
           state.logs[options?.id || get().logSelectId].pop();
-          return state.logs;
         }, true);
       },
 
