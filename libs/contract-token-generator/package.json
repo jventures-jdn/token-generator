@@ -1,6 +1,6 @@
 {
   "name": "@jventures-jdn/contract-token-generator",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "J Ventures Co., Ltd.",
   "dependencies": {
     "ethers": "^5.7.2"

@@ -1,6 +1,6 @@
 {
   "name": "@jventures-jdn/token-generator-web",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "author": "J Ventures Co., Ltd.",
   "dependencies": {
     "@rainbow-me/rainbowkit": "^1.3.0",
