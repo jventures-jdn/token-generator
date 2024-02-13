@@ -10,7 +10,12 @@ import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { spawn } from 'child_process';
 import { Job } from 'bull';
-import { GeneratedContractDto, OriginalContractDto } from './contract.dto';
+import {
+  GeneratedContractDto,
+  OriginalContractDto,
+  VerifyERC20ContractERC2Dto,
+} from './contract.dto';
+import JSON from 'json-bigint';
 
 @Injectable()
 export class ContractService {
@@ -20,6 +25,7 @@ export class ContractService {
   generateContractPath = `${process.cwd()}/contracts/generated`;
   originalContractPath = `${process.cwd()}/contracts/original`;
   compiledContractPath = `${process.cwd()}/contracts/compiled`;
+  argsContractPath = `${process.cwd()}/contracts/args`;
 
   /* ------------------------- Read Original Contract ------------------------- */
   /**
@@ -198,19 +204,28 @@ export class ContractService {
   /**
    * Verify the generated contract.
    *
-   * @param {Job<GeneratedContractDto> | GeneratedContractDto} payload Job or payload with containing `contractName` and `contractType` of contract
+   * @param {VerifyERC20ContractERC2Dto} payload payload with containing `contractName`, `contractType`, `address`, `chainName` of contract
    * @returns Verify output
    */
-  async verifyContract(
-    payload: GeneratedContractDto | Job<GeneratedContractDto>,
-  ) {
-    const isJob = payload.hasOwnProperty('id');
+  async verifyContract(payload: VerifyERC20ContractERC2Dto) {
+    // creates an argument file for use in contract verify
+    const argsName = `${payload.contractName}.js`;
+    const argsPath = `${this.argsContractPath}/${argsName}`;
+    writeFileSync(
+      argsPath,
+      `module.exports = ${JSON({ storeAsString: true }).stringify([
+        payload.body,
+      ])}`,
+    );
 
     // create execute streams
-    const command = spawn('npx hardhat compile', {
-      cwd: join(__dirname, '../'),
-      shell: true,
-    });
+    const command = spawn(
+      `npx hardhat verify --network ${payload.chainName} ${payload.address} --constructor-args ${argsPath}`,
+      {
+        cwd: join(__dirname, '../'),
+        shell: true,
+      },
+    );
 
     return new Promise((resolve, reject) => {
       let output = '';
@@ -219,21 +234,14 @@ export class ContractService {
       command.stdout.on('data', (data) => {
         output += `\n${data.toString()}`;
         this.logger.verbose(
-          `[compileContract] ${data.toString()?.replaceAll('\n', '')}`,
+          `[verifyContract] ${data.toString()?.replaceAll('\n', '')}`,
         );
       });
       // reject on error
       command.stderr.on('data', async (data) => {
         this.logger.error(
-          `[compileContract] ${data.toString()?.replaceAll('\n', '')}`,
+          `[verifyContract] ${data.toString()?.replaceAll('\n', '')}`,
         );
-        if (isJob) {
-          const job = payload as Job<GeneratedContractDto>;
-          await Promise.all([
-            job.moveToFailed({ message: data.toString() }),
-            job.progress(100),
-          ]);
-        }
         reject(
           new InternalServerErrorException({
             error: data.toString(),
@@ -244,11 +252,6 @@ export class ContractService {
 
       // resolve on exit
       command.on('exit', async () => {
-        if (isJob) {
-          const job = payload as Job<GeneratedContractDto>;
-          await Promise.all([job.moveToCompleted(output), job.progress(100)]);
-        }
-        await new Promise((resolve) => setTimeout(() => resolve(true), 3000));
         resolve(output);
       });
     });
@@ -291,6 +294,7 @@ export class ContractService {
     return {
       abi: raw.abi as Record<string, unknown>[],
       bytecode: raw.bytecode as string,
+      sourceName: raw.sourceName as string,
     };
   }
 }

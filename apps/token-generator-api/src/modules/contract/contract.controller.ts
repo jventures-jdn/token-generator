@@ -8,6 +8,7 @@ import {
   GeneratedContractDto,
   JobDto,
   OriginalContractDto,
+  VerifyERC20ContractERC2Dto,
 } from './contract.dto';
 
 @ApiTags('contract')
@@ -91,6 +92,16 @@ export class ContractController {
   @ApiOperation({ summary: 'Compile contract' })
   async compileContract(@Body() payload: GeneratedContractDto) {
     return await this.contractService.compileContract(payload);
+  }
+
+  /* ----------------------------- Verify Contract ---------------------------- */
+  @Throttle({
+    short: { limit: environmentConfig.isProduction ? 1 : 0, ttl: 1000 },
+  }) // 1 req/ 1s
+  @Post('verify')
+  @ApiOperation({ summary: 'Verify contract' })
+  async verifyContract(@Body() payload: VerifyERC20ContractERC2Dto) {
+    return await this.contractService.verifyContract(payload);
   }
 
   /* ----------------------------- Add Verify Job ----------------------------- */
