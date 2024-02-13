@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - 'main'
-      - 'dev/message-queue'
     # paths:
     #   - 'apps/token-generator-web/**'
     #   - 'libs/**'
@@ -52,7 +51,7 @@ jobs:
         run: |
           pnpm turbo build
           pnpm build:page
-        env: 
+        env:
           NEXT_PUBLIC_TOKEN_GENERATOR_API_ENDPOINT: ${{ vars.NEXT_PUBLIC_TOKEN_GENERATOR_API_ENDPOINT }}
 
       - name: 🎉 Publish
