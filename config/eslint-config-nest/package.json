@@ -1,6 +1,6 @@
 {
   "name": "@jventures-jdn/eslint-config-nest",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "author": "J Ventures Co., Ltd.",
   "dependencies": {
     "eslint-config-prettier": "^8.3.0",

@@ -1,6 +1,6 @@
 {
   "name": "@jventures-jdn/config-tsconfig",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "J Ventures Co., Ltd.",
   "files": [
     "base.json",

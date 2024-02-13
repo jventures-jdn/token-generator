@@ -1,6 +1,6 @@
 {
   "name": "@jventures-jdn/token-generator-api",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "author": "J Ventures Co., Ltd.",
   "dependencies": {
     "@nestjs/bull": "^10.0.1",
