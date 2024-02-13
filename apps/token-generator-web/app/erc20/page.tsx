@@ -7,31 +7,16 @@ import { TextInput } from '@/components/Form/TextInput';
 import { RangeInput } from '@/components/Form/RangeInput';
 import { HiInformationCircle } from 'react-icons/hi';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
-import { CHAIN_DECIMAL } from '@jventures-jdn/config-chains';
+import {
+  CHAIN_DECIMAL,
+  InternalChain,
+  getChain,
+} from '@jventures-jdn/config-chains';
 import { useErc20 } from './hooks';
 import { deployContract } from './deploy';
 import { contractFetcherApi } from '@jventures-jdn/fetcher';
 import { ContractTypeEnum } from '@jventures-jdn/config-consts';
-
-interface ERC20Form {
-  symbol: string;
-  name: string;
-  initialSupply: number;
-  supplyCap: number;
-  mintable: boolean;
-  burnable: boolean;
-  pausable: boolean;
-}
-
-const ERC20FormDefaultState: ERC20Form = {
-  symbol: '',
-  name: '',
-  initialSupply: 200000,
-  supplyCap: 500000,
-  mintable: false,
-  burnable: false,
-  pausable: false,
-};
+import { getNetwork } from 'wagmi/actions';
 
 export default function ERC20Page() {
   /* -------------------------------------------------------------------------- */
@@ -42,7 +27,6 @@ export default function ERC20Page() {
     account,
     handleInitialSupplyChange,
     handleSupplyCapChange,
-    handleAccountChange,
     setForm,
     isDisabled,
     minSupply,
@@ -50,9 +34,11 @@ export default function ERC20Page() {
     stepSupply,
   } = useErc20();
   const { openConnectModal } = useConnectModal();
-  const { add, clear, setLoading, setInitiating, pop } = LoggerStore.getState();
+  const { add, clear, setLoading, pop } = LoggerStore.getState();
+  const { chain } = getNetwork();
   const generateContract = contractFetcherApi.generateContract();
   const compileContract = contractFetcherApi.compileContract();
+  const verifyContract = contractFetcherApi.verifyContract();
 
   /* -------------------------------------------------------------------------- */
   /*                                   Methods                                  */
@@ -60,6 +46,7 @@ export default function ERC20Page() {
   const handleDeploy = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     clear();
+    setLoading('🚀 Contract Processing ...');
 
     /* ---------------------------- Generate Cotnract --------------------------- */
     add(`✨ Generating contract ...`, { color: 'info' });
@@ -75,7 +62,7 @@ export default function ERC20Page() {
         color: 'warning',
       });
       return;
-    } else if (generateContractResp.status === 500) {
+    } else if (generateContractResp.status !== 201) {
       add(`🚫 ${generateContractResp.message}`, {
         color: 'warning',
       });
@@ -125,7 +112,7 @@ export default function ERC20Page() {
       });
     }
 
-    deployContract('ERC20', {
+    const contractAddress = await deployContract('ERC20', {
       abi: getABIResp.data.abi,
       bytecode: getABIResp.data.bytecode,
       args: {
@@ -138,6 +125,52 @@ export default function ERC20Page() {
         pausable: form.pausable,
       },
     });
+
+    setLoading('📝 Verifying smart contract ...');
+    add(`📝 Verifying smart contract ...`, { color: 'info' });
+    const verifyContractResp = await verifyContract.trigger({
+      contractName: form.name,
+      contractType: ContractTypeEnum.ERC20,
+      address: contractAddress,
+      chainName: chain.nativeCurrency.symbol as any, // NEED TO FIX
+      sourceName: getABIResp.data.sourceName,
+      body: {
+        symbol: form.symbol,
+        name: form.name,
+        initialSupply: BigInt(form.initialSupply) * CHAIN_DECIMAL,
+        supplyCap: BigInt(form.supplyCap) * CHAIN_DECIMAL,
+        mintable: form.mintable,
+        burnable: form.burnable,
+        pausable: form.pausable,
+      },
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    pop();
+    if (verifyContractResp.isSuccess) {
+      add(`✅ Verifying smart contract successfully`, { color: 'success' });
+      add(
+        <a
+          href={`${
+            getChain(`${chain?.network}` as InternalChain).chainExplorer
+              .homePage
+          }/address/${contractAddress}//read-contract`}
+          target="_blank"
+        >
+          🌍 Contract URL:{' '}
+          <span className="underline">
+            {`${
+              getChain(`${chain?.network}` as InternalChain).chainExplorer
+                .homePage
+            }/address/${contractAddress}//read-contract`}
+          </span>
+        </a>,
+      );
+    } else {
+      add(`⚠️ ${verifyContractResp?.message}`, {
+        color: 'warning',
+      });
+    }
   };
 
   /* -------------------------------------------------------------------------- */
@@ -148,7 +181,10 @@ export default function ERC20Page() {
   /*                                    Doms                                    */
   /* -------------------------------------------------------------------------- */
   const ERC20Form = (
-    <form className="p-5" onSubmit={handleDeploy}>
+    <form
+      className="p-5"
+      onSubmit={(e) => handleDeploy(e).finally(() => setLoading(undefined))}
+    >
       <TextInput
         options={{
           key: 'name',

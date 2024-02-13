@@ -39,16 +39,16 @@ export class FetcherAPI {
         });
 
         // return server response body if exists, otherwise return mockup server response object
-        return (
-          err?.response?.data || {
-            status: 500,
-            isSuccess: false,
-            message: err?.response?.data || err?.message || 'Unknown error',
-            data: null,
-            error: null,
-            cause: 'network',
-          }
-        );
+        return err?.response?.data?.status
+          ? err?.response?.data
+          : {
+              status: 500,
+              isSuccess: false,
+              message: err?.message || 'Network error',
+              data: null,
+              error: null,
+              cause: 'network',
+            };
       });
   };
 }

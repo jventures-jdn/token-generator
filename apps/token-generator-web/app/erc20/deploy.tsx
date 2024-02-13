@@ -105,6 +105,8 @@ export async function deployContract(
       ).toLocaleString(undefined, { minimumFractionDigits: 7 })} ${chain
         ?.nativeCurrency.symbol}`,
     );
+
+    return transaction.contractAddress;
   } catch (e: any) {
     add(e?.details || e?.message || 'Unknown', {
       color: 'danger',

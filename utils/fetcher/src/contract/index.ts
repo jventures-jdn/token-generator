@@ -5,7 +5,9 @@ import {
   GenerateContractRequest,
   JobRequest,
   OriginalContractRequest,
+  VerifyERC20ContractRequest,
 } from '@jventures-jdn/config-consts';
+import JSONbig from 'json-bigint';
 
 export class ContractFetcherAPI extends FetcherAPI {
   private readonly key = 'contract';
@@ -59,6 +61,19 @@ export class ContractFetcherAPI extends FetcherAPI {
       (_, { arg }: { arg: GenerateContractRequest }) => {
         return this.fetch('post', '/compile', {
           body: arg,
+        });
+      },
+    );
+  }
+
+  public verifyContract() {
+    return useSWRMutation(
+      [`${this.key}/verify`],
+      (_, { arg }: { arg: VerifyERC20ContractRequest }) => {
+        return this.fetch('post', '/verify', {
+          body: JSONbig({ storeAsString: true }).parse(
+            JSONbig({ storeAsString: true }).stringify(arg),
+          ),
         });
       },
     );
