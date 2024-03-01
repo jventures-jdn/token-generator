@@ -1,13 +1,14 @@
 name: 🎉 Deploy Web
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - 'main'
     paths:
-      - 'apps/token-generator-web/**'
-      - 'libs/**'
-      - 'utils/**'
+      - 'apps/token-generator-web/*'
+      - 'libs/*'
+      - 'utils/*'
       - 'Dockerfile.API'
       - '.github/workflows/deploy-api-workflow.yaml'
 

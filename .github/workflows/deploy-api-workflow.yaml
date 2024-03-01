@@ -1,13 +1,14 @@
 name: 🎉 Deploy API
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - 'main'
     paths:
-      - 'apps/token-generator-api/**'
-      - 'libs/**'
-      - 'utils/**'
+      - 'apps/token-generator-api/*'
+      - 'libs/*'
+      - 'utils/*'
       - '.github/workflows/deploy-web-workflow.yaml'
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
