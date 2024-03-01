@@ -8,7 +8,7 @@ on:
       - 'apps/token-generator-api/**'
       - 'libs/**'
       - 'utils/**'
-      - '.github/workflows/deploy-web-workflow.yml'
+      - '.github/workflows/deploy-web-workflow.yaml'
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 

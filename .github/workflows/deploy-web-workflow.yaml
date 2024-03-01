@@ -9,7 +9,7 @@ on:
       - 'libs/**'
       - 'utils/**'
       - 'Dockerfile.API'
-      - '.github/workflows/deploy-api-workflow.yml'
+      - '.github/workflows/deploy-api-workflow.yaml'
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
