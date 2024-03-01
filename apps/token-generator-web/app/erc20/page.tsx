@@ -243,7 +243,7 @@ export default function ERC20Page() {
       </div>
 
       {/* Switch Case */}
-      <div className="border border-gray-400/25 p-3 pb-5 rounded-lg mt-5 grid grid-cols-3 ">
+      <div className="border border-gray-400/25 p-3 pb-5 rounded-lg mt-5 grid grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
         <ERC20CheckboxInput
           className="items-baseline sm:items-start lg:items-baseline xl:items-start"
           options={{
@@ -251,6 +251,7 @@ export default function ERC20Page() {
             title: 'Mintable',
             tooltip:
               '"Contract Owner" can mint more tokens (max at supply cap)',
+            tooltipPosition: 'right',
             value: form.mintable,
             setter: setForm,
             disabled: isDisabled,
@@ -274,6 +275,7 @@ export default function ERC20Page() {
             key: 'pausable',
             title: 'Pausable',
             tooltip: '"Contract Owner" can pause all activities on this token',
+            tooltipPosition: 'left',
             value: form.pausable,
             setter: setForm,
             disabled: isDisabled,
@@ -303,7 +305,7 @@ export default function ERC20Page() {
 
   return (
     <div className="erc20-page page py-5">
-      <div className="container min-h-screen-nav flex items-center">
+      <div className="container min-h-screen-nav">
         <div className="grid grid-cols-6 w-full h-full gap-5 ">
           <div className="col-span-6 lg:col-span-2">{ERC20Body}</div>
           <div className="col-span-6 lg:col-span-4 -order-1 md:order-1">

@@ -1,4 +1,5 @@
 import { SetStateAction } from 'react';
+import { HiInformationCircle } from 'react-icons/hi';
 
 export const ERC20TextInput = <T extends Object>(props: {
   className?: JSX.IntrinsicElements['div']['className'];
@@ -116,6 +117,7 @@ export const ERC20CheckboxInput = <T extends Object>(
       key: string;
       title: string;
       tooltip?: string;
+      tooltipPosition?: 'left' | 'right' | 'center' | 'top' | 'bottom';
       value: boolean;
       setter: (value: SetStateAction<T>) => void;
       disabled?: boolean;
@@ -132,10 +134,14 @@ export const ERC20CheckboxInput = <T extends Object>(
         <span>{props.options.title}</span>
         {props.options.tooltip && (
           <div
-            className="tooltip tooltip-secondary ml-1"
+            className={`tooltip tooltip-secondary ml-1 text-left ${`tooltip-${
+              props.options.tooltipPosition || 'center'
+            }`}`}
             data-tip={props.options.tooltip}
           >
-            <div>{/* <HiInformationCircle /> */}</div>
+            <div>
+              <HiInformationCircle />
+            </div>
           </div>
         )}
       </span>
