@@ -249,8 +249,7 @@ export default function ERC20Page() {
           options={{
             key: 'mintable',
             title: 'Mintable',
-            tooltip:
-              '"Contract Owner" can mint more tokens (max at supply cap)',
+            tooltip: 'Can mint more tokens',
             tooltipPosition: 'right',
             value: form.mintable,
             setter: setForm,
@@ -263,7 +262,7 @@ export default function ERC20Page() {
           options={{
             key: 'burnable',
             title: 'Burnable',
-            tooltip: '"Token Holder" can burn their own tokens',
+            tooltip: 'Can burn own tokens',
             value: form.burnable,
             setter: setForm,
             disabled: isDisabled,
@@ -274,7 +273,7 @@ export default function ERC20Page() {
           options={{
             key: 'pausable',
             title: 'Pausable',
-            tooltip: '"Contract Owner" can pause all activities on this token',
+            tooltip: 'Can pause all activities',
             tooltipPosition: 'left',
             value: form.pausable,
             setter: setForm,
