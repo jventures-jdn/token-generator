@@ -4,12 +4,11 @@ on:
   push:
     branches:
       - 'main'
-    # paths:
-    #   - 'apps/token-generator-api/*'
-    #   - '.github/workflows/deploy-api-workflow.yml'
-    #   - 'libs/*'
-    #   - 'utils/*'
-    #   - 'Dockerfile.API'
+    paths:
+      - 'apps/token-generator-api/**'
+      - 'libs/**'
+      - 'utils/**'
+      - '.github/workflows/deploy-web-workflow.yml'
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
