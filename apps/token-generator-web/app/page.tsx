@@ -10,7 +10,7 @@ export default function HomePage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 container text-primary-content">
           <div className="lg:col-span-3 lg:pb-[5vh] flex justify-center flex-col items-center">
             <span className="text-3xl lg:text-5xl font-bold ">
-              Token Generator 🥳
+              Token Generator 🎛️
             </span>
             <span className="pt-1 text-gray-300">
               Start generating your tokens. just a few clicks
@@ -18,15 +18,15 @@ export default function HomePage() {
           </div>
           <Link
             href="/erc20"
-            className="card shadow-xl bg-gradient-to-br from-primary to-secondary"
+            className="card shadow-xl bg-gradient-to-br from-primary to-secondary col-span-3 hover:opacity-90 transition-all"
           >
-            <div className="card-body">
-              <h2>ERC20 &rarr;</h2>
+            <div className="card-body mx-auto">
+              <h2>ERC20</h2>
               <p>Token</p>
             </div>
           </Link>
 
-          <Link
+          {/* <Link
             href="/erc721"
             className="card shadow-xl bg-gradient-to-br from-primary to-secondary"
           >
@@ -44,7 +44,7 @@ export default function HomePage() {
               <h2>ERC1155 &rarr;</h2>
               <p>Multi Token Standard</p>
             </div>
-          </Link>
+          </Link> */}
         </div>
       </div>
     </div>

@@ -23,7 +23,7 @@ export default function Navbar() {
             >
               ERC20
             </Link>
-            <Link
+            {/* <Link
               href="/erc721"
               className={`${
                 pathname === '/erc721' ? 'text-white' : 'text-gray-300'
@@ -38,7 +38,7 @@ export default function Navbar() {
               } pl-5`}
             >
               ERC1155
-            </Link>
+            </Link> */}
           </div>
         </div>
         <div>
