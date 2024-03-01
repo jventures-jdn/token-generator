@@ -52,7 +52,7 @@ export default function ERC20Page() {
     add(`✨ Generating contract ...`, { color: 'info' });
     const generateContractResp = await generateContract.trigger({
       contractType: ContractTypeEnum.ERC20,
-      contractName: form.name,
+      contractName: form.data.name,
     });
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -77,7 +77,7 @@ export default function ERC20Page() {
     add(`⚙️ Compiling contract ...`, { color: 'info' });
     const compileContractResp = await compileContract.trigger({
       contractType: ContractTypeEnum.ERC20,
-      contractName: form.name,
+      contractName: form.data.name,
     });
 
     pop();
@@ -97,7 +97,7 @@ export default function ERC20Page() {
       config: {
         params: {
           contractType: ContractTypeEnum.ERC20,
-          contractName: form.name,
+          contractName: form.data.name,
         },
       },
     });
@@ -116,32 +116,32 @@ export default function ERC20Page() {
       abi: getABIResp.data.abi,
       bytecode: getABIResp.data.bytecode,
       args: {
-        symbol: form.symbol,
-        name: form.name,
-        initialSupply: BigInt(form.initialSupply) * CHAIN_DECIMAL,
-        supplyCap: BigInt(form.supplyCap) * CHAIN_DECIMAL,
-        mintable: form.mintable,
-        burnable: form.burnable,
-        pausable: form.pausable,
+        symbol: form.data.symbol,
+        name: form.data.name,
+        initialSupply: BigInt(form.data.initialSupply) * CHAIN_DECIMAL,
+        supplyCap: BigInt(form.data.supplyCap) * CHAIN_DECIMAL,
+        mintable: form.data.mintable,
+        burnable: form.data.burnable,
+        pausable: form.data.pausable,
       },
     });
 
     setLoading('📝 Verifying smart contract ...');
     add(`📝 Verifying smart contract ...`, { color: 'info' });
     const verifyContractResp = await verifyContract.trigger({
-      contractName: form.name,
+      contractName: form.data.name,
       contractType: ContractTypeEnum.ERC20,
       address: contractAddress,
       chainName: chain.nativeCurrency.symbol as any, // NEED TO FIX
       sourceName: getABIResp.data.sourceName,
       body: {
-        symbol: form.symbol,
-        name: form.name,
-        initialSupply: BigInt(form.initialSupply) * CHAIN_DECIMAL,
-        supplyCap: BigInt(form.supplyCap) * CHAIN_DECIMAL,
-        mintable: form.mintable,
-        burnable: form.burnable,
-        pausable: form.pausable,
+        symbol: form.data.symbol,
+        name: form.data.name,
+        initialSupply: BigInt(form.data.initialSupply) * CHAIN_DECIMAL,
+        supplyCap: BigInt(form.data.supplyCap) * CHAIN_DECIMAL,
+        mintable: form.data.mintable,
+        burnable: form.data.burnable,
+        pausable: form.data.pausable,
       },
     });
 
@@ -174,37 +174,34 @@ export default function ERC20Page() {
   };
 
   /* -------------------------------------------------------------------------- */
-  /*                                   Watches                                  */
-  /* -------------------------------------------------------------------------- */
-
-  /* -------------------------------------------------------------------------- */
   /*                                    Doms                                    */
   /* -------------------------------------------------------------------------- */
+
   const ERC20Form = (
     <form
       className="p-5"
       onSubmit={(e) => handleDeploy(e).finally(() => setLoading(undefined))}
     >
       <TextInput
+        title="Name"
+        tooltip={{ value: 'Contract Name', icon: <HiInformationCircle /> }}
+        disabled={isDisabled}
+        validation={/^[a-zA-Z][A-Za-z0-9_]*$/g}
         options={{
           key: 'name',
-          title: 'Name',
-          tooltip: 'Contract Name',
           setter: setForm,
-          value: form.name,
-          disabled: isDisabled,
-          icon: <HiInformationCircle />,
+          form: form,
         }}
       />
       <TextInput
+        title="Symbol"
+        tooltip={{ value: 'Token Symbol', icon: <HiInformationCircle /> }}
+        disabled={isDisabled}
+        validation={/^[a-zA-Z][A-Za-z0-9_]*$/g}
         options={{
           key: 'symbol',
-          title: 'Symbol',
-          tooltip: 'Token Symbol',
           setter: setForm,
-          value: form.symbol,
-          disabled: isDisabled,
-          icon: <HiInformationCircle />,
+          form: form,
         }}
       />
 
@@ -216,7 +213,7 @@ export default function ERC20Page() {
             title: 'Initial Supply',
             tooltip: 'Initial Supply',
             setter: setForm,
-            value: form.initialSupply,
+            value: form.data.initialSupply,
             disabled: isDisabled,
             icon: <HiInformationCircle />,
             min: minSupply,
@@ -232,7 +229,7 @@ export default function ERC20Page() {
             title: 'Supply Cap',
             tooltip: 'Supply Cap',
             setter: setForm,
-            value: form.supplyCap,
+            value: form.data.supplyCap,
             disabled: isDisabled,
             icon: <HiInformationCircle />,
             min: minSupply,
@@ -251,7 +248,7 @@ export default function ERC20Page() {
             title: 'Mintable',
             tooltip: 'Can mint more tokens',
             tooltipPosition: 'right',
-            value: form.mintable,
+            value: form.data.mintable,
             setter: setForm,
             disabled: isDisabled,
           }}
@@ -263,7 +260,7 @@ export default function ERC20Page() {
             key: 'burnable',
             title: 'Burnable',
             tooltip: 'Can burn own tokens',
-            value: form.burnable,
+            value: form.data.burnable,
             setter: setForm,
             disabled: isDisabled,
           }}
@@ -275,7 +272,7 @@ export default function ERC20Page() {
             title: 'Pausable',
             tooltip: 'Can pause all activities',
             tooltipPosition: 'left',
-            value: form.pausable,
+            value: form.data.pausable,
             setter: setForm,
             disabled: isDisabled,
           }}

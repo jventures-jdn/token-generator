@@ -1,53 +1,87 @@
 import { SetStateAction } from 'react';
-import { HiInformationCircle } from 'react-icons/hi';
 
-export function TextInput<T>(
+export function TextInput<
+  T extends { data: Record<K, any>; validation?: Record<K, boolean> },
+  K extends keyof T['data'],
+>(
   props: JSX.IntrinsicElements['div'] & {
-    options: {
-      key: string;
-      title?: string;
-      tooltip?: string;
-      value: string | number;
-      setter: (value: SetStateAction<T>) => void;
-      disabled?: boolean;
+    tooltip?: {
+      value?: string;
+      position?: 'left' | 'right' | 'center' | 'top' | 'bottom';
       icon?: JSX.Element;
-      size?: 'xs' | 'sm' | 'md' | 'lg';
+    };
+    inputProps?: JSX.IntrinsicElements['input'];
+    title?: string;
+    disabled?: boolean;
+    validation?: ((value: unknown) => boolean) | RegExp;
+    size?: 'xs' | 'sm' | 'md' | 'lg';
+    options: {
+      key: K;
+      form: T;
+      setter: (value: SetStateAction<T>) => void;
     };
   },
 ) {
+  /* -------------------------------------------------------------------------- */
+  /*                                   Methods                                  */
+  /* -------------------------------------------------------------------------- */
+  const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const isError = props.validation
+      ? typeof props.validation === 'function'
+        ? !props.validation(e.target.value)
+        : !props.validation.test(e.target.value)
+      : undefined;
+
+    props.options.setter((form) => ({
+      ...form,
+      data: {
+        ...form.data,
+        [props.options.key]: e.target.value,
+      },
+      validation: {
+        ...form.validation,
+        [props.options.key]: isError,
+      },
+    }));
+  };
+  /* -------------------------------------------------------------------------- */
+  /*                                    Doms                                    */
+  /* -------------------------------------------------------------------------- */
+
   return (
     <div className={`form-control ${props.className || ''}`} {...props}>
-      {props.options.title && (
+      {/* --------------------------------- Tooltip -------------------------------- */}
+      {props.title && (
         <label className="label">
           <span className="label-text flex items-center">
-            <span>{props.options.title}</span>
-            {props.options.tooltip && (
+            <span>{props.title}</span>
+            {props.tooltip && (
               <div
                 className="tooltip tooltip-secondary ml-1"
-                data-tip={props.options.tooltip}
+                data-tip={props.tooltip.value}
               >
-                <div>{props.options.icon}</div>
+                <div>{props.tooltip.icon}</div>
               </div>
             )}
           </span>
         </label>
       )}
+
+      {/* ---------------------------------- Input --------------------------------- */}
       <input
+        {...props.inputProps}
         type="text"
-        placeholder={props.options.title}
-        onChange={(e) =>
-          props.options.setter((form) => ({
-            ...form,
-            [props.options.key]: e.target.value,
-          }))
-        }
-        value={props.options.value}
+        placeholder={props.title}
+        onChange={handleValueChange}
+        value={props.options.form?.data?.[props.options.key]}
         required
-        disabled={props.options?.disabled}
+        disabled={props.disabled}
         className={`input input-bordered w-full disabled:bg-base-300/0 disabled:border-gray-400/25 input-xs  ${
-          props.options.size
-            ? `!input-${props.options.size}`
-            : 'input-sm lg:input-md'
+          props.size ? `!input-${props.size}` : 'input-sm lg:input-md'
+        } ${
+          props.options.form?.validation?.[props.options.key]
+            ? 'input-error'
+            : ''
         }`}
       />
     </div>

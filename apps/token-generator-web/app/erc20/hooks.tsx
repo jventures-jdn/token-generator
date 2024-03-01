@@ -36,7 +36,10 @@ export function useErc20() {
     clear,
     add,
   } = LoggerStore();
-  const [form, setForm] = useState(ERC20FormDefaultState);
+  const [form, setForm] = useState({
+    data: ERC20FormDefaultState,
+    validation: {} as Record<keyof ERC20Form, boolean>,
+  });
   const [account, setAccount] =
     useState<GetAccountResult<PublicClient>>(getAccount());
 
@@ -52,7 +55,7 @@ export function useErc20() {
   const handleInitialSupplyChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = +e.target.value;
     if (value > maxSupply || value < minSupply) return;
-    if (value > form.supplyCap)
+    if (value > form.data.supplyCap)
       setForm((form) => ({
         ...form,
         supplyCap: value,
@@ -67,7 +70,7 @@ export function useErc20() {
   const handleSupplyCapChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = +e.target.value;
     if (value > maxSupply || value < minSupply) return;
-    if (value < form.initialSupply)
+    if (value < form.data.initialSupply)
       setForm((form) => ({
         ...form,
         initialSupply: value,
