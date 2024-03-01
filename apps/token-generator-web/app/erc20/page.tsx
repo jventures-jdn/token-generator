@@ -184,7 +184,7 @@ export default function ERC20Page() {
     >
       <TextInput
         title="Name"
-        tooltip={{ value: 'Contract Name', icon: <HiInformationCircle /> }}
+        tooltip={{ value: 'Contract Name' }}
         disabled={isDisabled}
         validation={/^[a-zA-Z][A-Za-z0-9_]*$/g}
         options={{
@@ -195,7 +195,7 @@ export default function ERC20Page() {
       />
       <TextInput
         title="Symbol"
-        tooltip={{ value: 'Token Symbol', icon: <HiInformationCircle /> }}
+        tooltip={{ value: 'Token Symbol' }}
         disabled={isDisabled}
         validation={/^[a-zA-Z][A-Za-z0-9_]*$/g}
         options={{
@@ -208,14 +208,15 @@ export default function ERC20Page() {
       <div className="border border-gray-400/25 p-3 pb-5 rounded-lg mt-5 flex gap-5 flex-col">
         <RangeInput
           onChange={handleInitialSupplyChange}
+          title="Initial Supply"
+          tooltip={{
+            value: 'Initial Supply',
+          }}
+          disabled={isDisabled}
           options={{
             key: 'initialSupply',
-            title: 'Initial Supply',
-            tooltip: 'Initial Supply',
             setter: setForm,
-            value: form.data.initialSupply,
-            disabled: isDisabled,
-            icon: <HiInformationCircle />,
+            form: form,
             min: minSupply,
             max: maxSupply,
             step: stepSupply,
@@ -224,14 +225,15 @@ export default function ERC20Page() {
 
         <RangeInput
           onChange={handleSupplyCapChange}
+          title="Supply Cap"
+          tooltip={{
+            value: 'Supply Cap',
+          }}
+          disabled={isDisabled}
           options={{
             key: 'supplyCap',
-            title: 'Supply Cap',
-            tooltip: 'Supply Cap',
             setter: setForm,
-            value: form.data.supplyCap,
-            disabled: isDisabled,
-            icon: <HiInformationCircle />,
+            form: form,
             min: minSupply,
             max: maxSupply,
             step: stepSupply,

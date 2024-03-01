@@ -1,4 +1,5 @@
 import { SetStateAction } from 'react';
+import { HiInformationCircle } from 'react-icons/hi';
 
 export function TextInput<
   T extends { data: Record<K, any>; validation?: Record<K, boolean> },
@@ -60,7 +61,7 @@ export function TextInput<
                 className="tooltip tooltip-secondary ml-1"
                 data-tip={props.tooltip.value}
               >
-                <div>{props.tooltip.icon}</div>
+                <div>{props.tooltip.icon || <HiInformationCircle />}</div>
               </div>
             )}
           </span>

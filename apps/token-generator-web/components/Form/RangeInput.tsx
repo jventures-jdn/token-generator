@@ -2,19 +2,26 @@ import { SetStateAction } from 'react';
 import { HiInformationCircle } from 'react-icons/hi';
 import { TextInput } from './TextInput';
 
-export function RangeInput<T>(
+export function RangeInput<
+  T extends { data: Record<K, any>; validation?: Record<K, boolean> },
+  K extends keyof T['data'],
+>(
   props: JSX.IntrinsicElements['div'] & {
+    title?: string;
+    tooltip?: {
+      value?: string;
+      position?: 'left' | 'right' | 'center' | 'top' | 'bottom';
+      icon?: JSX.Element;
+    };
+    disabled?: boolean;
+    validation?: ((value: unknown) => boolean) | RegExp;
     options: {
-      key: string;
-      title: string;
-      tooltip?: string;
-      value: number;
+      key: K;
+      form: T;
       min?: number;
       max?: number;
       step?: number;
       setter: (value: SetStateAction<T>) => void;
-      disabled?: boolean;
-      icon?: JSX.Element;
     };
   },
 ) {
@@ -22,26 +29,25 @@ export function RangeInput<T>(
     <div className={`form-control ${props.className || ''}`} {...props}>
       <label className="label p-0">
         <span className="label-text  items-center flex gap-1">
-          <span>{props.options.title}</span>
+          <span>{props.title}</span>
 
           <TextInput
             className="ml-1"
+            tooltip={props.tooltip}
+            disabled={props.disabled}
+            size="xs"
             options={{
+              form: props.options.form,
               key: props.options.key,
-              tooltip: props.options.tooltip,
               setter: props.options.setter,
-              value: props.options.value,
-              disabled: props.options.disabled,
-              icon: undefined,
-              size: 'xs',
             }}
           />
-          {props.options.tooltip && (
+          {props.tooltip && (
             <div
               className="tooltip tooltip-secondary ml-1"
-              data-tip={props.options.tooltip}
+              data-tip={props.tooltip.value}
             >
-              <div>{props.options.icon || <HiInformationCircle />}</div>
+              <div>{props.tooltip.icon || <HiInformationCircle />}</div>
             </div>
           )}
         </span>
@@ -50,10 +56,10 @@ export function RangeInput<T>(
         type="range"
         min={props.options.min}
         max={props.options.max}
-        value={props.options.value}
+        value={props.options.form.data[props.options.key]}
         step={props.options.step}
         className="range range-sm lg:range:md mt-2 disabled:opacity-10 disabled:cursor-not-allowed"
-        disabled={props.options.disabled}
+        disabled={props.disabled}
         onChange={(e) => {
           props.onChange
             ? props.onChange(e)
