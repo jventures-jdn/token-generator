@@ -303,10 +303,10 @@ export default function ERC20Page() {
 
   return (
     <div className="erc20-page page py-5">
-      <div className="container min-h-screen-nav">
+      <div className="container min-h-screen-nav flex items-center">
         <div className="grid grid-cols-6 w-full h-full gap-5 ">
           <div className="col-span-6 lg:col-span-2">{ERC20Body}</div>
-          <div className="col-span-6 lg:col-span-4 -order-1 md:order-1">
+          <div className="col-span-6 lg:col-span-4 ">
             <LoggerWindow
               title="Token Deployer"
               className="font-spacemono min-h-[50vh]"
