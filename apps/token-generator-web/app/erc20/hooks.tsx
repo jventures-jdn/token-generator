@@ -1,5 +1,5 @@
 import { LoggerStore } from '@jventures-jdn/react-logger';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import { PublicClient } from 'wagmi';
 import { GetAccountResult, getAccount, watchAccount } from 'wagmi/actions';
 
@@ -22,6 +22,15 @@ export const ERC20FormDefaultState: ERC20Form = {
   burnable: false,
   pausable: false,
 };
+
+export const ERC20FormDefaultValudation: Record<keyof ERC20Form, boolean> =
+  Object.entries(ERC20FormDefaultState).reduce(
+    (acc, [key]) => {
+      acc[key as keyof ERC20Form] = false;
+      return acc;
+    },
+    {} as Record<keyof ERC20Form, boolean>,
+  );
 
 export function useErc20() {
   /* -------------------------------------------------------------------------- */
@@ -47,6 +56,10 @@ export function useErc20() {
   const maxSupply = 1000000;
   const stepSupply = 10000;
   const isDisabled = !!loading[logSelectId] || initiating[logSelectId];
+  const isValidateError = useMemo(
+    () => Object.entries(form.validation).some(([, value]) => value),
+    [form.validation],
+  );
   watchAccount((account) => setAccount(account));
 
   /* -------------------------------------------------------------------------- */
@@ -122,5 +135,6 @@ export function useErc20() {
     handleAccountChange,
     setForm,
     isDisabled,
+    isValidateError,
   };
 }

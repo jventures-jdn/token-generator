@@ -11,6 +11,7 @@ export function TextInput<
       position?: 'left' | 'right' | 'center' | 'top' | 'bottom';
       icon?: JSX.Element;
     };
+    required?: boolean;
     inputProps?: JSX.IntrinsicElements['input'];
     title?: string;
     disabled?: boolean;
@@ -75,7 +76,7 @@ export function TextInput<
         placeholder={props.title}
         onChange={handleValueChange}
         value={props.options.form?.data?.[props.options.key]}
-        required
+        required={true && props.required}
         disabled={props.disabled}
         className={`input input-bordered w-full disabled:bg-base-300/0 disabled:border-gray-400/25 input-xs  ${
           props.size ? `!input-${props.size}` : 'input-sm lg:input-md'

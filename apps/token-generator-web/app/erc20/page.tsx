@@ -17,6 +17,7 @@ import { deployContract } from './deploy';
 import { contractFetcherApi } from '@jventures-jdn/fetcher';
 import { ContractTypeEnum } from '@jventures-jdn/config-consts';
 import { getNetwork } from 'wagmi/actions';
+import Form from './test';
 
 export default function ERC20Page() {
   /* -------------------------------------------------------------------------- */
@@ -32,6 +33,7 @@ export default function ERC20Page() {
     minSupply,
     maxSupply,
     stepSupply,
+    isValidateError,
   } = useErc20();
   const { openConnectModal } = useConnectModal();
   const { add, clear, setLoading, pop } = LoggerStore.getState();
@@ -39,6 +41,28 @@ export default function ERC20Page() {
   const generateContract = contractFetcherApi.generateContract();
   const compileContract = contractFetcherApi.compileContract();
   const verifyContract = contractFetcherApi.verifyContract();
+
+  const f = new Form<{
+    name: string;
+    age: number;
+    interior: { window: string; door: string };
+    partners: string[];
+    history: Record<string, number>[];
+  }>({
+    name: { data: 'vasin' },
+    age: { data: 25 },
+    interior: { data: { door: 'white', window: 'black' } },
+    partners: { data: ['EGear', 'HomePro'] },
+    history: { data: [{ '2021': 10000 }, { '2022': 123000 }] },
+  });
+
+  f.update('name', 'Vasin(Update)');
+  f.update('age', 200);
+  f.update('interior', { door: 'blue' });
+  f.update('partners', ['Index'], true);
+  f.update('history', [{ '2023': 230000 }], true);
+
+  console.log(f.form);
 
   /* -------------------------------------------------------------------------- */
   /*                                   Methods                                  */
@@ -284,7 +308,7 @@ export default function ERC20Page() {
       <button
         type={!account ? 'button' : 'submit'}
         className="btn btn-primary  w-full mt-10 disabled:bg-primary/25"
-        disabled={isDisabled}
+        disabled={isDisabled || isValidateError}
         onClick={() => !account?.address && openConnectModal?.()}
       >
         Deploy
