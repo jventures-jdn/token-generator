@@ -148,4 +148,27 @@ describe('Form', () => {
       expect(formControl.form[field].data).toEqual(expectData);
     });
   });
+
+  describe('validate', () => {
+    it('Should validate `string` data with `RegExp`', async () => {
+      const field: keyof IForm = 'name';
+      const data = 'something_cool';
+      formControl.update(field, data);
+      expect(formControl.validate(field)).toBe(false);
+    });
+
+    it('Should validate `string` data with `RegExp`', async () => {
+      const field: keyof IForm = 'name';
+      const data = 'something cool';
+      formControl.update(field, data);
+      expect(formControl.validate(field)).toBe(true);
+    });
+
+    it('Should validate incorrect `string` data with `RegExp`', async () => {
+      const field: keyof IForm = 'name';
+      const data = '12345';
+      formControl.update(field, data);
+      expect(formControl.validate(field)).toBe(true);
+    });
+  });
 });
