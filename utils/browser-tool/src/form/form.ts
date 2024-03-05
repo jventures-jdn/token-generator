@@ -61,6 +61,13 @@ export class FormControl<FormType extends ExtractGenericForm<FormType>> {
         : [...(this.form[key].data || []), ...data]);
     }
 
+    // is object
+    if (data instanceof Object) {
+      return (this.form[key].data = replace
+        ? (data as ExtractGenericForm<FormType>[Field])
+        : { ...this.form[key].data, ...data });
+    }
+
     // is others
     return (this.form[key].data = data as ExtractGenericForm<FormType>[Field]);
 
