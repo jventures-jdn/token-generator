@@ -30,6 +30,7 @@ dist
 .next
 out/
 build
+.wrangler
 
 # local env files
 .env*.local
