@@ -1,0 +1,41 @@
+{
+  "name": "@jventures-jdn/browser-helper",
+  "version": "0.0.0",
+  "author": "J Ventures Co., Ltd.",
+  "dependencies": {
+    "@jventures-jdn/config-consts": "*",
+    "@jventures-jdn/eslint-config-nest": "*"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js"
+    }
+  },
+  "devDependencies": {
+    "@jventures-jdn/config-tsconfig": "*",
+    "tsup": "^8.0.1",
+    "@types/jest": "^29.5.2",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jventures-jdn/token-generator.git",
+    "directory": "utils/form"
+  },
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "tsup index.ts --format cjs,esm --dts",
+    "clean": "rm -rf node_modules && rm -rf dist",
+    "lint": "eslint \"./**/*.ts\"",
+    "test": "jest --verbose  ./test/.*.spec\\.ts$",
+    "test:cov": "pnpm test -- --coverage"
+  }
+}
