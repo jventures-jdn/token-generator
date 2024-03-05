@@ -1,5 +1,6 @@
 import {
   ExtractForm,
+  ExtractFormKey,
   ExtractGenericForm,
   Field,
   UpdateOrReplace,
@@ -42,7 +43,7 @@ export class FormControl<FormType extends ExtractGenericForm<FormType>> {
    * @returns The updated data of the field.
    */
   update<
-    Field extends keyof ExtractForm<FormType>,
+    Field extends ExtractFormKey<FormType>,
     Data extends UpdateOrReplace<ExtractGenericForm<FormType>[Field], Replace>,
     Replace extends boolean,
   >(key: Field, data: Data, replace?: Replace) {
