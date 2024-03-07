@@ -2,6 +2,7 @@
   "extends": "@jventures-jdn/config-tsconfig/nestjs.json",
   "include": ["./src/**/*.ts", "./test/**/*.ts"],
   "exclude": ["node_modules"],
+  "files": ["hardhat.config.ts"],
   "compilerOptions": {
     "paths": {
       "@/*": ["./*"]

@@ -1,6 +1,8 @@
 import { HardhatUserConfig } from 'hardhat/config';
 import { chains } from '@jventures-jdn/config-chains';
 import '@nomicfoundation/hardhat-verify';
+import '@nomicfoundation/hardhat-viem';
+import 'hardhat-jest';
 
 const config: HardhatUserConfig = {
   solidity: '0.8.17',
@@ -33,6 +35,7 @@ const config: HardhatUserConfig = {
     sources: './contracts/generated',
     artifacts: './contracts/compiled/artifacts',
     cache: './contracts/compiled/cache',
+    tests: './test/solidity',
   },
 };
 
