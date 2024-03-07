@@ -72,7 +72,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --verbose --passWithNoTests --detectOpenHandles --forceExit ./test/integration/.*.spec\\.ts$",
     "test:e2e:cov": "pnpm test:e2e -- --coverage",
-    "test:watch": "jest --watch",
-    "test:hardhat": "pnpm hardhat jest test/solidity/**/*.spec.ts"
+    "test:hardhat": "pnpm hardhat jest test/solidity/**/*.spec.ts",
+    "test:watch": "jest --watch"
   }
 }

@@ -180,4 +180,11 @@ contract ERC20Generator is ERC20Capped, ERC20Pausable, ERC20Burnable, Ownable {
     function unpause() public onlyOwner whenPausable {
         _unpause();
     }
+
+    /**
+     * @dev Returns the number of decimal places used for token balances.
+     */
+    function decimals() public view virtual override returns (uint8) {
+        return 18;
+    }
 }
