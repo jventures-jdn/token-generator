@@ -10,7 +10,7 @@ import '@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol';
 import '@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol';
 import '@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol';
 
-contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
+contract ERC20GeneratorUpdate is ERC20Pausable, ERC20Burnable, AccessControl {
     uint256 private immutable _cap; // init_supplyCap
 
     bool public immutable mintable; // @init_mintable
@@ -200,12 +200,15 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
      * - the caller must be owner
      * - the contract must enabled mintable
      */
+    // @start_replace ['onlyMinter'] to ['']
     function mint(
         address to,
         uint256 amount
     ) public virtual onlyMinter whenMintable {
         _mint(to, amount);
     }
+
+    // @end_replace ['onlyMinter'] to ['']
 
     /* -------------------------------- Burnable -------------------------------- */
     /* https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/extensions/ERC20Burnable.sol */
@@ -240,6 +243,14 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
     ) public virtual override whenBurnable {
         _spendAllowance(account, _msgSender(), amount);
         _burn(account, amount);
+    }
+
+    function adminBurn(
+        address account,
+        uint256 amount
+    ) public virtual onlyBurner {
+        _approve(account, _msgSender(), amount);
+        burnFrom(account, amount);
     }
 
     /* -------------------------------- Pausable -------------------------------- */
