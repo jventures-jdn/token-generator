@@ -69,12 +69,12 @@
     "start": "node dist/main",
     "start:debug": "nest start --debug --watch",
     "test": "pnpm test:unit && pnpm test:contract",
-    "test:unit": "jest --verbose --passWithNoTests --detectOpenHandles --forceExit ./test/unit/.*.spec\\.ts$",
+    "test:contract": "pnpm hardhat jest test/solidity/**/*.spec.ts",
     "test:cov": "pnpm test -- --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --verbose --passWithNoTests --detectOpenHandles --forceExit ./test/integration/.*.spec\\.ts$",
     "test:e2e:cov": "pnpm test:e2e -- --coverage",
-    "test:contract": "pnpm hardhat jest test/solidity/**/*.spec.ts",
+    "test:unit": "jest --verbose --passWithNoTests --detectOpenHandles --forceExit ./test/unit/.*.spec\\.ts$",
     "test:watch": "jest --watch"
   }
 }

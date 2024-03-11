@@ -3,7 +3,7 @@
   "version": "0.0.2",
   "author": "J Ventures Co., Ltd.",
   "dependencies": {
-    "ethers": "^5.7.2"
+    "ethers": "6.6.2"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",
