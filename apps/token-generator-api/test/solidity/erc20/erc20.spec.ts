@@ -263,11 +263,9 @@ describe('ERC20 Generator', function () {
     });
   });
 
-  describe('transfer', () => {
+  describe('adminTransfer', () => {
     it('adminTransfer should be resolve when caller has TRANSFEROR_ROLE', async () => {
       const [, wallet1, wallet2] = await ethers.getSigners();
-
-      // deployer contract with wallet1 is burner role
       const { contract, deployer } = await deploy({
         ...initialArgs,
         transferor: wallet1.address,
@@ -307,8 +305,8 @@ describe('ERC20 Generator', function () {
     });
 
     it('adminTransfer should be resolve when caller has no TRANSFEROR_ROLE', async () => {
-      // deployer contract with wallet1 is burner role
       const { contract, deployer, wallet1, wallet2 } = await deploy();
+
       // connect to wallet1
       const contractWallet1 = (await contract.connect(
         wallet1,
@@ -337,8 +335,6 @@ describe('ERC20 Generator', function () {
 
     it('adminTransfer should be reject when paused', async () => {
       const [, wallet1, wallet2] = await ethers.getSigners();
-
-      // deployer contract with wallet1 is burner role
       const { contract, deployer } = await deploy({
         ...initialArgs,
         transferor: wallet1.address,
@@ -365,6 +361,71 @@ describe('ERC20 Generator', function () {
         ),
       ).rejects.toThrow(
         "VM Exception while processing transaction: reverted with reason string 'Pausable: paused'",
+      );
+    });
+  });
+
+  describe('pause', () => {
+    it('pause should be resolve when caller has PAUSER_ROLE', async () => {
+      const [, wallet1] = await ethers.getSigners();
+      const { contract } = await deploy({
+        ...initialArgs,
+        pauser: wallet1.address,
+        pausable: true,
+      });
+
+      // connect to wallet1
+      const contractWallet1 = (await contract.connect(
+        wallet1,
+      )) as typeof contract;
+
+      // pause
+      await expect(contractWallet1.pause()).resolves.toBeTruthy();
+
+      // check pause status
+      await expect(contractWallet1.paused()).resolves.toBeTruthy();
+    });
+
+    it('unpause should be resolve when caller has PAUSER_ROLE', async () => {
+      const [, wallet1] = await ethers.getSigners();
+      const { contract } = await deploy({
+        ...initialArgs,
+        pauser: wallet1.address,
+        pausable: true,
+      });
+
+      // connect to wallet1
+      const contractWallet1 = (await contract.connect(
+        wallet1,
+      )) as typeof contract;
+
+      // unpause
+      await expect(contractWallet1.pause()).resolves.toBeTruthy();
+      await expect(contractWallet1.unpause()).resolves.toBeTruthy();
+
+      // check pause status
+      await expect(contractWallet1.paused()).resolves.toBeFalsy();
+    });
+
+    it('pause, unpause should be reject when caller has no PAUSER_ROLE', async () => {
+      const { contract, wallet1 } = await deploy({
+        ...initialArgs,
+        pausable: true,
+      });
+
+      // connect to wallet1
+      const contractWallet1 = (await contract.connect(
+        wallet1,
+      )) as typeof contract;
+
+      // check pause
+      await expect(contractWallet1.pause()).rejects.toThrow(
+        "VM Exception while processing transaction: reverted with reason string 'ERC20Generator: caller must have pauser role'",
+      );
+
+      // check unpause
+      await expect(contractWallet1.unpause()).rejects.toThrow(
+        "VM Exception while processing transaction: reverted with reason string 'ERC20Generator: caller must have pauser role'",
       );
     });
   });
