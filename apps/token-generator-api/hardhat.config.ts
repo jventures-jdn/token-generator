@@ -1,7 +1,7 @@
 import { HardhatUserConfig } from 'hardhat/config';
 import { chains } from '@jventures-jdn/config-chains';
 import '@nomicfoundation/hardhat-verify';
-import '@nomicfoundation/hardhat-viem';
+import '@nomicfoundation/hardhat-ethers';
 import 'hardhat-jest';
 
 const config: HardhatUserConfig = {
