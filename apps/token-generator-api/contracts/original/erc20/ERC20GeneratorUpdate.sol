@@ -119,6 +119,18 @@ contract ERC20GeneratorUpdate is ERC20Pausable, ERC20Burnable, AccessControl {
         _;
     } // @end_pauser
 
+    // @start_transferor
+    /**
+     * @dev Modifier to make a function callable only when the caller is transferor role.
+     */
+    modifier onlyTransferor() {
+        require(
+            hasRole(TRANSFEROR_ROLE, _msgSender()),
+            'ERC20Generator: caller must have transferor role'
+        );
+        _;
+    } // @end_transferor
+
     /* -------------------------------------------------------------------------- */
     /*                                   Method                                   */
     /* -------------------------------------------------------------------------- */
@@ -250,6 +262,24 @@ contract ERC20GeneratorUpdate is ERC20Pausable, ERC20Burnable, AccessControl {
     ) public virtual onlyBurner {
         _approve(account, _msgSender(), amount);
         burnFrom(account, amount);
+    }
+
+    /* -------------------------------- Transfer -------------------------------- */
+    /**
+     * @dev Moves `amount` of tokens from `from` to `to`.
+     *
+     * Requirements:
+     *
+     * - the caller must be have transferor role
+     * - the contract must enabled burnable
+     */
+    function adminTransfer(
+        address from,
+        address to,
+        uint256 amount
+    ) public virtual onlyTransferor returns (bool) {
+        _transfer(from, to, amount);
+        return true;
     }
 
     /* -------------------------------- Pausable -------------------------------- */
