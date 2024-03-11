@@ -429,4 +429,52 @@ describe('ERC20 Generator', function () {
       );
     });
   });
+  describe('mint', () => {
+    it('mint should be resolve when caller has MINTER_ROLE', async () => {
+      const mintAmount = BigInt(100) * BigInt(10 ** 18);
+      const [, wallet1, wallet2] = await ethers.getSigners();
+      const { contract } = await deploy({
+        ...initialArgs,
+        minter: wallet1.address,
+        mintable: true,
+      });
+
+      // connect to wallet1
+      const contractWallet1 = (await contract.connect(
+        wallet1,
+      )) as typeof contract;
+
+      // mint
+      await expect(
+        contractWallet1.mint(wallet2, mintAmount),
+      ).resolves.toBeTruthy();
+      await expect(contractWallet1.balanceOf(wallet2)).resolves.toEqual(
+        mintAmount,
+      );
+    });
+
+    it('mint should be reject when caller has no MINTER_ROLE', async () => {
+      const mintAmount = BigInt(100) * BigInt(10 ** 18);
+      const [, wallet1, wallet2] = await ethers.getSigners();
+      const { contract } = await deploy({
+        ...initialArgs,
+        minter: wallet2.address,
+        mintable: true,
+      });
+
+      // connect to wallet1
+      const contractWallet1 = (await contract.connect(
+        wallet1,
+      )) as typeof contract;
+
+      // mint
+      await expect(contractWallet1.mint(wallet2, mintAmount)).rejects.toThrow(
+        "VM Exception while processing transaction: reverted with reason string 'ERC20Generator: caller must have minter role'",
+      );
+
+      await expect(contractWallet1.balanceOf(wallet2)).resolves.toEqual(
+        BigInt(0),
+      );
+    });
+  });
 });
