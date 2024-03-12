@@ -8,7 +8,7 @@ describe('ERC20 Generator', function () {
   /* -------------------------------------------------------------------------- */
   /*                                    Types                                   */
   /* -------------------------------------------------------------------------- */
-  const contractName = 'ERC20GeneratorUpdate';
+  const contractName = 'ERC20Generator';
   type Args = {
     name: string;
     symbol: string;
@@ -68,14 +68,14 @@ describe('ERC20 Generator', function () {
 
   beforeAll(async function () {
     setupContract();
-    const [admin] = await ethers.getSigners();
+    const [deployer] = await ethers.getSigners();
     initialArgs = {
       ...initialArgs,
-      payee: admin.address,
-      transferor: admin.address,
-      minter: admin.address,
-      burner: admin.address,
-      pauser: admin.address,
+      payee: deployer.address,
+      transferor: deployer.address,
+      minter: deployer.address,
+      burner: deployer.address,
+      pauser: deployer.address,
     };
     const { contract } = await deploy();
     console.table(

@@ -1,4 +1,5 @@
 import {
+  ContractRemovePatternEnum,
   ContractTypeEnum,
   GenerateContractRequest,
   JobRequest,
@@ -24,6 +25,22 @@ export class GeneratedContractDto
     example: 'TOKEN_GENERATOR',
   })
   contractName: string;
+}
+
+export class GenerateContractDto
+  extends GeneratedContractDto
+  implements GenerateContractRequest
+{
+  @ApiProperty({
+    example: { type: 'LINE', pattern: '@init_supplyCap' },
+    enum: ContractRemovePatternEnum,
+  })
+  disable?: {
+    supplyCap?: boolean;
+    mintable?: boolean;
+    burnable?: boolean;
+    pausable?: boolean;
+  };
 }
 
 export class JobDto extends JobRequest {

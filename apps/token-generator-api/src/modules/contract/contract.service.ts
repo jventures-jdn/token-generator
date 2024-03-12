@@ -11,12 +11,13 @@ import { join } from 'path';
 import { spawn } from 'child_process';
 import { Job } from 'bull';
 import {
+  GenerateContractDto,
   GeneratedContractDto,
   OriginalContractDto,
   VerifyERC20ContractERC2Dto,
 } from './contract.dto';
 import JSON from 'json-bigint';
-
+import { ContractRemovePatternEnum } from '@jventures-jdn/config-consts';
 @Injectable()
 export class ContractService {
   constructor() {}
@@ -103,10 +104,10 @@ export class ContractService {
    * otherwise, it reads the original contract, replaces the contract name, generates the new contract,
    * and writes it to the specified path.
    *
-   * @param {GeneratedContractDto} payload - The payload containing `contractName` and `contractType` of contract
+   * @param {GenerateContractDto} payload - The payload containing `contractName` and `contractType` of contract
    * @returns The path of the generated contract.
    */
-  async generateContract(payload: GeneratedContractDto) {
+  async generateContract(payload: GenerateContractDto) {
     const filePath = `${payload.contractType}/${payload.contractName}.sol`;
 
     // validate contract name
@@ -129,15 +130,90 @@ export class ContractService {
     // read orignal contract and replace contract name
     const { raw } = await this.readOriginalContract(payload);
 
+    // replace contract name
     const generatedContractRaw = raw.replaceAll(
       `${payload.contractType.toUpperCase()}Generator`,
       payload.contractName,
     );
 
+    // disable feature
+    const generatedFeatureContractRaw = this.contractFeatureGenerator(
+      generatedContractRaw,
+      payload.disable,
+    );
+
     // write new contract
     const writePath = `${this.generateContractPath}/${filePath}`;
-    writeFileSync(writePath, generatedContractRaw);
+    writeFileSync(writePath, generatedFeatureContractRaw);
     return filePath;
+  }
+
+  contractFeatureGenerator(
+    contractRaw: string,
+    disable?: {
+      supplyCap?: boolean;
+      mintable?: boolean;
+      burnable?: boolean;
+      pausable?: boolean;
+    },
+  ) {
+    let newContractRaw = contractRaw;
+    if (disable.supplyCap) {
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'supplyCap',
+        type: ContractRemovePatternEnum.LINE,
+      });
+
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'supplyCap',
+        type: ContractRemovePatternEnum.RANGE,
+      });
+    }
+
+    return newContractRaw;
+  }
+
+  removePattern({
+    type,
+    pattern,
+    payload,
+  }: {
+    payload: string;
+    type: ContractRemovePatternEnum;
+    pattern: string;
+  }) {
+    // remove line by line
+    if (type === ContractRemovePatternEnum.LINE) {
+      return payload
+        .split('\n')
+        .filter((line) => !line.includes(`@${pattern}`))
+        .join('\n');
+    }
+
+    // remove in range
+    if (type === ContractRemovePatternEnum.RANGE) {
+      const lines = payload.split('\n');
+
+      const removeLines = lines.reduce((acc, line, index) => {
+        if (line.includes(`@start_${pattern}`)) {
+          acc.push(index);
+        }
+
+        if (line.includes(`@end_${pattern}`)) {
+          const prevStartLine = acc[acc.length - 1];
+          Array(index - prevStartLine)
+            .fill(0)
+            .map((_, i) => acc.push(prevStartLine + i + 1));
+        }
+        return acc;
+      }, [] as number[]);
+
+      return lines
+        .filter((_, index) => !removeLines.includes(index))
+        .join('\n');
+    }
   }
 
   /* ---------------------------- Compile Contract ---------------------------- */
