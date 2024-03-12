@@ -11,9 +11,6 @@ import '@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol'; // @b
 
 contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
     uint256 private immutable _cap; // @supplyCap
-    bool public immutable mintable; // @mintable
-    bool public immutable burnable; // @burnable
-    bool public immutable pausable; // @pausable
     bytes32 public constant TRANSFEROR_ROLE = keccak256('TRANSFEROR_ROLE'); // @transferor
     bytes32 public constant MINTER_ROLE = keccak256('MINTER_ROLE'); // @minter
     bytes32 public constant BURNER_ROLE = keccak256('BURNER_ROLE'); // @burner
@@ -24,9 +21,6 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
         string symbol;
         uint256 initialSupply;
         uint256 supplyCap; // @supplyCap
-        bool mintable; // @mintable
-        bool burnable; // @burnable
-        bool pausable; // @pausable
         address payee;
         address transferor; // @transferor
         address minter; // @minter
@@ -49,40 +43,11 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
 
         // Mint `initialSupply` to the owner
         _mint(args_.payee, args_.initialSupply);
-
-        mintable = args_.mintable; // @mintable
-        burnable = args_.burnable; // @burnable
-        pausable = args_.pausable; // @pausable
     }
 
     /* -------------------------------------------------------------------------- */
     /*                                  Modifier                                  */
     /* -------------------------------------------------------------------------- */
-
-    /**
-     * @dev Modifier to make a function callable only when the mintable is enabled.
-     */
-    modifier whenMintable() {
-        require(mintable, 'ERC20Generator: mint functionality not enabled');
-        _;
-    }
-
-    /**
-     * @dev Modifier to make a function callable only when the burnable is enabled.
-     */
-    modifier whenBurnable() {
-        require(burnable, 'ERC20Generator: burn functionality not enabled');
-        _;
-    }
-
-    /**
-     * @dev Modifier to make a function callable only when the pausable is enabled.
-     */
-    modifier whenPausable() {
-        require(pausable, 'ERC20Generator: pause functionality not enabled');
-        _;
-    }
-
     // @start_minter
     /**
      * @dev Modifier to make a function callable only when the caller is minter role.
@@ -197,6 +162,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
         super._revokeRole(role, account);
     }
 
+    // @start_mintable
     /* -------------------------------- Mintable -------------------------------- */
     /*https://docs.icenetwork.io/build/evm/evm-and-solidity-smart-contracts/using-openzeppelin/erc20-standard/mintable-erc20 */
 
@@ -208,21 +174,14 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
      * Requirements:
      *
      * - the caller must be owner
-     * - the contract must enabled mintable
      */
-    // @start_replace ['onlyMinter'] to ['']
-    function mint(
-        address to,
-        uint256 amount
-    ) public virtual onlyMinter whenMintable {
+    function mint(address to, uint256 amount) public virtual onlyMinter {
         _mint(to, amount);
-    }
+    } // @end_mintable
 
-    // @end_replace ['onlyMinter'] to ['']
-
+    // @start_burnable
     /* -------------------------------- Burnable -------------------------------- */
     /* https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/extensions/ERC20Burnable.sol */
-
     /**
      * @dev Destroys `amount` tokens from the owner.
      *
@@ -230,9 +189,8 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
      *
      * Requirements:
      *
-     * - the contract must enabled burnable
      */
-    function burn(uint256 amount) public virtual override whenBurnable {
+    function burn(uint256 amount) public virtual override {
         _burn(_msgSender(), amount);
     }
 
@@ -245,12 +203,8 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
      * Requirements:
      *
      * - the caller must have allowance for ``accounts``'s tokens of at least `amount`.
-     * - the contract must enabled burnable
      */
-    function burnFrom(
-        address account,
-        uint256 amount
-    ) public virtual override whenBurnable {
+    function burnFrom(address account, uint256 amount) public virtual override {
         _spendAllowance(account, _msgSender(), amount);
         _burn(account, amount);
     }
@@ -261,7 +215,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
     ) public virtual onlyBurner {
         _approve(account, _msgSender(), amount);
         burnFrom(account, amount);
-    }
+    } // @end_burnable
 
     /* -------------------------------- Transfer -------------------------------- */
     /**
@@ -270,7 +224,6 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
      * Requirements:
      *
      * - the caller must be have transferor role
-     * - the contract must enabled burnable
      */
     function adminTransfer(
         address from,
@@ -299,6 +252,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
         super._beforeTokenTransfer(from, to, amount);
     }
 
+    // @start_pausable
     /**
      * @dev Triggers stopped state.
      *
@@ -307,7 +261,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
      * - The contract must not be paused.
      * - The caller mustber owner
      */
-    function pause() public onlyPauser whenPausable {
+    function pause() public onlyPauser {
         _pause();
     }
 
@@ -315,13 +269,11 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
      * @dev Triggers normal state.
      *
      * Requirements:
-     *
-     * - The contract must not be paused.
      * - The caller mustber owner
      */
-    function unpause() public onlyPauser whenPausable {
+    function unpause() public onlyPauser {
         _unpause();
-    }
+    } // @end_pausable
 
     /* --------------------------------- Decimal -------------------------------- */
     /**

@@ -9,9 +9,6 @@ describe('Contract Service', () => {
     symbol: string;
     initialSupply: string;
     supplyCap: string;
-    mintable: boolean;
-    burnable: boolean;
-    pausable: boolean;
     payee: `0x${string}` | string;
     transferor: `0x${string}` | string;
     minter: `0x${string}` | string;
@@ -40,9 +37,6 @@ describe('Contract Service', () => {
       symbol: 'JDB',
       initialSupply: '1000000000000000000000000', // 1*10^24
       supplyCap: '2000000000000000000000000', // 2*10^24
-      mintable: false,
-      burnable: false,
-      pausable: false,
       payee: '0x',
       transferor: '0x',
       minter: '0x',
@@ -68,7 +62,7 @@ describe('Contract Service', () => {
       let _args: DefaultArgs;
 
       beforeAll(async () => {
-        _args = { ...initialArgs, name: contractName, mintable: true };
+        _args = { ...initialArgs, name: contractName };
         delete _args.supplyCap;
         await contractService.generateContract({
           contractName,

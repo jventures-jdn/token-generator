@@ -14,9 +14,6 @@ describe('ERC20 Generator', function () {
     symbol: string;
     initialSupply: string;
     supplyCap: string;
-    mintable: boolean;
-    burnable: boolean;
-    pausable: boolean;
     payee: `0x${string}` | string;
     transferor: `0x${string}` | string;
     minter: `0x${string}` | string;
@@ -29,9 +26,6 @@ describe('ERC20 Generator', function () {
     symbol: 'JDB',
     initialSupply: '1000000000000000000000000', // 1*10^24
     supplyCap: '2000000000000000000000000', // 2*10^24
-    mintable: false,
-    burnable: false,
-    pausable: false,
     payee: '0x',
     transferor: '0x',
     minter: '0x',
@@ -114,11 +108,6 @@ describe('ERC20 Generator', function () {
         BigInt(initialArgs.supplyCap),
       );
 
-      // check initial features enabled
-      await expect(contract.mintable()).resolves.toBeFalsy();
-      await expect(contract.burnable()).resolves.toBeFalsy();
-      await expect(contract.pausable()).resolves.toBeFalsy();
-
       // check initial roles
       await expect(
         contract.hasRole(keccak256(toUtf8Bytes('MINTER_ROLE')), deployer),
@@ -136,54 +125,6 @@ describe('ERC20 Generator', function () {
         contract.hasRole(keccak256(toUtf8Bytes('TRANSFEROR_ROLE')), wallet1),
       ).resolves.toBeFalsy();
     });
-
-    it('Mint, Burn, Pause should be resolve when mintable, burnable, pausable is enabled', async () => {
-      const { contract, wallet1, wallet2 } = await deploy({
-        ...initialArgs,
-        mintable: true,
-        burnable: true,
-        pausable: true,
-      });
-
-      // deployer caller with all role
-      await expect(
-        contract.mint(wallet1.address, BigInt(100)),
-      ).resolves.toBeTruthy();
-      await expect(contract.burn(BigInt(100))).resolves.toBeTruthy();
-      await expect(
-        contract.adminBurn(wallet1.address, BigInt(100)),
-      ).resolves.toBeTruthy();
-      await expect(contract.pause()).resolves.toBeTruthy();
-
-      // other caller without role
-      const contractWallet1 = (await contract.connect(
-        wallet1,
-      )) as typeof contract;
-      await expect(
-        contractWallet1.mint(wallet2.address, BigInt(100)),
-      ).rejects.toThrow(
-        "VM Exception while processing transaction: reverted with reason string 'ERC20Generator: caller must have minter role'",
-      );
-      await expect(
-        contractWallet1.adminBurn(wallet2.address, BigInt(100)),
-      ).rejects.toThrow(
-        "VM Exception while processing transaction: reverted with reason string 'ERC20Generator: caller must have burner role'",
-      );
-      await expect(contractWallet1.pause()).rejects.toThrow(
-        "VM Exception while processing transaction: reverted with reason string 'ERC20Generator: caller must have pauser role'",
-      );
-    });
-
-    it('Mint, Burn, Pause should be rejected when mintable, burnable, pausable is disabled', async () => {
-      const { contract, wallet1 } = await deploy();
-
-      await expect(
-        contract.mint(wallet1.address, BigInt(100)),
-      ).rejects.toThrow();
-      await expect(contract.burn(BigInt(100))).rejects.toThrow();
-      await expect(contract.adminBurn(wallet1, BigInt(100))).rejects.toThrow();
-      await expect(contract.pause()).rejects.toThrow();
-    });
   });
 
   describe('adminBurn', () => {
@@ -194,7 +135,6 @@ describe('ERC20 Generator', function () {
       const { contract, deployer } = await deploy({
         ...initialArgs,
         burner: wallet1.address,
-        burnable: true,
       });
 
       // deployer caller
@@ -230,7 +170,6 @@ describe('ERC20 Generator', function () {
       const { contract, deployer } = await deploy({
         ...initialArgs,
         burner: wallet1.address,
-        burnable: true,
       });
 
       const contractWallet2 = (await contract.connect(
@@ -242,25 +181,6 @@ describe('ERC20 Generator', function () {
         "VM Exception while processing transaction: reverted with reason string 'ERC20Generator: caller must have burner role'",
       );
     });
-
-    it('adminBurn should be reject when burnable is disabled', async () => {
-      const [, wallet1, wallet2] = await ethers.getSigners();
-      // deployer contract with wallet1 is burner role
-      const { contract } = await deploy({
-        ...initialArgs,
-        burner: wallet1.address,
-        burnable: false,
-      });
-
-      const contractWallet1 = (await contract.connect(
-        wallet1,
-      )) as typeof contract;
-      await expect(
-        contractWallet1.adminBurn(wallet2.address, BigInt(100)),
-      ).rejects.toThrow(
-        "VM Exception while processing transaction: reverted with reason string 'ERC20Generator: burn functionality not enabled'",
-      );
-    });
   });
 
   describe('adminTransfer', () => {
@@ -269,7 +189,6 @@ describe('ERC20 Generator', function () {
       const { contract, deployer } = await deploy({
         ...initialArgs,
         transferor: wallet1.address,
-        mintable: true,
       });
 
       // connect to wallet1
@@ -339,8 +258,6 @@ describe('ERC20 Generator', function () {
         ...initialArgs,
         transferor: wallet1.address,
         pauser: wallet1.address,
-        mintable: true,
-        pausable: true,
       });
       const transferAmount = BigInt(100) * BigInt(10 ** 18);
 
@@ -371,7 +288,6 @@ describe('ERC20 Generator', function () {
       const { contract } = await deploy({
         ...initialArgs,
         pauser: wallet1.address,
-        pausable: true,
       });
 
       // connect to wallet1
@@ -391,7 +307,6 @@ describe('ERC20 Generator', function () {
       const { contract } = await deploy({
         ...initialArgs,
         pauser: wallet1.address,
-        pausable: true,
       });
 
       // connect to wallet1
@@ -410,7 +325,6 @@ describe('ERC20 Generator', function () {
     it('pause, unpause should be reject when caller has no PAUSER_ROLE', async () => {
       const { contract, wallet1 } = await deploy({
         ...initialArgs,
-        pausable: true,
       });
 
       // connect to wallet1
@@ -436,7 +350,6 @@ describe('ERC20 Generator', function () {
       const { contract } = await deploy({
         ...initialArgs,
         minter: wallet1.address,
-        mintable: true,
       });
 
       // connect to wallet1
@@ -459,7 +372,6 @@ describe('ERC20 Generator', function () {
       const { contract } = await deploy({
         ...initialArgs,
         minter: wallet2.address,
-        mintable: true,
       });
 
       // connect to wallet1
