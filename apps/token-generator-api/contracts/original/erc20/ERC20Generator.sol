@@ -15,7 +15,7 @@ import '@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol'; // @b
 contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
     // @end_replace_burn  @end_replace_pause
     uint256 private immutable _cap; // @supplyCap
-    bytes32 public constant TRANSFEROR_ROLE = keccak256('TRANSFEROR_ROLE'); // @transferor
+    bytes32 public constant TRANSFEROR_ROLE = keccak256('TRANSFEROR_ROLE'); // @adminTransfer
     bytes32 public constant MINTER_ROLE = keccak256('MINTER_ROLE'); // @mint
     bytes32 public constant BURNER_ROLE = keccak256('BURNER_ROLE'); // @adminBurn
     bytes32 public constant PAUSER_ROLE = keccak256('PAUSER_ROLE'); // @pause
@@ -26,7 +26,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
         uint256 initialSupply;
         uint256 supplyCap; // @supplyCap
         address payee;
-        address transferor; // @transferor
+        address transferor; // @adminTransfer
         address minter; // @mint
         address burner; // @adminBurn
         address pauser; // @pause
@@ -40,7 +40,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
         // @end_supplyCap
 
         // Grant roles to a specified account
-        _setupRole(TRANSFEROR_ROLE, args_.transferor); // @transferor
+        _setupRole(TRANSFEROR_ROLE, args_.transferor); // @adminTransfer
         _setupRole(MINTER_ROLE, args_.minter); // @mint
         _setupRole(BURNER_ROLE, args_.burner); // @adminBurn
         _setupRole(PAUSER_ROLE, args_.pauser); // @pause
@@ -88,7 +88,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
         _;
     } // @end_pause
 
-    // @start_transferor
+    // @start_adminTransfer
     /**
      * @dev Modifier to make a function callable only when the caller is transferor role.
      */
@@ -98,7 +98,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
             'ERC20Generator: caller must have transferor role'
         );
         _;
-    } // @end_transferor
+    } // @end_adminTransfer
 
     /* -------------------------------------------------------------------------- */
     /*                                   Method                                   */
@@ -195,6 +195,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
         burnFrom(account, amount);
     } // @end_adminBurn
 
+    // @start_adminTransfer
     /* -------------------------------- Transfer -------------------------------- */
     /**
      * @dev Moves `amount` of tokens from `from` to `to`.
@@ -210,7 +211,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
     ) public virtual onlyTransferor returns (bool) {
         _transfer(from, to, amount);
         return true;
-    }
+    } // @end_adminTransfer
 
     // @start_pause
     /* -------------------------------- Pausable -------------------------------- */
@@ -230,7 +231,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
         uint256 amount
     ) internal virtual override(ERC20, ERC20Pausable) whenNotPaused {
         super._beforeTokenTransfer(from, to, amount);
-    } // @end_replace_burn 
+    } // @end_replace_burn
 
     /**
      * @dev Triggers stopped state.

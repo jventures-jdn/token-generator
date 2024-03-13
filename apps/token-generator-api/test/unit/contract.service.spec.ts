@@ -51,6 +51,7 @@ describe('Contract Service', () => {
       { name: 'ERC20_NoBurn', disable: { burn: true } },
       { name: 'ERC20_NoAdminBurn', disable: { adminBurn: true } },
       { name: 'ERC20_NoPause', disable: { pause: true } },
+      { name: 'ERC20_NoAdminTransfer', disable: { adminTransfer: true } },
     ];
 
     beforeAll(async () => {
@@ -87,19 +88,19 @@ describe('Contract Service', () => {
     });
 
     afterAll(async () => {
-      // await Promise.all(
-      //   contractNamespaces.map(
-      //     (i) =>
-      //       new Promise((resolve) => {
-      //         resolve(
-      //           contractService.removeContract({
-      //             contractType: ContractTypeEnum.ERC20,
-      //             contractName: i.name,
-      //           }),
-      //         );
-      //       }),
-      //   ),
-      // );
+      await Promise.all(
+        contractNamespaces.map(
+          (i) =>
+            new Promise((resolve) => {
+              resolve(
+                contractService.removeContract({
+                  contractType: ContractTypeEnum.ERC20,
+                  contractName: i.name,
+                }),
+              );
+            }),
+        ),
+      );
     });
 
     describe('ERC20: Disable supply cap', () => {
@@ -235,6 +236,32 @@ describe('Contract Service', () => {
         const { contract, deployer } = await deploy(contractName, _args);
         await expect(
           contract.hasRole(keccak256(toUtf8Bytes('PAUSER_ROLE')), deployer),
+        ).resolves.toBeFalsy();
+      });
+    });
+
+    describe('ERC20: Disable adminTransfer', () => {
+      const contractName = 'ERC20_NoAdminTransfer';
+      let _args: DefaultArgs;
+
+      beforeAll(async () => {
+        _args = { ...initialArgs, name: contractName };
+        delete _args.transferor;
+      });
+
+      it('Disable `adminTransfer` should not have `adminTransfer()` method', async () => {
+        const { contract } = await deploy(contractName, _args);
+        const methods = contract.interface.fragments
+          .map((f: any) => f.name)
+          .filter((f) => f);
+        expect(methods).not.toContain('adminTransfer');
+        expect(methods).not.toContain('TRANSFEROR_ROLE');
+      });
+
+      it('Disable `adminTransfer` should not have `TRANSFEROR_ROLE` role', async () => {
+        const { contract, deployer } = await deploy(contractName, _args);
+        await expect(
+          contract.hasRole(keccak256(toUtf8Bytes('TRANSFEROR_ROLE')), deployer),
         ).resolves.toBeFalsy();
       });
     });

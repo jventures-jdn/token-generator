@@ -252,6 +252,19 @@ export class ContractService {
     }
 
     // no admin transfer
+    if (disable.adminTransfer) {
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'adminTransfer',
+        type: 'RANGE',
+      });
+
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'adminTransfer',
+        type: 'LINE',
+      });
+    }
 
     return newContractRaw;
   }
@@ -299,7 +312,7 @@ export class ContractService {
     if (type === 'REPLACE') {
       const lines = payload.split('\n');
       const newContractRaw = lines.reduce(
-        (acc, line, index) => {
+        (acc, line) => {
           if (line.includes(`@start_replace_${pattern}`)) {
             acc.inRange = true;
           }
