@@ -37,9 +37,10 @@ export class GenerateContractDto
   })
   disable?: {
     supplyCap?: boolean;
-    mintable?: boolean;
-    burnable?: boolean;
-    pausable?: boolean;
+    mint?: boolean;
+    adminBurn?: boolean;
+    pause?: boolean;
+    adminTransfer?: boolean;
   };
 }
 

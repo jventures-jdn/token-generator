@@ -12,7 +12,7 @@ import '@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol'; // @b
 contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
     uint256 private immutable _cap; // @supplyCap
     bytes32 public constant TRANSFEROR_ROLE = keccak256('TRANSFEROR_ROLE'); // @transferor
-    bytes32 public constant MINTER_ROLE = keccak256('MINTER_ROLE'); // @minter
+    bytes32 public constant MINTER_ROLE = keccak256('MINTER_ROLE'); // @mint
     bytes32 public constant BURNER_ROLE = keccak256('BURNER_ROLE'); // @burner
     bytes32 public constant PAUSER_ROLE = keccak256('PAUSER_ROLE'); // @pauser
 
@@ -23,7 +23,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
         uint256 supplyCap; // @supplyCap
         address payee;
         address transferor; // @transferor
-        address minter; // @minter
+        address minter; // @mint
         address burner; // @burner
         address pauser; // @pauser
     }
@@ -37,7 +37,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
 
         // Grant roles to a specified account
         _setupRole(TRANSFEROR_ROLE, args_.transferor); // @transferor
-        _setupRole(MINTER_ROLE, args_.minter); // @minter
+        _setupRole(MINTER_ROLE, args_.minter); // @mint
         _setupRole(BURNER_ROLE, args_.burner); // @burner
         _setupRole(PAUSER_ROLE, args_.pauser); // @pausera
 
@@ -48,7 +48,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
     /* -------------------------------------------------------------------------- */
     /*                                  Modifier                                  */
     /* -------------------------------------------------------------------------- */
-    // @start_minter
+    // @start_mint
     /**
      * @dev Modifier to make a function callable only when the caller is minter role.
      */
@@ -58,7 +58,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
             'ERC20Generator: caller must have minter role'
         );
         _;
-    } // @end_minter
+    } // @end_mint
 
     // @start_burner
     /**
@@ -162,7 +162,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
         super._revokeRole(role, account);
     }
 
-    // @start_mintable
+    // @start_mint
     /* -------------------------------- Mintable -------------------------------- */
     /*https://docs.icenetwork.io/build/evm/evm-and-solidity-smart-contracts/using-openzeppelin/erc20-standard/mintable-erc20 */
 
@@ -177,7 +177,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
      */
     function mint(address to, uint256 amount) public virtual onlyMinter {
         _mint(to, amount);
-    } // @end_mintable
+    } // @end_mint
 
     // @start_burnable
     /* -------------------------------- Burnable -------------------------------- */

@@ -152,12 +152,15 @@ export class ContractService {
     contractRaw: string,
     disable?: {
       supplyCap?: boolean;
-      mintable?: boolean;
-      burnable?: boolean;
-      pausable?: boolean;
+      mint?: boolean;
+      adminBurn?: boolean;
+      pause?: boolean;
+      adminTransfer?: boolean;
     },
   ) {
     let newContractRaw = contractRaw;
+
+    // no supply cap
     if (disable.supplyCap) {
       newContractRaw = this.removePattern({
         payload: newContractRaw,
@@ -171,6 +174,25 @@ export class ContractService {
         type: ContractRemovePatternEnum.RANGE,
       });
     }
+
+    if (disable.mint) {
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'mint',
+        type: ContractRemovePatternEnum.LINE,
+      });
+
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'mint',
+        type: ContractRemovePatternEnum.RANGE,
+      });
+    }
+
+    // no mint
+    // no admin burn
+    // no pause
+    // no admin transfer
 
     return newContractRaw;
   }

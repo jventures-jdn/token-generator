@@ -28,9 +28,10 @@ export class GenerateContractRequest extends GeneratedContractRequest {
   @IsOptional()
   disable?: {
     supplyCap?: boolean;
-    mintable?: boolean;
-    burnable?: boolean;
-    pausable?: boolean;
+    mint?: boolean;
+    adminBurn?: boolean;
+    pause?: boolean;
+    adminTransfer?: boolean;
   };
 }
 
