@@ -4,8 +4,4 @@ export enum ContractTypeEnum {
   ERC1155 = 'erc1155',
 }
 
-export enum ContractRemovePatternEnum {
-  LINE = 'line',
-  RANGE = 'range',
-  REPLACE = 'replace',
-}
+export type ContractRemovePattern = 'TEXT' | 'LINE' | 'RANGE' | 'REPLACE';

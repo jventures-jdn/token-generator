@@ -1,5 +1,5 @@
 import { supportContractType } from './const';
-import { ContractRemovePatternEnum, ContractTypeEnum } from './enum';
+import { ContractTypeEnum } from './enum';
 import {
   IsEnum,
   IsEthereumAddress,
@@ -29,6 +29,7 @@ export class GenerateContractRequest extends GeneratedContractRequest {
   disable?: {
     supplyCap?: boolean;
     mint?: boolean;
+    burn?: boolean;
     adminBurn?: boolean;
     pause?: boolean;
     adminTransfer?: boolean;

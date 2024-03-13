@@ -17,7 +17,7 @@ import {
   VerifyERC20ContractERC2Dto,
 } from './contract.dto';
 import JSON from 'json-bigint';
-import { ContractRemovePatternEnum } from '@jventures-jdn/config-consts';
+import { ContractRemovePattern } from '@jventures-jdn/config-consts';
 @Injectable()
 export class ContractService {
   constructor() {}
@@ -153,6 +153,7 @@ export class ContractService {
     disable?: {
       supplyCap?: boolean;
       mint?: boolean;
+      burn?: boolean;
       adminBurn?: boolean;
       pause?: boolean;
       adminTransfer?: boolean;
@@ -165,32 +166,46 @@ export class ContractService {
       newContractRaw = this.removePattern({
         payload: newContractRaw,
         pattern: 'supplyCap',
-        type: ContractRemovePatternEnum.LINE,
+        type: 'LINE',
       });
 
       newContractRaw = this.removePattern({
         payload: newContractRaw,
         pattern: 'supplyCap',
-        type: ContractRemovePatternEnum.RANGE,
-      });
-    }
-
-    if (disable.mint) {
-      newContractRaw = this.removePattern({
-        payload: newContractRaw,
-        pattern: 'mint',
-        type: ContractRemovePatternEnum.LINE,
-      });
-
-      newContractRaw = this.removePattern({
-        payload: newContractRaw,
-        pattern: 'mint',
-        type: ContractRemovePatternEnum.RANGE,
+        type: 'RANGE',
       });
     }
 
     // no mint
+    if (disable.mint) {
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'mint',
+        type: 'LINE',
+      });
+
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'mint',
+        type: 'RANGE',
+      });
+    }
+
     // no admin burn
+    if (disable.adminBurn) {
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'adminBurn',
+        type: 'LINE',
+      });
+
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'adminBurn',
+        type: 'RANGE',
+      });
+    }
+
     // no pause
     // no admin transfer
 
@@ -203,11 +218,11 @@ export class ContractService {
     payload,
   }: {
     payload: string;
-    type: ContractRemovePatternEnum;
+    type: ContractRemovePattern;
     pattern: string;
   }) {
     // remove line by line
-    if (type === ContractRemovePatternEnum.LINE) {
+    if (type === 'LINE') {
       return payload
         .split('\n')
         .filter((line) => !line.includes(`@${pattern}`))
@@ -215,7 +230,7 @@ export class ContractService {
     }
 
     // remove in range
-    if (type === ContractRemovePatternEnum.RANGE) {
+    if (type === 'RANGE') {
       const lines = payload.split('\n');
 
       const removeLines = lines.reduce((acc, line, index) => {

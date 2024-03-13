@@ -7,13 +7,13 @@ import '@openzeppelin/contracts/security/Pausable.sol'; // @pausable
 import '@openzeppelin/contracts/access/AccessControl.sol';
 import '@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol'; // @supplyCap
 import '@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol'; // @pausable
-import '@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol'; // @burnable
+import '@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol'; // @burn
 
-contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
+contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl { // @burn_[ERC20Burnable]
     uint256 private immutable _cap; // @supplyCap
     bytes32 public constant TRANSFEROR_ROLE = keccak256('TRANSFEROR_ROLE'); // @transferor
     bytes32 public constant MINTER_ROLE = keccak256('MINTER_ROLE'); // @mint
-    bytes32 public constant BURNER_ROLE = keccak256('BURNER_ROLE'); // @burner
+    bytes32 public constant BURNER_ROLE = keccak256('BURNER_ROLE'); // @adminBurn
     bytes32 public constant PAUSER_ROLE = keccak256('PAUSER_ROLE'); // @pauser
 
     struct Args {
@@ -24,7 +24,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
         address payee;
         address transferor; // @transferor
         address minter; // @mint
-        address burner; // @burner
+        address burner; // @adminBurn
         address pauser; // @pauser
     }
 
@@ -38,7 +38,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
         // Grant roles to a specified account
         _setupRole(TRANSFEROR_ROLE, args_.transferor); // @transferor
         _setupRole(MINTER_ROLE, args_.minter); // @mint
-        _setupRole(BURNER_ROLE, args_.burner); // @burner
+        _setupRole(BURNER_ROLE, args_.burner); // @adminBurn
         _setupRole(PAUSER_ROLE, args_.pauser); // @pausera
 
         // Mint `initialSupply` to the owner
@@ -60,7 +60,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
         _;
     } // @end_mint
 
-    // @start_burner
+    // @start_adminBurn
     /**
      * @dev Modifier to make a function callable only when the caller is burner role.
      */
@@ -70,7 +70,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
             'ERC20Generator: caller must have burner role'
         );
         _;
-    } // @end_burner
+    } // @end_adminBurn
 
     // @start_pauser
     /**
@@ -179,35 +179,9 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
         _mint(to, amount);
     } // @end_mint
 
-    // @start_burnable
+    // @start_adminBurn
     /* -------------------------------- Burnable -------------------------------- */
     /* https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/extensions/ERC20Burnable.sol */
-    /**
-     * @dev Destroys `amount` tokens from the owner.
-     *
-     * See {ERC20-_burn}.
-     *
-     * Requirements:
-     *
-     */
-    function burn(uint256 amount) public virtual override {
-        _burn(_msgSender(), amount);
-    }
-
-    /**
-     * @dev Destroys `amount` tokens from `account`, deducting from the caller's
-     * allowance.
-     *
-     * See {ERC20-_burn} and {ERC20-allowance}.
-     *
-     * Requirements:
-     *
-     * - the caller must have allowance for ``accounts``'s tokens of at least `amount`.
-     */
-    function burnFrom(address account, uint256 amount) public virtual override {
-        _spendAllowance(account, _msgSender(), amount);
-        _burn(account, amount);
-    }
 
     function adminBurn(
         address account,
@@ -215,7 +189,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
     ) public virtual onlyBurner {
         _approve(account, _msgSender(), amount);
         burnFrom(account, amount);
-    } // @end_burnable
+    } // @end_adminBurn
 
     /* -------------------------------- Transfer -------------------------------- */
     /**

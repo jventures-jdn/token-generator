@@ -1,5 +1,4 @@
 import {
-  ContractRemovePatternEnum,
   ContractTypeEnum,
   GenerateContractRequest,
   JobRequest,
@@ -33,11 +32,11 @@ export class GenerateContractDto
 {
   @ApiProperty({
     example: { type: 'LINE', pattern: '@init_supplyCap' },
-    enum: ContractRemovePatternEnum,
   })
   disable?: {
     supplyCap?: boolean;
     mint?: boolean;
+    burn?: boolean;
     adminBurn?: boolean;
     pause?: boolean;
     adminTransfer?: boolean;
