@@ -142,9 +142,18 @@ export class ContractService {
       payload.disable,
     );
 
+    const lines = generatedFeatureContractRaw.split('\n');
+    const requiredComment = lines.slice(0, 4).join('\n');
+    const codeBlock = lines
+      .slice(3, lines.length)
+      .join('\n')
+      .replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '')
+      .replace(/^\s*\n/gm, '');
+    const generatedContractWithNoComment = requiredComment + codeBlock;
+
     // write new contract
     const writePath = `${this.generateContractPath}/${filePath}`;
-    writeFileSync(writePath, generatedFeatureContractRaw);
+    writeFileSync(writePath, generatedContractWithNoComment);
     return filePath;
   }
 
@@ -217,11 +226,31 @@ export class ContractService {
       newContractRaw = this.removePattern({
         payload: newContractRaw,
         pattern: 'burn',
-        type: 'TEXT',
+        type: 'REPLACE',
       });
     }
 
     // no pause
+    if (disable.pause) {
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'pause',
+        type: 'REPLACE',
+      });
+
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'pause',
+        type: 'LINE',
+      });
+
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'pause',
+        type: 'RANGE',
+      });
+    }
+
     // no admin transfer
 
     return newContractRaw;
@@ -236,20 +265,6 @@ export class ContractService {
     type: ContractRemovePattern;
     pattern: string;
   }) {
-    if (type === 'TEXT') {
-      return payload
-        .split('\n')
-        .map((line) => {
-          if (line.includes(`@text_${pattern}`)) {
-            const remove = line.match(/\[(.*)\]/)?.[1];
-            if (!remove) return;
-            return line.replace(remove, '');
-          }
-          return line;
-        })
-        .join('\n');
-    }
-
     // remove line by line
     if (type === 'LINE') {
       return payload
@@ -279,6 +294,44 @@ export class ContractService {
       return lines
         .filter((_, index) => !removeLines.includes(index))
         .join('\n');
+    }
+
+    if (type === 'REPLACE') {
+      const lines = payload.split('\n');
+      const newContractRaw = lines.reduce(
+        (acc, line, index) => {
+          if (line.includes(`@start_replace_${pattern}`)) {
+            acc.inRange = true;
+          }
+
+          if (acc.inRange === true) {
+            if (line.includes(`_${pattern}[`)) {
+              acc.replace = line
+                .match(/\[(.*?)]/g)
+                .toString()
+                .replaceAll('[', '')
+                .replaceAll(']', '');
+            }
+
+            acc.new.push(line.replaceAll(acc.replace, ''));
+          } else {
+            acc.new.push(line);
+          }
+
+          if (line.includes(`@end_replace_${pattern}`)) {
+            acc.inRange = false;
+            acc.replace = undefined;
+          }
+
+          return acc;
+        },
+        { inRange: false, new: [] as string[], replace: undefined },
+      );
+
+      // console.log(newContractRaw.new);
+      return newContractRaw.new.join('\n');
+
+      // const contractRaw = replaceLines.map((line) => {});
     }
   }
 

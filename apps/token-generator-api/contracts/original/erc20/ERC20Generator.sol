@@ -4,18 +4,21 @@
 pragma solidity ^0.8.17;
 
 import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
-import '@openzeppelin/contracts/security/Pausable.sol'; // @pausable
+import '@openzeppelin/contracts/security/Pausable.sol'; // @pause
 import '@openzeppelin/contracts/access/AccessControl.sol';
 import '@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol'; // @supplyCap
-import '@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol'; // @pausable
+import '@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol'; // @pause
 import '@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol'; // @burn
 
-contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl { // @text_burn[ERC20Burnable,] 
+// @start_replace_burn[ERC20Burnable,]
+// @start_replace_pause[ERC20Pausable,]
+contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
+    // @end_replace_burn  @end_replace_pause
     uint256 private immutable _cap; // @supplyCap
     bytes32 public constant TRANSFEROR_ROLE = keccak256('TRANSFEROR_ROLE'); // @transferor
     bytes32 public constant MINTER_ROLE = keccak256('MINTER_ROLE'); // @mint
     bytes32 public constant BURNER_ROLE = keccak256('BURNER_ROLE'); // @adminBurn
-    bytes32 public constant PAUSER_ROLE = keccak256('PAUSER_ROLE'); // @pauser
+    bytes32 public constant PAUSER_ROLE = keccak256('PAUSER_ROLE'); // @pause
 
     struct Args {
         string name;
@@ -26,7 +29,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl { // @tex
         address transferor; // @transferor
         address minter; // @mint
         address burner; // @adminBurn
-        address pauser; // @pauser
+        address pauser; // @pause
     }
 
     constructor(Args memory args_) ERC20(args_.name, args_.symbol) {
@@ -40,7 +43,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl { // @tex
         _setupRole(TRANSFEROR_ROLE, args_.transferor); // @transferor
         _setupRole(MINTER_ROLE, args_.minter); // @mint
         _setupRole(BURNER_ROLE, args_.burner); // @adminBurn
-        _setupRole(PAUSER_ROLE, args_.pauser); // @pausera
+        _setupRole(PAUSER_ROLE, args_.pauser); // @pause
 
         // Mint `initialSupply` to the owner
         _mint(args_.payee, args_.initialSupply);
@@ -73,7 +76,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl { // @tex
         _;
     } // @end_adminBurn
 
-    // @start_pauser
+    // @start_pause
     /**
      * @dev Modifier to make a function callable only when the caller is pauser role.
      */
@@ -83,7 +86,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl { // @tex
             'ERC20Generator: caller must have pauser role'
         );
         _;
-    } // @end_pauser
+    } // @end_pause
 
     // @start_transferor
     /**
@@ -209,6 +212,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl { // @tex
         return true;
     }
 
+    // @start_pause
     /* -------------------------------- Pausable -------------------------------- */
     /* https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/extensions/ERC20Pausable.sol */
 
@@ -219,15 +223,15 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl { // @tex
      *
      * - the contract must not be paused.
      */
+    // @start_replace_burn[(ERC20, ERC20Pausable)]
     function _beforeTokenTransfer(
         address from,
         address to,
         uint256 amount
-    ) internal virtual override(ERC20, ERC20Pausable) whenNotPaused {  // @text_burn[(ERC20, ERC20Pausable)]
+    ) internal virtual override(ERC20, ERC20Pausable) whenNotPaused {
         super._beforeTokenTransfer(from, to, amount);
-    }
+    } // @end_replace_burn 
 
-    // @start_pausable
     /**
      * @dev Triggers stopped state.
      *
@@ -248,7 +252,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl { // @tex
      */
     function unpause() public onlyPauser {
         _unpause();
-    } // @end_pausable
+    } // @end_pause
 
     /* --------------------------------- Decimal -------------------------------- */
     /**

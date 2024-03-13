@@ -50,6 +50,7 @@ describe('Contract Service', () => {
       { name: 'ERC20_NoMint', disable: { mint: true } },
       { name: 'ERC20_NoBurn', disable: { burn: true } },
       { name: 'ERC20_NoAdminBurn', disable: { adminBurn: true } },
+      { name: 'ERC20_NoPause', disable: { pause: true } },
     ];
 
     beforeAll(async () => {
@@ -86,19 +87,19 @@ describe('Contract Service', () => {
     });
 
     afterAll(async () => {
-      await Promise.all(
-        contractNamespaces.map(
-          (i) =>
-            new Promise((resolve) => {
-              resolve(
-                contractService.removeContract({
-                  contractType: ContractTypeEnum.ERC20,
-                  contractName: i.name,
-                }),
-              );
-            }),
-        ),
-      );
+      // await Promise.all(
+      //   contractNamespaces.map(
+      //     (i) =>
+      //       new Promise((resolve) => {
+      //         resolve(
+      //           contractService.removeContract({
+      //             contractType: ContractTypeEnum.ERC20,
+      //             contractName: i.name,
+      //           }),
+      //         );
+      //       }),
+      //   ),
+      // );
     });
 
     describe('ERC20: Disable supply cap', () => {
@@ -135,7 +136,7 @@ describe('Contract Service', () => {
         delete _args.minter;
       });
 
-      it('Disable `mint`  should not have `mint()`', async () => {
+      it('Disable `mint`  should not have `mint()` method', async () => {
         const { contract } = await deploy(contractName, _args);
         const methods = contract.interface.fragments
           .map((f: any) => f.name)
@@ -161,7 +162,7 @@ describe('Contract Service', () => {
         delete _args.burner;
       });
 
-      it('Disable `burn`  should not have `burn()`', async () => {
+      it('Disable `burn`  should not have `burn()` method', async () => {
         const { contract } = await deploy(contractName, _args);
         const methods = contract.interface.fragments
           .map((f: any) => f.name)
@@ -169,7 +170,7 @@ describe('Contract Service', () => {
         expect(methods).not.toContain('burn');
       });
 
-      it('Disable `burn`  should not have `burnForm()`', async () => {
+      it('Disable `burn`  should not have `burnForm()` method', async () => {
         const { contract } = await deploy(contractName, _args);
         const methods = contract.interface.fragments
           .map((f: any) => f.name)
@@ -187,7 +188,7 @@ describe('Contract Service', () => {
         delete _args.burner;
       });
 
-      it('Disable `adminBurn`  should not have `adminBurn()`', async () => {
+      it('Disable `adminBurn` should not have `adminBurn()` method', async () => {
         const { contract } = await deploy(contractName, _args);
         const methods = contract.interface.fragments
           .map((f: any) => f.name)
@@ -200,6 +201,40 @@ describe('Contract Service', () => {
         const { contract, deployer } = await deploy(contractName, _args);
         await expect(
           contract.hasRole(keccak256(toUtf8Bytes('BURNER_ROLE')), deployer),
+        ).resolves.toBeFalsy();
+      });
+    });
+
+    describe('ERC20: Disable pause', () => {
+      const contractName = 'ERC20_NoPause';
+      let _args: DefaultArgs;
+
+      beforeAll(async () => {
+        _args = { ...initialArgs, name: contractName };
+        delete _args.pauser;
+      });
+
+      it('Disable `pause` should not have `pause()` method', async () => {
+        const { contract } = await deploy(contractName, _args);
+        const methods = contract.interface.fragments
+          .map((f: any) => f.name)
+          .filter((f) => f);
+        expect(methods).not.toContain('pause');
+        expect(methods).not.toContain('PAUSER_ROLE');
+      });
+
+      it('Disable `pause` should not have `unpause()` method', async () => {
+        const { contract } = await deploy(contractName, _args);
+        const methods = contract.interface.fragments
+          .map((f: any) => f.name)
+          .filter((f) => f);
+        expect(methods).not.toContain('unpause');
+      });
+
+      it('Disable `pause` should not have `PAUSER_ROLE` role', async () => {
+        const { contract, deployer } = await deploy(contractName, _args);
+        await expect(
+          contract.hasRole(keccak256(toUtf8Bytes('PAUSER_ROLE')), deployer),
         ).resolves.toBeFalsy();
       });
     });
