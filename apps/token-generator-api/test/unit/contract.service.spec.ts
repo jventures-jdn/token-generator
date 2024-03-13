@@ -48,6 +48,7 @@ describe('Contract Service', () => {
     const contractNamespaces = [
       { name: 'ERC20_NoCap', disable: { supplyCap: true } },
       { name: 'ERC20_NoMint', disable: { mint: true } },
+      { name: 'ERC20_NoBurn', disable: { burn: true } },
       { name: 'ERC20_NoAdminBurn', disable: { adminBurn: true } },
     ];
 
@@ -151,6 +152,32 @@ describe('Contract Service', () => {
       });
     });
 
+    describe('ERC20: Disable burn', () => {
+      const contractName = 'ERC20_NoBurn';
+      let _args: DefaultArgs;
+
+      beforeAll(async () => {
+        _args = { ...initialArgs, name: contractName };
+        delete _args.burner;
+      });
+
+      it('Disable `burn`  should not have `burn()`', async () => {
+        const { contract } = await deploy(contractName, _args);
+        const methods = contract.interface.fragments
+          .map((f: any) => f.name)
+          .filter((f) => f);
+        expect(methods).not.toContain('burn');
+      });
+
+      it('Disable `burn`  should not have `burnForm()`', async () => {
+        const { contract } = await deploy(contractName, _args);
+        const methods = contract.interface.fragments
+          .map((f: any) => f.name)
+          .filter((f) => f);
+        expect(methods).not.toContain('burnForm');
+      });
+    });
+
     describe('ERC20: Disable adminBurn', () => {
       const contractName = 'ERC20_NoAdminBurn';
       let _args: DefaultArgs;
@@ -160,7 +187,7 @@ describe('Contract Service', () => {
         delete _args.burner;
       });
 
-      it('Disable `burn`  should not have `adminBurn()`', async () => {
+      it('Disable `adminBurn`  should not have `adminBurn()`', async () => {
         const { contract } = await deploy(contractName, _args);
         const methods = contract.interface.fragments
           .map((f: any) => f.name)
@@ -169,7 +196,7 @@ describe('Contract Service', () => {
         expect(methods).not.toContain('BURNER_ROLE');
       });
 
-      it('Disable `burn` should not have `BURNER_ROLE` role', async () => {
+      it('Disable `adminBurn` should not have `BURNER_ROLE` role', async () => {
         const { contract, deployer } = await deploy(contractName, _args);
         await expect(
           contract.hasRole(keccak256(toUtf8Bytes('BURNER_ROLE')), deployer),

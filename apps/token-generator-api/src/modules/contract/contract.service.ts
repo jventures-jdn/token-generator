@@ -192,7 +192,7 @@ export class ContractService {
     }
 
     // no admin burn
-    if (disable.adminBurn) {
+    if (disable.adminBurn || disable.burn) {
       newContractRaw = this.removePattern({
         payload: newContractRaw,
         pattern: 'adminBurn',
@@ -203,6 +203,21 @@ export class ContractService {
         payload: newContractRaw,
         pattern: 'adminBurn',
         type: 'RANGE',
+      });
+    }
+
+    // no  burn
+    if (disable.burn) {
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'burn',
+        type: 'LINE',
+      });
+
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'burn',
+        type: 'TEXT',
       });
     }
 
@@ -221,6 +236,20 @@ export class ContractService {
     type: ContractRemovePattern;
     pattern: string;
   }) {
+    if (type === 'TEXT') {
+      return payload
+        .split('\n')
+        .map((line) => {
+          if (line.includes(`@text_${pattern}`)) {
+            const remove = line.match(/\[(.*)\]/)?.[1];
+            if (!remove) return;
+            return line.replace(remove, '');
+          }
+          return line;
+        })
+        .join('\n');
+    }
+
     // remove line by line
     if (type === 'LINE') {
       return payload

@@ -1,3 +1,4 @@
+// prettier-ignore
 // contracts/ERC20Generator.sol
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.17;
@@ -9,7 +10,7 @@ import '@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol'; // @sup
 import '@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol'; // @pausable
 import '@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol'; // @burn
 
-contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl { // @burn_[ERC20Burnable]
+contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl { // @text_burn[ERC20Burnable,] 
     uint256 private immutable _cap; // @supplyCap
     bytes32 public constant TRANSFEROR_ROLE = keccak256('TRANSFEROR_ROLE'); // @transferor
     bytes32 public constant MINTER_ROLE = keccak256('MINTER_ROLE'); // @mint
@@ -222,7 +223,7 @@ contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl { // @bur
         address from,
         address to,
         uint256 amount
-    ) internal virtual override(ERC20, ERC20Pausable) whenNotPaused {
+    ) internal virtual override(ERC20, ERC20Pausable) whenNotPaused {  // @text_burn[(ERC20, ERC20Pausable)]
         super._beforeTokenTransfer(from, to, amount);
     }
 
