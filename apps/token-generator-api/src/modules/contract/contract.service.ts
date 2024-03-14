@@ -11,12 +11,13 @@ import { join } from 'path';
 import { spawn } from 'child_process';
 import { Job } from 'bull';
 import {
+  GenerateContractDto,
   GeneratedContractDto,
   OriginalContractDto,
   VerifyERC20ContractERC2Dto,
 } from './contract.dto';
 import JSON from 'json-bigint';
-
+import { ContractRemovePattern } from '@jventures-jdn/config-consts';
 @Injectable()
 export class ContractService {
   constructor() {}
@@ -103,10 +104,10 @@ export class ContractService {
    * otherwise, it reads the original contract, replaces the contract name, generates the new contract,
    * and writes it to the specified path.
    *
-   * @param {GeneratedContractDto} payload - The payload containing `contractName` and `contractType` of contract
+   * @param {GenerateContractDto} payload - The payload containing `contractName` and `contractType` of contract
    * @returns The path of the generated contract.
    */
-  async generateContract(payload: GeneratedContractDto) {
+  async generateContract(payload: GenerateContractDto) {
     const filePath = `${payload.contractType}/${payload.contractName}.sol`;
 
     // validate contract name
@@ -129,15 +130,213 @@ export class ContractService {
     // read orignal contract and replace contract name
     const { raw } = await this.readOriginalContract(payload);
 
+    // replace contract name
     const generatedContractRaw = raw.replaceAll(
       `${payload.contractType.toUpperCase()}Generator`,
       payload.contractName,
     );
 
+    // disable feature
+    const generatedFeatureContractRaw = this.contractFeatureGenerator(
+      generatedContractRaw,
+      payload.disable,
+    );
+
     // write new contract
     const writePath = `${this.generateContractPath}/${filePath}`;
-    writeFileSync(writePath, generatedContractRaw);
+    writeFileSync(writePath, generatedFeatureContractRaw);
     return filePath;
+  }
+
+  contractFeatureGenerator(
+    contractRaw: string,
+    disable?: {
+      supplyCap?: boolean;
+      mint?: boolean;
+      burn?: boolean;
+      adminBurn?: boolean;
+      pause?: boolean;
+      adminTransfer?: boolean;
+    },
+  ) {
+    let newContractRaw = contractRaw;
+
+    // no supply cap
+    if (disable.supplyCap) {
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'supplyCap',
+        type: 'LINE',
+      });
+
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'supplyCap',
+        type: 'RANGE',
+      });
+    }
+
+    // no mint
+    if (disable.mint) {
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'mint',
+        type: 'LINE',
+      });
+
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'mint',
+        type: 'RANGE',
+      });
+    }
+
+    // no admin burn
+    if (disable.adminBurn || disable.burn) {
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'adminBurn',
+        type: 'LINE',
+      });
+
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'adminBurn',
+        type: 'RANGE',
+      });
+    }
+
+    // no  burn
+    if (disable.burn) {
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'burn',
+        type: 'LINE',
+      });
+
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'burn',
+        type: 'REPLACE',
+      });
+    }
+
+    // no pause
+    if (disable.pause) {
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'pause',
+        type: 'REPLACE',
+      });
+
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'pause',
+        type: 'LINE',
+      });
+
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'pause',
+        type: 'RANGE',
+      });
+    }
+
+    // no admin transfer
+    if (disable.adminTransfer) {
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'adminTransfer',
+        type: 'RANGE',
+      });
+
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'adminTransfer',
+        type: 'LINE',
+      });
+    }
+
+    return newContractRaw;
+  }
+
+  removePattern({
+    type,
+    pattern,
+    payload,
+  }: {
+    payload: string;
+    type: ContractRemovePattern;
+    pattern: string;
+  }) {
+    // remove line by line
+    if (type === 'LINE') {
+      return payload
+        .split('\n')
+        .filter((line) => !line.includes(`@${pattern}`))
+        .join('\n');
+    }
+
+    // remove in range
+    if (type === 'RANGE') {
+      const lines = payload.split('\n');
+
+      const removeLines = lines.reduce((acc, line, index) => {
+        if (line.includes(`@start_${pattern}`)) {
+          acc.push(index);
+        }
+
+        if (line.includes(`@end_${pattern}`)) {
+          const prevStartLine = acc[acc.length - 1];
+          Array(index - prevStartLine)
+            .fill(0)
+            .map((_, i) => acc.push(prevStartLine + i + 1));
+        }
+        return acc;
+      }, [] as number[]);
+
+      return lines
+        .filter((_, index) => !removeLines.includes(index))
+        .join('\n');
+    }
+
+    if (type === 'REPLACE') {
+      const lines = payload.split('\n');
+      const newContractRaw = lines.reduce(
+        (acc, line) => {
+          if (line.includes(`@start_replace_${pattern}`)) {
+            acc.inRange = true;
+          }
+
+          if (acc.inRange === true) {
+            if (line.includes(`_${pattern}[`)) {
+              acc.replace = line
+                .match(/\[(.*?)]/g)
+                .toString()
+                .replaceAll('[', '')
+                .replaceAll(']', '');
+            }
+
+            acc.new.push(line.replaceAll(acc.replace, ''));
+          } else {
+            acc.new.push(line);
+          }
+
+          if (line.includes(`@end_replace_${pattern}`)) {
+            acc.inRange = false;
+            acc.replace = undefined;
+          }
+
+          return acc;
+        },
+        { inRange: false, new: [] as string[], replace: undefined },
+      );
+
+      // console.log(newContractRaw.new);
+      return newContractRaw.new.join('\n');
+
+      // const contractRaw = replaceLines.map((line) => {});
+    }
   }
 
   /* ---------------------------- Compile Contract ---------------------------- */

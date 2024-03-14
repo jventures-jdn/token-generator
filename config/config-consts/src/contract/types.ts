@@ -6,6 +6,7 @@ import {
   IsNotEmpty,
   IsNumberString,
   IsObject,
+  IsOptional,
   IsString,
 } from 'class-validator';
 import { InternalChainEnum } from '@jventures-jdn/config-chains';
@@ -16,10 +17,23 @@ export class OriginalContractRequest {
   contractType: ContractTypeEnum;
 }
 
-export class GenerateContractRequest extends OriginalContractRequest {
+export class GeneratedContractRequest extends OriginalContractRequest {
   @IsString()
   @IsNotEmpty()
   contractName: string;
+}
+
+export class GenerateContractRequest extends GeneratedContractRequest {
+  @IsObject()
+  @IsOptional()
+  disable?: {
+    supplyCap?: boolean;
+    mint?: boolean;
+    burn?: boolean;
+    adminBurn?: boolean;
+    pause?: boolean;
+    adminTransfer?: boolean;
+  };
 }
 
 export class JobRequest {
@@ -28,7 +42,7 @@ export class JobRequest {
   jobId: number;
 }
 
-export class VerifyERC20ContractRequest extends GenerateContractRequest {
+export class VerifyERC20ContractRequest extends GeneratedContractRequest {
   @IsEnum(InternalChainEnum)
   @IsNotEmpty()
   chainName: InternalChainEnum;
@@ -47,9 +61,11 @@ export class VerifyERC20ContractRequest extends GenerateContractRequest {
     symbol: string;
     name: string;
     initialSupply: bigint;
-    supplyCap: bigint;
-    mintable?: boolean;
-    burnable?: boolean;
-    pausable?: boolean;
+    supplyCap?: bigint;
+    payee?: `0x${string}` | string;
+    transferor?: `0x${string}` | string;
+    minter?: `0x${string}` | string;
+    burner?: `0x${string}` | string;
+    pauser?: `0x${string}` | string;
   };
 }

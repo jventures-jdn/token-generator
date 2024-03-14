@@ -5,6 +5,7 @@ import { Throttle } from '@nestjs/throttler';
 import { environmentConfig } from '@jventures-jdn/config-consts';
 import { ContractProducer } from './contract.producer';
 import {
+  GenerateContractDto,
   GeneratedContractDto,
   JobDto,
   OriginalContractDto,
@@ -70,7 +71,7 @@ export class ContractController {
   }) // 1 req/1s
   @Post('generate')
   @ApiOperation({ summary: 'Generate contract' })
-  async generateContract(@Body() payload: GeneratedContractDto) {
+  async generateContract(@Body() payload: GenerateContractDto) {
     return this.contractService.generateContract(payload);
   }
 

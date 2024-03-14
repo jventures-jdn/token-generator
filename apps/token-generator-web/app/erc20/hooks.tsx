@@ -8,19 +8,23 @@ export interface ERC20Form {
   name: string;
   initialSupply: number;
   supplyCap: number;
-  mintable: boolean;
-  burnable: boolean;
-  pausable: boolean;
+  payee?: string;
+  transferor?: string;
+  minter?: string;
+  burner?: string;
+  pauser?: string;
 }
 
 export const ERC20FormDefaultState: ERC20Form = {
   symbol: '',
   name: '',
-  initialSupply: 200000,
-  supplyCap: 500000,
-  mintable: false,
-  burnable: false,
-  pausable: false,
+  initialSupply: 2000000,
+  supplyCap: 5000000,
+  payee: '',
+  transferor: undefined,
+  minter: '',
+  burner: '',
+  pauser: '',
 };
 
 export function useErc20() {
@@ -39,9 +43,17 @@ export function useErc20() {
   const [form, setForm] = useState(ERC20FormDefaultState);
   const [account, setAccount] =
     useState<GetAccountResult<PublicClient>>(getAccount());
+  const [feature, setFeature] = useState({
+    supplyCap: true,
+    mint: true,
+    burn: true,
+    adminBurn: false,
+    pause: true,
+    adminTransfer: false,
+  });
 
   const minSupply = 0;
-  const maxSupply = 1000000;
+  const maxSupply = 10000000;
   const stepSupply = 10000;
   const isDisabled = !!loading[logSelectId] || initiating[logSelectId];
   watchAccount((account) => setAccount(account));
@@ -90,6 +102,15 @@ export function useErc20() {
           </span>,
           { color: 'success' },
         );
+    // update feature admin
+    setForm((form) => ({
+      ...form,
+      payee: form.payee || account?.address,
+      minter: form.minter || account?.address,
+      burner: form.burner || account?.address,
+      pauser: form.pauser || account?.address,
+      transferor: form.transferor || account?.address,
+    }));
   };
 
   /* -------------------------------------------------------------------------- */
@@ -104,6 +125,11 @@ export function useErc20() {
       setInitiating(false);
     };
   }, []);
+  // handle burn disable
+  useEffect(() => {
+    if (feature.adminBurn)
+      setFeature((feature) => ({ ...feature, adminBurn: false }));
+  }, [feature.burn]);
 
   /* -------------------------------------------------------------------------- */
   /*                                    Doms                                    */
@@ -114,9 +140,11 @@ export function useErc20() {
     stepSupply,
     form,
     account,
+    feature,
     handleInitialSupplyChange,
     handleSupplyCapChange,
     handleAccountChange,
+    setFeature,
     setForm,
     isDisabled,
   };

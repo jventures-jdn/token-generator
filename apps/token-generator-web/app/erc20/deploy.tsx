@@ -12,6 +12,14 @@ export async function deployContract(
     args: Record<string, any>;
     abi: readonly unknown[];
     bytecode: `0x${string}`;
+    feature: {
+      supplyCap: boolean;
+      mint: boolean;
+      burn: boolean;
+      adminBurn: boolean;
+      pause: boolean;
+      adminTransfer: boolean;
+    };
   },
 ) {
   const { add, setLoading, pop } = LoggerStore.getState();
@@ -20,6 +28,18 @@ export async function deployContract(
   const publicClient = await getPublicClient({ chainId: chain?.id });
   const gasPrice = await publicClient.getGasPrice();
   const transactionFeeDecimal = 10 ** 7;
+  const args = {
+    ...options.args,
+    ...(options.feature.supplyCap && {
+      supplyCap: options.args.supplyCap,
+    }),
+    ...(options.feature.adminTransfer && {
+      transferor: options.args.transferor,
+    }),
+    ...(options.feature.mint && { minter: options.args.minter }),
+    ...(options.feature.burn && { burner: options.args.burner }),
+    ...(options.feature.pause && { pauser: options.args.pauser }),
+  };
 
   /* ------------------------------- Initialize ------------------------------- */
   add(`🗳️ Deploying ${type} to ${chain?.name}`, { color: 'info' });
@@ -41,7 +61,7 @@ export async function deployContract(
     ?.deployContract({
       abi: options.abi,
       bytecode: options.bytecode,
-      args: [options.args],
+      args: [args],
       chain: chain,
     })
     .catch((e) => {
@@ -67,7 +87,6 @@ export async function deployContract(
       color: 'success',
     });
 
-    console.log(chain, getChain(`${chain?.name}` as InternalChain));
     add(
       <a
         href={`${

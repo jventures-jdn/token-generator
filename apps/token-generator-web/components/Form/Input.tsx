@@ -114,13 +114,15 @@ export const ERC20CheckboxInput = <T extends Object>(
     key?: JSX.IntrinsicElements['div']['key'];
   } & {
     options: {
+      size?: 'xs' | 'sm' | 'md' | 'lg';
       key: string;
-      title: string;
+      title?: string;
       tooltip?: string;
       tooltipPosition?: 'left' | 'right' | 'center' | 'top' | 'bottom';
       value: boolean;
       setter: (value: SetStateAction<T>) => void;
       disabled?: boolean;
+      inputProps?: JSX.IntrinsicElements['input'];
     };
   },
 ) => (
@@ -129,26 +131,37 @@ export const ERC20CheckboxInput = <T extends Object>(
     style={props.style}
     id={props.id}
   >
-    <label className="label">
-      <span className="label-text flex items-center">
-        <span>{props.options.title}</span>
-        {props.options.tooltip && (
-          <div
-            className={`tooltip tooltip-secondary ml-1 text-left ${`tooltip-${
-              props.options.tooltipPosition || 'center'
-            }`}`}
-            data-tip={props.options.tooltip}
-          >
-            <div>
-              <HiInformationCircle />
+    {props.options.title && (
+      <label className="label">
+        <span className="label-text flex items-center">
+          <span>{props.options.title}</span>
+          {props.options.tooltip && (
+            <div
+              className={`tooltip tooltip-secondary ml-1 text-left ${`tooltip-${
+                props.options.tooltipPosition || 'center'
+              }`}`}
+              data-tip={props.options.tooltip}
+            >
+              <div>
+                <HiInformationCircle />
+              </div>
             </div>
-          </div>
-        )}
-      </span>
-    </label>
+          )}
+        </span>
+      </label>
+    )}
     <input
+      {...props.options.inputProps}
       type="checkbox"
-      className="toggle"
+      className={`toggle ${
+        props.options.size === 'lg'
+          ? 'toggle-lg'
+          : props.options.size === 'md'
+            ? 'toggle-md'
+            : props.options.size === 'sm'
+              ? 'toggle-sm'
+              : 'toggle-xs'
+      } `}
       checked={props.options.value}
       disabled={props.options.disabled}
       onChange={(e) =>

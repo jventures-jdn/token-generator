@@ -26,6 +26,23 @@ export class GeneratedContractDto
   contractName: string;
 }
 
+export class GenerateContractDto
+  extends GeneratedContractDto
+  implements GenerateContractRequest
+{
+  @ApiProperty({
+    example: { type: 'LINE', pattern: '@init_supplyCap' },
+  })
+  disable?: {
+    supplyCap?: boolean;
+    mint?: boolean;
+    burn?: boolean;
+    adminBurn?: boolean;
+    pause?: boolean;
+    adminTransfer?: boolean;
+  };
+}
+
 export class JobDto extends JobRequest {
   @ApiProperty({
     example: '1',
