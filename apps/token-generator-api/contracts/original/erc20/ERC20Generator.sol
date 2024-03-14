@@ -224,14 +224,13 @@ contract ERC20Generator is ERC20, ERC20Pausable, ERC20Burnable, AccessControl {
      *
      * - the contract must not be paused.
      */
-    // @start_replace_burn[(ERC20, ERC20Pausable)]
     function _beforeTokenTransfer(
         address from,
         address to,
         uint256 amount
     ) internal virtual override(ERC20, ERC20Pausable) whenNotPaused {
         super._beforeTokenTransfer(from, to, amount);
-    } // @end_replace_burn
+    }
 
     /**
      * @dev Triggers stopped state.
