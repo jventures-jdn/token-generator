@@ -12,7 +12,7 @@ import '@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol'; // @b
 
 // @start_replace_burn[ERC20Burnable,]
 // @start_replace_pause[ERC20Pausable,]
-contract ERC20Generator is ERC20Pausable, ERC20Burnable, AccessControl {
+contract ERC20Generator is ERC20, ERC20Pausable, ERC20Burnable, AccessControl {
     // @end_replace_burn  @end_replace_pause
     uint256 private immutable _cap; // @supplyCap
     bytes32 public constant TRANSFEROR_ROLE = keccak256('TRANSFEROR_ROLE'); // @adminTransfer
