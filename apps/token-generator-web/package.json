@@ -17,7 +17,6 @@
     "@jventures-jdn/config-prettier": "*",
     "@jventures-jdn/config-tailwind": "*",
     "@jventures-jdn/config-tsconfig": "*",
-    "@jventures-jdn/contract-token-generator": "workspace:*",
     "@jventures-jdn/eslint-config-next": "*",
     "@jventures-jdn/fetcher": "workspace:*",
     "@jventures-jdn/react-logger": "workspace:*",
