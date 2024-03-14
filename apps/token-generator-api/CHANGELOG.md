@@ -1,5 +1,11 @@
 # @jventures-jdn/token-generator-api
 
+## 1.1.0
+
+### Minor Changes
+
+- [#30](https://github.com/jventures-jdn/token-generator/pull/30) [`ba9cbda`](https://github.com/jventures-jdn/token-generator/commit/ba9cbda1e0ca4d548ff013b1e3a5050830027120) Thanks [@vasin-peach](https://github.com/vasin-peach)! - dynamic contract generator
+
 ## 1.0.0
 
 ### Major Changes
