@@ -187,6 +187,9 @@ export default function ERC20Page() {
     >
       <TextInput
         options={{
+          inputProps: {
+            pattern: '[a-zA-Z][A-Za-z0-9_]*',
+          },
           key: 'name',
           title: 'Name',
           tooltip: 'Contract Name',
@@ -198,6 +201,9 @@ export default function ERC20Page() {
       />
       <TextInput
         options={{
+          inputProps: {
+            pattern: '[a-zA-Z][A-Za-z0-9_]*',
+          },
           key: 'symbol',
           title: 'Symbol',
           tooltip: 'Token Symbol',
