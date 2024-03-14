@@ -1,5 +1,5 @@
 import { ethers } from 'hardhat';
-import { toUtf8Bytes, keccak256 } from 'ethers';
+import { utils } from 'ethers';
 import { ContractService } from '../../src/modules/contract/contract.service';
 import { ContractTypeEnum } from '@jventures-jdn/config-consts';
 
@@ -25,7 +25,8 @@ describe('Contract Service', () => {
     const contract = await ethers.deployContract(contractName, [
       Object.values(args),
     ]);
-    await contract.waitForDeployment();
+    contract.deployTransaction.wait();
+    await contract.deployed();
     return { contract, deployer, wallet1, wallet2, wallet3 };
   }
 
@@ -123,7 +124,10 @@ describe('Contract Service', () => {
       it('Disable supply cap `mint` method should not be limit with `supplyCap`', async () => {
         const { contract, wallet1 } = await deploy(contractName, _args);
         await expect(
-          contract.mint(wallet1, BigInt(initialArgs.initialSupply + 1000000)),
+          contract.mint(
+            wallet1.address,
+            BigInt(initialArgs.initialSupply + 1000000),
+          ),
         ).resolves.toBeTruthy();
       });
     });
@@ -149,7 +153,10 @@ describe('Contract Service', () => {
       it('Disable `mint` should not have `MINTER_ROLE` role', async () => {
         const { contract, deployer } = await deploy(contractName, _args);
         await expect(
-          contract.hasRole(keccak256(toUtf8Bytes('MINTER_ROLE')), deployer),
+          contract.hasRole(
+            utils.keccak256(utils.toUtf8Bytes('MINTER_ROLE')),
+            deployer.address,
+          ),
         ).resolves.toBeFalsy();
       });
     });
@@ -201,7 +208,10 @@ describe('Contract Service', () => {
       it('Disable `adminBurn` should not have `BURNER_ROLE` role', async () => {
         const { contract, deployer } = await deploy(contractName, _args);
         await expect(
-          contract.hasRole(keccak256(toUtf8Bytes('BURNER_ROLE')), deployer),
+          contract.hasRole(
+            utils.keccak256(utils.toUtf8Bytes('BURNER_ROLE')),
+            deployer.address,
+          ),
         ).resolves.toBeFalsy();
       });
     });
@@ -235,7 +245,10 @@ describe('Contract Service', () => {
       it('Disable `pause` should not have `PAUSER_ROLE` role', async () => {
         const { contract, deployer } = await deploy(contractName, _args);
         await expect(
-          contract.hasRole(keccak256(toUtf8Bytes('PAUSER_ROLE')), deployer),
+          contract.hasRole(
+            utils.keccak256(utils.toUtf8Bytes('PAUSER_ROLE')),
+            deployer.address,
+          ),
         ).resolves.toBeFalsy();
       });
     });
@@ -261,7 +274,10 @@ describe('Contract Service', () => {
       it('Disable `adminTransfer` should not have `TRANSFEROR_ROLE` role', async () => {
         const { contract, deployer } = await deploy(contractName, _args);
         await expect(
-          contract.hasRole(keccak256(toUtf8Bytes('TRANSFEROR_ROLE')), deployer),
+          contract.hasRole(
+            utils.keccak256(utils.toUtf8Bytes('TRANSFEROR_ROLE')),
+            deployer.address,
+          ),
         ).resolves.toBeFalsy();
       });
     });

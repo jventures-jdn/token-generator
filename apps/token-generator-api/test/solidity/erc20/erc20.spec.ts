@@ -1,8 +1,9 @@
 import { execSync } from 'child_process';
 import { copyFileSync, existsSync, unlinkSync } from 'fs';
 import { ethers } from 'hardhat';
-import { keccak256, toUtf8Bytes } from 'ethers';
+import { utils, BigNumber } from 'ethers';
 import { join } from 'path';
+import { parseEther } from 'ethers/lib/utils';
 
 describe('ERC20 Generator', function () {
   /* -------------------------------------------------------------------------- */
@@ -56,7 +57,8 @@ describe('ERC20 Generator', function () {
     const contract = await ethers.deployContract(contractName, [
       Object.values(args),
     ]);
-    await contract.waitForDeployment();
+
+    await contract.deployed();
     return { contract, deployer, wallet1, wallet2, wallet3 };
   }
 
@@ -95,34 +97,49 @@ describe('ERC20 Generator', function () {
 
       // check payee supply should same as initial supply
       await expect(contract.balanceOf(deployer.address)).resolves.toEqual(
-        BigInt(initialArgs.initialSupply),
+        BigNumber.from(initialArgs.initialSupply),
       );
 
       // check total supply
       await expect(contract.totalSupply()).resolves.toEqual(
-        BigInt(initialArgs.initialSupply),
+        BigNumber.from(initialArgs.initialSupply),
       );
 
       // check supply cap
       await expect(contract.cap()).resolves.toEqual(
-        BigInt(initialArgs.supplyCap),
+        BigNumber.from(initialArgs.supplyCap),
       );
 
       // check initial roles
       await expect(
-        contract.hasRole(keccak256(toUtf8Bytes('MINTER_ROLE')), deployer),
+        contract.hasRole(
+          utils.keccak256(utils.toUtf8Bytes('MINTER_ROLE')),
+          deployer.address,
+        ),
       ).resolves.toBeTruthy();
       await expect(
-        contract.hasRole(keccak256(toUtf8Bytes('BURNER_ROLE')), deployer),
+        contract.hasRole(
+          utils.keccak256(utils.toUtf8Bytes('BURNER_ROLE')),
+          deployer.address,
+        ),
       ).resolves.toBeTruthy();
       await expect(
-        contract.hasRole(keccak256(toUtf8Bytes('PAUSER_ROLE')), deployer),
+        contract.hasRole(
+          utils.keccak256(utils.toUtf8Bytes('PAUSER_ROLE')),
+          deployer.address,
+        ),
       ).resolves.toBeTruthy();
       await expect(
-        contract.hasRole(keccak256(toUtf8Bytes('TRANSFEROR_ROLE')), deployer),
+        contract.hasRole(
+          utils.keccak256(utils.toUtf8Bytes('TRANSFEROR_ROLE')),
+          deployer.address,
+        ),
       ).resolves.toBeTruthy();
       await expect(
-        contract.hasRole(keccak256(toUtf8Bytes('TRANSFEROR_ROLE')), wallet1),
+        contract.hasRole(
+          utils.keccak256(utils.toUtf8Bytes('TRANSFEROR_ROLE')),
+          wallet1.address,
+        ),
       ).resolves.toBeFalsy();
     });
   });
@@ -136,10 +153,10 @@ describe('ERC20 Generator', function () {
         payee: wallet1.address,
       });
 
-      await expect(contract.mint(deployer.address, BigInt(1000)));
-      await expect(contract.burn(BigInt(100))).resolves.toBeTruthy();
+      await expect(contract.mint(deployer.address, BigNumber.from(1000)));
+      await expect(contract.burn(BigNumber.from(100))).resolves.toBeTruthy();
       await expect(contract.balanceOf(deployer.address)).resolves.toEqual(
-        BigInt(900),
+        BigNumber.from(900),
       );
     });
 
@@ -151,11 +168,11 @@ describe('ERC20 Generator', function () {
         payee: wallet1.address,
       });
 
-      await expect(contract.burn(BigInt(100))).rejects.toThrow(
+      await expect(contract.burn(BigNumber.from(100))).rejects.toThrow(
         "VM Exception while processing transaction: reverted with reason string 'ERC20: burn amount exceeds balance'",
       );
       await expect(contract.balanceOf(deployer.address)).resolves.toEqual(
-        BigInt(0),
+        BigNumber.from(0),
       );
     });
   });
@@ -172,7 +189,7 @@ describe('ERC20 Generator', function () {
 
       // deployer caller
       await expect(
-        contract.adminBurn(wallet2.address, BigInt(100)),
+        contract.adminBurn(wallet2.address, BigNumber.from(100)),
       ).rejects.toThrow();
 
       // wallet1 caller with burner role
@@ -184,16 +201,18 @@ describe('ERC20 Generator', function () {
       // check payee supply should same as initial supply
       await expect(
         contractWallet1.balanceOf(deployer.address),
-      ).resolves.toEqual(BigInt(initialArgs.initialSupply));
+      ).resolves.toEqual(BigNumber.from(initialArgs.initialSupply));
       // burn payee
       await expect(
-        contractWallet1.adminBurn(deployer.address, BigInt(burnAmount)),
+        contractWallet1.adminBurn(deployer.address, BigNumber.from(burnAmount)),
       ).resolves.toBeTruthy();
       // check payee supply
       await expect(
         contractWallet1.balanceOf(deployer.address),
       ).resolves.toEqual(
-        BigInt(initialArgs.initialSupply) - BigInt(burnAmount),
+        BigNumber.from(initialArgs.initialSupply).sub(
+          BigNumber.from(burnAmount),
+        ),
       );
     });
 
@@ -209,7 +228,7 @@ describe('ERC20 Generator', function () {
         wallet2,
       )) as typeof contract;
       await expect(
-        contractWallet2.adminBurn(deployer.address, BigInt(100)),
+        contractWallet2.adminBurn(deployer.address, BigNumber.from(100)),
       ).rejects.toThrow(
         "VM Exception while processing transaction: reverted with reason string 'ERC20Generator: caller must have burner role'",
       );
@@ -229,29 +248,34 @@ describe('ERC20 Generator', function () {
         wallet1,
       )) as typeof contract;
 
-      const transferAmount = BigInt(100) * BigInt(10 ** 18);
+      const transferAmount = parseEther('100');
 
       // check wallet1 has transferor role
       await expect(
-        contract.hasRole(keccak256(toUtf8Bytes('TRANSFEROR_ROLE')), wallet1),
+        contract.hasRole(
+          utils.keccak256(utils.toUtf8Bytes('TRANSFEROR_ROLE')),
+          wallet1.address,
+        ),
       ).resolves.toBeTruthy();
 
       // check transfer from payee to wallet2
       await expect(
         contractWallet1.adminTransfer(
-          deployer,
+          deployer.address,
           wallet2.address,
-          BigInt(transferAmount),
+          transferAmount,
         ),
       ).resolves.toBeTruthy();
 
       // check payee balance
-      await expect(contractWallet1.balanceOf(deployer)).resolves.toEqual(
-        BigInt(initialArgs.initialSupply) - transferAmount,
+      await expect(
+        contractWallet1.balanceOf(deployer.address),
+      ).resolves.toEqual(
+        BigNumber.from(initialArgs.initialSupply).sub(transferAmount),
       );
 
       // check wallet2 balance
-      await expect(contractWallet1.balanceOf(wallet2)).resolves.toEqual(
+      await expect(contractWallet1.balanceOf(wallet2.address)).resolves.toEqual(
         transferAmount,
       );
     });
@@ -263,22 +287,22 @@ describe('ERC20 Generator', function () {
       const contractWallet1 = (await contract.connect(
         wallet1,
       )) as typeof contract;
-      const transferAmount = BigInt(100) * BigInt(10 ** 18);
+      const transferAmount = parseEther('100');
 
       // check deployer has transferor role
       await expect(
         contractWallet1.hasRole(
-          keccak256(toUtf8Bytes('TRANSFEROR_ROLE')),
-          deployer,
+          utils.keccak256(utils.toUtf8Bytes('TRANSFEROR_ROLE')),
+          deployer.address,
         ),
       ).resolves.toBeTruthy();
 
       // check transfer from payee to wallet2
       await expect(
         contractWallet1.adminTransfer(
-          deployer,
+          deployer.address,
           wallet2.address,
-          BigInt(transferAmount),
+          BigNumber.from(transferAmount),
         ),
       ).rejects.toThrow(
         "VM Exception while processing transaction: reverted with reason string 'ERC20Generator: caller must have transferor role'",
@@ -292,7 +316,7 @@ describe('ERC20 Generator', function () {
         transferor: wallet1.address,
         pauser: wallet1.address,
       });
-      const transferAmount = BigInt(100) * BigInt(10 ** 18);
+      const transferAmount = parseEther('100');
 
       // connect to wallet1
       const contractWallet1 = (await contract.connect(
@@ -305,9 +329,9 @@ describe('ERC20 Generator', function () {
       // when pause adminTransfer should be rejected
       await expect(
         contractWallet1.adminTransfer(
-          deployer,
+          deployer.address,
           wallet2.address,
-          BigInt(transferAmount),
+          BigNumber.from(transferAmount),
         ),
       ).rejects.toThrow(
         "VM Exception while processing transaction: reverted with reason string 'Pausable: paused'",
@@ -378,7 +402,7 @@ describe('ERC20 Generator', function () {
   });
   describe('mint', () => {
     it('mint should be resolve when caller has MINTER_ROLE', async () => {
-      const mintAmount = BigInt(100) * BigInt(10 ** 18);
+      const mintAmount = parseEther('100');
       const [, wallet1, wallet2] = await ethers.getSigners();
       const { contract } = await deploy({
         ...initialArgs,
@@ -392,15 +416,15 @@ describe('ERC20 Generator', function () {
 
       // mint
       await expect(
-        contractWallet1.mint(wallet2, mintAmount),
+        contractWallet1.mint(wallet2.address, mintAmount),
       ).resolves.toBeTruthy();
-      await expect(contractWallet1.balanceOf(wallet2)).resolves.toEqual(
+      await expect(contractWallet1.balanceOf(wallet2.address)).resolves.toEqual(
         mintAmount,
       );
     });
 
     it('mint should be reject when caller has no MINTER_ROLE', async () => {
-      const mintAmount = BigInt(100) * BigInt(10 ** 18);
+      const mintAmount = parseEther('100');
       const [, wallet1, wallet2] = await ethers.getSigners();
       const { contract } = await deploy({
         ...initialArgs,
@@ -413,12 +437,14 @@ describe('ERC20 Generator', function () {
       )) as typeof contract;
 
       // mint
-      await expect(contractWallet1.mint(wallet2, mintAmount)).rejects.toThrow(
+      await expect(
+        contractWallet1.mint(wallet2.address, mintAmount),
+      ).rejects.toThrow(
         "VM Exception while processing transaction: reverted with reason string 'ERC20Generator: caller must have minter role'",
       );
 
-      await expect(contractWallet1.balanceOf(wallet2)).resolves.toEqual(
-        BigInt(0),
+      await expect(contractWallet1.balanceOf(wallet2.address)).resolves.toEqual(
+        BigNumber.from(0),
       );
     });
   });
