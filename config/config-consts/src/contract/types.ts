@@ -61,9 +61,11 @@ export class VerifyERC20ContractRequest extends GeneratedContractRequest {
     symbol: string;
     name: string;
     initialSupply: bigint;
-    supplyCap: bigint;
-    mintable?: boolean;
-    burnable?: boolean;
-    pausable?: boolean;
+    supplyCap?: bigint;
+    payee?: `0x${string}` | string;
+    transferor?: `0x${string}` | string;
+    minter?: `0x${string}` | string;
+    burner?: `0x${string}` | string;
+    pauser?: `0x${string}` | string;
   };
 }

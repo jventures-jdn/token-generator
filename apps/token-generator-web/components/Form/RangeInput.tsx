@@ -6,7 +6,7 @@ export function RangeInput<T>(
   props: JSX.IntrinsicElements['div'] & {
     options: {
       key: string;
-      title: string;
+      title?: string;
       tooltip?: string;
       value: number;
       min?: number;
@@ -22,20 +22,7 @@ export function RangeInput<T>(
     <div className={`form-control ${props.className || ''}`} {...props}>
       <label className="label p-0">
         <span className="label-text  items-center flex gap-1">
-          <span>{props.options.title}</span>
-
-          <TextInput
-            className="ml-1"
-            options={{
-              key: props.options.key,
-              tooltip: props.options.tooltip,
-              setter: props.options.setter,
-              value: props.options.value,
-              disabled: props.options.disabled,
-              icon: undefined,
-              size: 'xs',
-            }}
-          />
+          {props.options.title && <span>{props.options.title}</span>}
           {props.options.tooltip && (
             <div
               className="tooltip tooltip-secondary ml-1"
@@ -46,6 +33,19 @@ export function RangeInput<T>(
           )}
         </span>
       </label>
+      <span className="mt-2">
+        <TextInput
+          options={{
+            key: props.options.key,
+            tooltip: props.options.tooltip,
+            setter: props.options.setter,
+            value: props.options.value,
+            disabled: props.options.disabled,
+            icon: undefined,
+            size: 'xs',
+          }}
+        />
+      </span>
       <input
         type="range"
         min={props.options.min}

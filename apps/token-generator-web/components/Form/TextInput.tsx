@@ -7,10 +7,13 @@ export function TextInput<T>(
       key: string;
       title?: string;
       tooltip?: string;
+      tooltipPosition?: 'top' | 'bottom' | 'left' | 'right';
+      inputProps?: JSX.IntrinsicElements['input'];
       value: string | number;
       setter: (value: SetStateAction<T>) => void;
       disabled?: boolean;
       icon?: JSX.Element;
+      placeholder?: string;
       size?: 'xs' | 'sm' | 'md' | 'lg';
     };
   },
@@ -23,7 +26,11 @@ export function TextInput<T>(
             <span>{props.options.title}</span>
             {props.options.tooltip && (
               <div
-                className="tooltip tooltip-secondary ml-1"
+                className={`tooltip tooltip-secondary ml-1 ${
+                  props.options.tooltipPosition
+                    ? `tooltip-${props.options.tooltipPosition}`
+                    : 'tooltip-right'
+                }`}
                 data-tip={props.options.tooltip}
               >
                 <div>{props.options.icon}</div>
@@ -33,8 +40,9 @@ export function TextInput<T>(
         </label>
       )}
       <input
+        {...props.options.inputProps}
         type="text"
-        placeholder={props.options.title}
+        placeholder={props.options.placeholder || props.options.title}
         onChange={(e) =>
           props.options.setter((form) => ({
             ...form,
@@ -44,10 +52,14 @@ export function TextInput<T>(
         value={props.options.value}
         required
         disabled={props.options?.disabled}
-        className={`input input-bordered w-full disabled:bg-base-300/0 disabled:border-gray-400/25 input-xs  ${
-          props.options.size
-            ? `!input-${props.options.size}`
-            : 'input-sm lg:input-md'
+        className={`input input-bordered  w-full disabled:bg-base-300/0 disabled:border-gray-400/25 input-xs !px-3 ${
+          props.options.size === 'lg'
+            ? 'input-lg'
+            : props.options.size === 'md'
+              ? 'input-sm md:input-md'
+              : props.options.size === 'sm'
+                ? 'input-sm !text-xs'
+                : 'input-xs !text-xs'
         }`}
       />
     </div>
