@@ -127,6 +127,39 @@ describe('ERC20 Generator', function () {
     });
   });
 
+  describe('burn', () => {
+    it('burn should be resolve when caller has balance', async () => {
+      const [, wallet1] = await ethers.getSigners();
+      // deployer contract with wallet1 is burner role
+      const { contract, deployer } = await deploy({
+        ...initialArgs,
+        payee: wallet1.address,
+      });
+
+      await expect(contract.mint(deployer.address, BigInt(1000)));
+      await expect(contract.burn(BigInt(100))).resolves.toBeTruthy();
+      await expect(contract.balanceOf(deployer.address)).resolves.toEqual(
+        BigInt(900),
+      );
+    });
+
+    it('burn should be reject when caller has no balance', async () => {
+      const [, wallet1] = await ethers.getSigners();
+      // deployer contract with wallet1 is burner role
+      const { contract, deployer } = await deploy({
+        ...initialArgs,
+        payee: wallet1.address,
+      });
+
+      await expect(contract.burn(BigInt(100))).rejects.toThrow(
+        "VM Exception while processing transaction: reverted with reason string 'ERC20: burn amount exceeds balance'",
+      );
+      await expect(contract.balanceOf(deployer.address)).resolves.toEqual(
+        BigInt(0),
+      );
+    });
+  });
+
   describe('adminBurn', () => {
     it('adminBurn should be resolve when caller has BURNER_ROLE', async () => {
       const [, wallet1, wallet2] = await ethers.getSigners();
