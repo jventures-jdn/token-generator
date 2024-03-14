@@ -142,18 +142,9 @@ export class ContractService {
       payload.disable,
     );
 
-    const lines = generatedFeatureContractRaw.split('\n');
-    const requiredComment = lines.slice(0, 4).join('\n');
-    const codeBlock = lines
-      .slice(3, lines.length)
-      .join('\n')
-      .replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '')
-      .replace(/^\s*\n/gm, '');
-    const generatedContractWithNoComment = requiredComment + codeBlock;
-
     // write new contract
     const writePath = `${this.generateContractPath}/${filePath}`;
-    writeFileSync(writePath, generatedContractWithNoComment);
+    writeFileSync(writePath, generatedFeatureContractRaw);
     return filePath;
   }
 
