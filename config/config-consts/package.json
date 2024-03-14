@@ -1,6 +1,6 @@
 {
   "name": "@jventures-jdn/config-consts",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "J Ventures Co., Ltd.",
   "dependencies": {
     "@jventures-jdn/eslint-config-nest": "*",

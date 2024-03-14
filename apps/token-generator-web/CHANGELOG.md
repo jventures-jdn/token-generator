@@ -1,5 +1,15 @@
 # token-generator-web
 
+## 1.1.0
+
+### Minor Changes
+
+- [#30](https://github.com/jventures-jdn/token-generator/pull/30) [`ba9cbda`](https://github.com/jventures-jdn/token-generator/commit/ba9cbda1e0ca4d548ff013b1e3a5050830027120) Thanks [@vasin-peach](https://github.com/vasin-peach)! - dynamic contract generator
+
+### Patch Changes
+
+- [`665d4f4`](https://github.com/jventures-jdn/token-generator/commit/665d4f449c92f2bee10755bf61b33893d5e7c933) Thanks [@vasin-peach](https://github.com/vasin-peach)! - form tooltip cause mobile layout overflow
+
 ## 1.0.0
 
 ### Major Changes
