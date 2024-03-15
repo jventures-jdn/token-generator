@@ -1,5 +1,13 @@
 # token-generator-web
 
+## 1.1.1
+
+### Patch Changes
+
+- [#36](https://github.com/jventures-jdn/token-generator/pull/36) [`b06f856`](https://github.com/jventures-jdn/token-generator/commit/b06f856555d876b1eba72bf0cd60d7e1bc3fbd57) Thanks [@vasin-peach](https://github.com/vasin-peach)! - - separated between selfBurn and adminBurn
+  - generate contract name can be reusable
+  - trying deploy after push release
+
 ## 1.1.0
 
 ### Minor Changes
