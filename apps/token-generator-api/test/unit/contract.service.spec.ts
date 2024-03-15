@@ -49,8 +49,9 @@ describe('Contract Service', () => {
     const contractNamespaces = [
       { name: 'ERC20_NoCap', disable: { supplyCap: true } },
       { name: 'ERC20_NoMint', disable: { mint: true } },
-      { name: 'ERC20_NoBurn', disable: { burn: true } },
+      { name: 'ERC20_NoSelfBurn', disable: { burn: true } },
       { name: 'ERC20_NoAdminBurn', disable: { adminBurn: true } },
+      { name: 'ERC20_NoBurn', disable: { adminBurn: true, burn: true } },
       { name: 'ERC20_NoPause', disable: { pause: true } },
       { name: 'ERC20_NoAdminTransfer', disable: { adminTransfer: true } },
     ];
@@ -161,16 +162,15 @@ describe('Contract Service', () => {
       });
     });
 
-    describe('ERC20: Disable burn', () => {
-      const contractName = 'ERC20_NoBurn';
+    describe('ERC20: Disable selfBurn', () => {
+      const contractName = 'ERC20_NoSelfBurn';
       let _args: DefaultArgs;
 
       beforeAll(async () => {
         _args = { ...initialArgs, name: contractName };
-        delete _args.burner;
       });
 
-      it('Disable `burn`  should not have `burn()` method', async () => {
+      it('Disable `selfBurn` should not have `burn()` method', async () => {
         const { contract } = await deploy(contractName, _args);
         const methods = contract.interface.fragments
           .map((f: any) => f.name)
@@ -178,12 +178,20 @@ describe('Contract Service', () => {
         expect(methods).not.toContain('burn');
       });
 
-      it('Disable `burn`  should not have `burnForm()` method', async () => {
+      it('Disable `selfBurn` should not have `burnFrom()` method', async () => {
         const { contract } = await deploy(contractName, _args);
         const methods = contract.interface.fragments
           .map((f: any) => f.name)
           .filter((f) => f);
-        expect(methods).not.toContain('burnForm');
+        expect(methods).not.toContain('burnFrom');
+      });
+
+      it('Disable `adminBurn` should still have `adminBurn()` method', async () => {
+        const { contract } = await deploy(contractName, _args);
+        const methods = contract.interface.fragments
+          .map((f: any) => f.name)
+          .filter((f) => f);
+        expect(methods).toContain('adminBurn');
       });
     });
 
@@ -213,6 +221,53 @@ describe('Contract Service', () => {
             deployer.address,
           ),
         ).resolves.toBeFalsy();
+      });
+
+      it('Disable `adminBurn` should still have `burn()` and `burnFrom()` method', async () => {
+        const { contract } = await deploy(contractName, _args);
+        const methods = contract.interface.fragments
+          .map((f: any) => f.name)
+          .filter((f) => f);
+        expect(methods).toContain('burn');
+        expect(methods).toContain('burnFrom');
+      });
+    });
+
+    describe('ERC20: Disable burn', () => {
+      const contractName = 'ERC20_NoBurn';
+      let _args: DefaultArgs;
+
+      beforeAll(async () => {
+        _args = { ...initialArgs, name: contractName };
+        delete _args.burner;
+      });
+
+      it('Disable `burn` should not have `burn()` method', async () => {
+        const { contract } = await deploy(contractName, _args);
+        const methods = contract.interface.fragments
+          .map((f: any) => f.name)
+          .filter((f) => f);
+        expect(methods).not.toContain('burn');
+        expect(methods).not.toContain('BURNER_ROLE');
+      });
+
+      it('Disable `burn` should not have `BURNER_ROLE` role', async () => {
+        const { contract, deployer } = await deploy(contractName, _args);
+        await expect(
+          contract.hasRole(
+            utils.keccak256(utils.toUtf8Bytes('BURNER_ROLE')),
+            deployer.address,
+          ),
+        ).resolves.toBeFalsy();
+      });
+
+      it('Disable `burn` should not have `burn()` and `burnFrom()` method', async () => {
+        const { contract } = await deploy(contractName, _args);
+        const methods = contract.interface.fragments
+          .map((f: any) => f.name)
+          .filter((f) => f);
+        expect(methods).not.toContain('burn');
+        expect(methods).not.toContain('burnFrom');
       });
     });
 

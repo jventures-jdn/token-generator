@@ -132,7 +132,7 @@ export default function ERC20Page() {
         transferor: form.transferor,
       }),
       ...(feature.mint && { minter: form.minter }),
-      ...(feature.burn && { burner: form.burner }),
+      ...(feature.adminBurn && { burner: form.burner }),
       ...(feature.pause && { pauser: form.pauser }),
     };
     const contractAddress = await deployContract('ERC20', {
@@ -230,7 +230,7 @@ export default function ERC20Page() {
             },
             key: 'payee',
             title: 'Payee',
-            tooltip: 'Who receive initial balance',
+            tooltip: 'Address who receive initial balance',
             tooltipPosition: 'right',
             setter: setForm,
             value: form.payee,
@@ -326,46 +326,44 @@ export default function ERC20Page() {
             </div>
           </div>
           {/* Admin burn */}
-          {feature.burn && (
-            <div className="flex flex-col gap-2">
-              <div className="label-text items-center flex gap-3">
-                <span>Admin Burn</span>
-                <ERC20CheckboxInput
-                  className="!w-auto"
-                  options={{
-                    key: 'adminBurn',
-                    tooltipPosition: 'right',
-                    value: feature.adminBurn,
-                    setter: setFeature,
-                    disabled: isDisabled,
-                    size: 'sm',
-                  }}
-                />
-                <div
-                  className="tooltip tooltip-secondary"
-                  data-tip="Turn off/on adminBurn functionality"
-                >
-                  <div>{<HiInformationCircle />}</div>
-                </div>
+          <div className="flex flex-col gap-2">
+            <div className="label-text items-center flex gap-3">
+              <span>Admin Burn</span>
+              <ERC20CheckboxInput
+                className="!w-auto"
+                options={{
+                  key: 'adminBurn',
+                  tooltipPosition: 'right',
+                  value: feature.adminBurn,
+                  setter: setFeature,
+                  disabled: isDisabled,
+                  size: 'sm',
+                }}
+              />
+              <div
+                className="tooltip tooltip-secondary"
+                data-tip="Turn off/on adminBurn functionality"
+              >
+                <div>{<HiInformationCircle />}</div>
               </div>
-              {feature.adminBurn && (
-                <TextInput
-                  options={{
-                    inputProps: {
-                      pattern: '(0x)?[0-9a-fA-F]{40}',
-                    },
-                    placeholder: 'Burner Address',
-                    key: 'burner',
-                    setter: setForm,
-                    value: form.burner,
-                    disabled: isDisabled || !feature.adminBurn,
-                    icon: <HiInformationCircle />,
-                    size: 'sm',
-                  }}
-                />
-              )}
             </div>
-          )}
+            {feature.adminBurn && (
+              <TextInput
+                options={{
+                  inputProps: {
+                    pattern: '(0x)?[0-9a-fA-F]{40}',
+                  },
+                  placeholder: 'Burner Address',
+                  key: 'burner',
+                  setter: setForm,
+                  value: form.burner,
+                  disabled: isDisabled || !feature.adminBurn,
+                  icon: <HiInformationCircle />,
+                  size: 'sm',
+                }}
+              />
+            )}
+          </div>
           {/* Mintable */}
           <div className="flex flex-col gap-2">
             <div className="label-text items-center flex gap-3">
@@ -405,7 +403,6 @@ export default function ERC20Page() {
               />
             )}
           </div>
-
           {/* Pausable */}
           <div className="flex flex-col gap-2">
             <div className="label-text items-center flex gap-3">
@@ -445,7 +442,6 @@ export default function ERC20Page() {
               />
             )}
           </div>
-
           {/* Admin Transfer */}
           <div className="flex flex-col gap-2">
             <div className="label-text items-center flex gap-3">

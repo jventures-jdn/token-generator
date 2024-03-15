@@ -125,11 +125,6 @@ export function useErc20() {
       setInitiating(false);
     };
   }, []);
-  // handle burn disable
-  useEffect(() => {
-    if (feature.adminBurn)
-      setFeature((feature) => ({ ...feature, adminBurn: false }));
-  }, [feature.burn]);
 
   /* -------------------------------------------------------------------------- */
   /*                                    Doms                                    */

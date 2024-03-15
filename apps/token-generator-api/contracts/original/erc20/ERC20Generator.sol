@@ -8,16 +8,14 @@ import '@openzeppelin/contracts/security/Pausable.sol'; // @pause
 import '@openzeppelin/contracts/access/AccessControl.sol';
 import '@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol'; // @supplyCap
 import '@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol'; // @pause
-import '@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol'; // @burn
 
-// @start_replace_burn[ERC20Burnable,]
-// @start_replace_pause[ERC20Pausable,]
-contract ERC20Generator is ERC20, ERC20Pausable, ERC20Burnable, AccessControl {
-    // @end_replace_burn  @end_replace_pause
+// @start_replace_pause[ERC20Pausable, ]
+contract ERC20Generator is ERC20, ERC20Pausable, AccessControl {
+    // @end_replace_pause
     uint256 private immutable _cap; // @supplyCap
     bytes32 public constant TRANSFEROR_ROLE = keccak256('TRANSFEROR_ROLE'); // @adminTransfer
     bytes32 public constant MINTER_ROLE = keccak256('MINTER_ROLE'); // @mint
-    bytes32 public constant BURNER_ROLE = keccak256('BURNER_ROLE'); // @adminBurn
+    bytes32 public constant BURNER_ROLE = keccak256('BURNER_ROLE'); // @adminBurn @burn
     bytes32 public constant PAUSER_ROLE = keccak256('PAUSER_ROLE'); // @pause
 
     struct Args {
@@ -28,7 +26,7 @@ contract ERC20Generator is ERC20, ERC20Pausable, ERC20Burnable, AccessControl {
         address payee;
         address transferor; // @adminTransfer
         address minter; // @mint
-        address burner; // @adminBurn
+        address burner; // @adminBurn @burn
         address pauser; // @pause
     }
 
@@ -183,17 +181,47 @@ contract ERC20Generator is ERC20, ERC20Pausable, ERC20Burnable, AccessControl {
         _mint(to, amount);
     } // @end_mint
 
-    // @start_adminBurn
+    // @start_burn
     /* -------------------------------- Burnable -------------------------------- */
     /* https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/extensions/ERC20Burnable.sol */
 
+    // @start_selfBurn
+    /**
+     * @dev Destroys `amount` tokens from the caller.
+     *
+     * See {ERC20-_burn}.
+     */
+    function burn(uint256 amount) public virtual {
+        _burn(_msgSender(), amount);
+    }
+
+    /**
+     * @dev Destroys `amount` tokens from `account`, deducting from the caller's
+     * allowance.
+     *
+     * See {ERC20-_burn} and {ERC20-allowance}.
+     *
+     * Requirements:
+     *
+     * - the caller must have allowance for ``accounts``'s tokens of at least
+     * `amount`.
+     */
+    function burnFrom(address account, uint256 amount) public virtual {
+        _spendAllowance(account, _msgSender(), amount);
+        _burn(account, amount);
+    } // @end_selfBurn
+
+    // @start_adminBurn
     function adminBurn(
         address account,
         uint256 amount
     ) public virtual onlyBurner {
         _approve(account, _msgSender(), amount);
-        burnFrom(account, amount);
+        _spendAllowance(account, _msgSender(), amount);
+        _burn(account, amount);
     } // @end_adminBurn
+
+    // @end_burn
 
     // @start_adminTransfer
     /* -------------------------------- Transfer -------------------------------- */
