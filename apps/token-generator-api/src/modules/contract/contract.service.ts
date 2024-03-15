@@ -114,17 +114,12 @@ export class ContractService {
     if (!payload.contractName.match(/^[a-zA-Z][A-Za-z0-9_]*$/g))
       throw new BadRequestException(undefined, {
         description:
-          'Contract name must be alphanumeric and start with a letter',
+          'Contract name must be alphanumeric and start with a letter ([a-zA-Z][A-Za-z0-9_])',
       });
 
     // if giving generated contract name is already exist, throw error
     if (await this.readGeneratedContract(payload).catch(() => {})) {
-      throw new ConflictException(
-        { data: filePath },
-        {
-          description: 'This contact name is already in use',
-        },
-      );
+      this.removeContract(payload);
     }
 
     // read orignal contract and replace contract name
