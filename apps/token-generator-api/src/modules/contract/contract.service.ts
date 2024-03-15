@@ -114,17 +114,12 @@ export class ContractService {
     if (!payload.contractName.match(/^[a-zA-Z][A-Za-z0-9_]*$/g))
       throw new BadRequestException(undefined, {
         description:
-          'Contract name must be alphanumeric and start with a letter',
+          'Contract name must be alphanumeric and start with a letter ([a-zA-Z][A-Za-z0-9_])',
       });
 
     // if giving generated contract name is already exist, throw error
     if (await this.readGeneratedContract(payload).catch(() => {})) {
-      throw new ConflictException(
-        { data: filePath },
-        {
-          description: 'This contact name is already in use',
-        },
-      );
+      this.removeContract(payload);
     }
 
     // read orignal contract and replace contract name
@@ -191,8 +186,23 @@ export class ContractService {
       });
     }
 
+    // no self burn
+    if (disable.burn) {
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'selfBurn',
+        type: 'LINE',
+      });
+
+      newContractRaw = this.removePattern({
+        payload: newContractRaw,
+        pattern: 'selfBurn',
+        type: 'RANGE',
+      });
+    }
+
     // no admin burn
-    if (disable.adminBurn || disable.burn) {
+    if (disable.adminBurn) {
       newContractRaw = this.removePattern({
         payload: newContractRaw,
         pattern: 'adminBurn',
@@ -206,8 +216,8 @@ export class ContractService {
       });
     }
 
-    // no  burn
-    if (disable.burn) {
+    // no brun
+    if (disable.burn && disable.adminBurn) {
       newContractRaw = this.removePattern({
         payload: newContractRaw,
         pattern: 'burn',
@@ -217,7 +227,7 @@ export class ContractService {
       newContractRaw = this.removePattern({
         payload: newContractRaw,
         pattern: 'burn',
-        type: 'REPLACE',
+        type: 'RANGE',
       });
     }
 
