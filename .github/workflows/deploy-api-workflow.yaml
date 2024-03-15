@@ -3,8 +3,8 @@ name: 🎉 Deploy API
 on:
   workflow_dispatch:
   push:
-    branches:
-      - 'changeset-release/*'
+    tags:
+      - '**'
     paths:
       - 'apps/token-generator-api/*'
       - 'libs/*'
