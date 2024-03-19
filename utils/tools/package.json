@@ -5,9 +5,7 @@
   "dependencies": {
     "@jventures-jdn/config-consts": "*",
     "@jventures-jdn/eslint-config-nest": "*",
-    "axios": "^1.6.7",
-    "json-bigint": "^1.0.0",
-    "swr": "^2.2.4"
+    "axios": "^1.6.8"
   },
   "type": "module",
   "main": "./index.js",
@@ -28,8 +26,6 @@
   },
   "devDependencies": {
     "@jventures-jdn/config-tsconfig": "*",
-    "@swc/core": "^1.4.8",
-    "@types/json-bigint": "^1.0.4",
     "tsup": "^8.0.1"
   },
   "repository": {

@@ -14,7 +14,7 @@ import {
 } from '@jventures-jdn/config-chains';
 import { useErc20 } from './hooks';
 import { deployContract } from './deploy';
-import { contractFetcherApi } from '@jventures-jdn/fetcher';
+import { contractFetcherApi } from '@jventures-jdn/api-fetcher';
 import { ContractTypeEnum } from '@jventures-jdn/config-consts';
 import { getNetwork } from 'wagmi/actions';
 
