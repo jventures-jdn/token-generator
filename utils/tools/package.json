@@ -15,9 +15,9 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.cjs"
     },
-    "./content": {
-      "types": "./dist/src/content/index.d.ts",
-      "default": "./dist/src/content/index.cjs"
+    "./content-management": {
+      "types": "./dist/src/content-management/index.d.ts",
+      "default": "./dist/src/content-management/index.cjs"
     },
     "./fetcher": {
       "types": "./dist/src/fetcher/index.d.ts",
