@@ -28,6 +28,7 @@
     "@jventures-jdn/config-prettier": "*",
     "@jventures-jdn/config-tsconfig": "*",
     "@jventures-jdn/eslint-config-nest": "*",
+    "@jventures-jdn/tools": "*",
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",

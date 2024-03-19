@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ConflictException,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -17,7 +16,8 @@ import {
   VerifyERC20ContractERC2Dto,
 } from './contract.dto';
 import JSON from 'json-bigint';
-import { ContractRemovePattern } from '@jventures-jdn/config-consts';
+import { ContentManagement } from '@jventures-jdn/tools';
+
 @Injectable()
 export class ContractService {
   constructor() {}
@@ -158,195 +158,116 @@ export class ContractService {
 
     // no supply cap
     if (disable.supplyCap) {
-      newContractRaw = this.removePattern({
-        payload: newContractRaw,
-        pattern: 'supplyCap',
-        type: 'LINE',
-      });
+      newContractRaw = ContentManagement.editContent(
+        newContractRaw,
+        'LINE',
+        'supplyCap',
+      );
 
-      newContractRaw = this.removePattern({
-        payload: newContractRaw,
-        pattern: 'supplyCap',
-        type: 'RANGE',
-      });
+      newContractRaw = ContentManagement.editContent(
+        newContractRaw,
+        'RANGE',
+        'supplyCap',
+      );
     }
 
     // no mint
     if (disable.mint) {
-      newContractRaw = this.removePattern({
-        payload: newContractRaw,
-        pattern: 'mint',
-        type: 'LINE',
-      });
+      newContractRaw = ContentManagement.editContent(
+        newContractRaw,
+        'LINE',
+        'mint',
+      );
 
-      newContractRaw = this.removePattern({
-        payload: newContractRaw,
-        pattern: 'mint',
-        type: 'RANGE',
-      });
+      newContractRaw = ContentManagement.editContent(
+        newContractRaw,
+        'RANGE',
+        'mint',
+      );
     }
 
     // no self burn
     if (disable.burn) {
-      newContractRaw = this.removePattern({
-        payload: newContractRaw,
-        pattern: 'selfBurn',
-        type: 'LINE',
-      });
+      newContractRaw = ContentManagement.editContent(
+        newContractRaw,
+        'LINE',
+        'selfBurn',
+      );
 
-      newContractRaw = this.removePattern({
-        payload: newContractRaw,
-        pattern: 'selfBurn',
-        type: 'RANGE',
-      });
+      newContractRaw = ContentManagement.editContent(
+        newContractRaw,
+        'RANGE',
+        'selfBurn',
+      );
     }
 
     // no admin burn
     if (disable.adminBurn) {
-      newContractRaw = this.removePattern({
-        payload: newContractRaw,
-        pattern: 'adminBurn',
-        type: 'LINE',
-      });
+      newContractRaw = ContentManagement.editContent(
+        newContractRaw,
+        'LINE',
+        'adminBurn',
+      );
 
-      newContractRaw = this.removePattern({
-        payload: newContractRaw,
-        pattern: 'adminBurn',
-        type: 'RANGE',
-      });
+      newContractRaw = ContentManagement.editContent(
+        newContractRaw,
+        'RANGE',
+        'adminBurn',
+      );
     }
 
     // no brun
     if (disable.burn && disable.adminBurn) {
-      newContractRaw = this.removePattern({
-        payload: newContractRaw,
-        pattern: 'burn',
-        type: 'LINE',
-      });
+      newContractRaw = ContentManagement.editContent(
+        newContractRaw,
+        'LINE',
+        'burn',
+      );
 
-      newContractRaw = this.removePattern({
-        payload: newContractRaw,
-        pattern: 'burn',
-        type: 'RANGE',
-      });
+      newContractRaw = ContentManagement.editContent(
+        newContractRaw,
+        'RANGE',
+        'burn',
+      );
     }
 
     // no pause
     if (disable.pause) {
-      newContractRaw = this.removePattern({
-        payload: newContractRaw,
-        pattern: 'pause',
-        type: 'REPLACE',
-      });
+      newContractRaw = ContentManagement.editContent(
+        newContractRaw,
+        'REPLACE',
+        'pause',
+      );
 
-      newContractRaw = this.removePattern({
-        payload: newContractRaw,
-        pattern: 'pause',
-        type: 'LINE',
-      });
+      newContractRaw = ContentManagement.editContent(
+        newContractRaw,
+        'LINE',
+        'pause',
+      );
 
-      newContractRaw = this.removePattern({
-        payload: newContractRaw,
-        pattern: 'pause',
-        type: 'RANGE',
-      });
+      newContractRaw = ContentManagement.editContent(
+        newContractRaw,
+        'RANGE',
+        'pause',
+      );
     }
 
     // no admin transfer
     if (disable.adminTransfer) {
-      newContractRaw = this.removePattern({
-        payload: newContractRaw,
-        pattern: 'adminTransfer',
-        type: 'RANGE',
-      });
+      newContractRaw = ContentManagement.editContent(
+        newContractRaw,
+        'RANGE',
+        'adminTransfer',
+      );
 
-      newContractRaw = this.removePattern({
-        payload: newContractRaw,
-        pattern: 'adminTransfer',
-        type: 'LINE',
-      });
+      newContractRaw = ContentManagement.editContent(
+        newContractRaw,
+        'LINE',
+        'adminTransfer',
+      );
     }
 
     return newContractRaw;
-  }
-
-  removePattern({
-    type,
-    pattern,
-    payload,
-  }: {
-    payload: string;
-    type: ContractRemovePattern;
-    pattern: string;
-  }) {
-    // remove line by line
-    if (type === 'LINE') {
-      return payload
-        .split('\n')
-        .filter((line) => !line.includes(`@${pattern}`))
-        .join('\n');
-    }
-
-    // remove in range
-    if (type === 'RANGE') {
-      const lines = payload.split('\n');
-
-      const removeLines = lines.reduce((acc, line, index) => {
-        if (line.includes(`@start_${pattern}`)) {
-          acc.push(index);
-        }
-
-        if (line.includes(`@end_${pattern}`)) {
-          const prevStartLine = acc[acc.length - 1];
-          Array(index - prevStartLine)
-            .fill(0)
-            .map((_, i) => acc.push(prevStartLine + i + 1));
-        }
-        return acc;
-      }, [] as number[]);
-
-      return lines
-        .filter((_, index) => !removeLines.includes(index))
-        .join('\n');
-    }
-
-    if (type === 'REPLACE') {
-      const lines = payload.split('\n');
-      const newContractRaw = lines.reduce(
-        (acc, line) => {
-          if (line.includes(`@start_replace_${pattern}`)) {
-            acc.inRange = true;
-          }
-
-          if (acc.inRange === true) {
-            if (line.includes(`_${pattern}[`)) {
-              acc.replace = line
-                .match(/\[(.*?)]/g)
-                .toString()
-                .replaceAll('[', '')
-                .replaceAll(']', '');
-            }
-
-            acc.new.push(line.replaceAll(acc.replace, ''));
-          } else {
-            acc.new.push(line);
-          }
-
-          if (line.includes(`@end_replace_${pattern}`)) {
-            acc.inRange = false;
-            acc.replace = undefined;
-          }
-
-          return acc;
-        },
-        { inRange: false, new: [] as string[], replace: undefined },
-      );
-
-      // console.log(newContractRaw.new);
-      return newContractRaw.new.join('\n');
-
-      // const contractRaw = replaceLines.map((line) => {});
-    }
   }
 
   /* ---------------------------- Compile Contract ---------------------------- */
