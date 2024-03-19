@@ -1,7 +1,7 @@
 import { environmentConfig } from '@jventures-jdn/config-consts';
 import axios, { AxiosRequestConfig } from 'axios';
 
-export class FetcherAPI {
+export default class FetcherAPI {
   constructor(version?: number, endpoint?: string, baseUrl?: string) {
     this.version = version || 1;
     this.endpoint = endpoint || environmentConfig.tokenGeneratorApiEndpoint;
