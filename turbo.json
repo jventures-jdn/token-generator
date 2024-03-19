@@ -1,6 +1,11 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "pipeline": {
+    "start": {
+      "cache": true,
+      "dotEnv": [".env"],
+      "dependsOn": ["build"]
+    },
     "build": {
       "dotEnv": [".env"],
       "dependsOn": ["^build"],

@@ -23,6 +23,7 @@
     "disablePostinstall": "1"
   },
   "scripts": {
+    "start": "turbo run start",
     "build": "turbo run build",
     "changeset:gen": "pnpm changeset-conventional",
     "changeset:publish": "changeset publish",
