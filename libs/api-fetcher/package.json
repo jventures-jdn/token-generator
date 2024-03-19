@@ -1,0 +1,39 @@
+{
+  "name": "@jventures-jdn/api-fetcher",
+  "version": "0.0.0",
+  "author": "J Ventures Co., Ltd.",
+  "dependencies": {
+    "json-bigint": "^1.0.0",
+    "swr": "^2.2.4"
+  },
+  "devDependencies": {
+    "@jventures-jdn/config-consts": "*",
+    "@jventures-jdn/config-tsconfig": "*",
+    "@jventures-jdn/eslint-config-nest": "*",
+    "@jventures-jdn/tools": "*",
+    "@swc/core": "^1.4.8",
+    "@types/json-bigint": "^1.0.4",
+    "tsup": "^8.0.1"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.cjs"
+    }
+  },
+  "license": "MIT",
+  "main": "./index.js",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jventures-jdn/token-generator.git",
+    "directory": "libs/api-fetcher"
+  },
+  "scripts": {
+    "build": "tsup --format cjs,esm --dts",
+    "clean": "rm -rf node_modules && rm -rf dist",
+    "lint": "eslint \"./**/*.ts\""
+  },
+  "type": "module",
+  "types": "./index.d.ts"
+}
