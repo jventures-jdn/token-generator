@@ -1,11 +1,11 @@
-import { GeneratedContractDto } from '../../src/modules/contract/contract.dto';
+import { CompileContractDto } from '@jventures-jdn/api-fetcher';
 import Supertest from 'supertest';
 
 export async function compileJobTest(
   supertest: Supertest.SuperTest<Supertest.Test>,
   options: {
     prefix: string;
-    payload: GeneratedContractDto;
+    payload: CompileContractDto;
   },
 ) {
   // generate contract
@@ -42,7 +42,7 @@ export async function compileTest(
   supertest: Supertest.SuperTest<Supertest.Test>,
   options: {
     prefix: string;
-    payload: GeneratedContractDto;
+    payload: CompileContractDto;
   },
 ) {
   // generate contract
