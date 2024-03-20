@@ -2,7 +2,12 @@ import { InjectQueue } from '@nestjs/bull';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Job, Queue } from 'bull';
 import { ContractService } from './contract.service';
-import { GeneratedContractDto, JobDto } from './contract.dto';
+import {
+  CompileContractDto,
+  GetGeneratedContractDto,
+  JobDto,
+  VerifyERC20ContractDto,
+} from '@jventures-jdn/api-fetcher';
 
 @Injectable()
 export class ContractProducer {
@@ -15,10 +20,10 @@ export class ContractProducer {
   /**
    * Add compile job to queue.
    *
-   * @param {GeneratedContractDto} payload - Type and name of contract
+   * @param {CompileContractDto} payload - Type and name of contract
    * @returns Job id
    */
-  async addCompileJob(payload: GeneratedContractDto) {
+  async addCompileJob(payload: CompileContractDto) {
     // if giving generated contract name is not exist, throw error
     await this.contractService.readGeneratedContract(payload);
 
@@ -29,10 +34,10 @@ export class ContractProducer {
   /**
    * Add verify job to queue.
    *
-   * @param {GeneratedContractDto} payload - Type and name of contract
+   * @param {VerifyERC20ContractDto} payload - Type and name of contract
    * @returns Job id
    */
-  async addVerifyJob(payload: GeneratedContractDto) {
+  async addVerifyJob(payload: VerifyERC20ContractDto) {
     // if giving generated contract name is not exist, throw error
     await this.contractService.readGeneratedContract(payload);
 
@@ -62,7 +67,7 @@ export class ContractProducer {
    * @throws NotFoundException if the jobId does not exist.
    */
   async getJob(payload: JobDto) {
-    const job: Job<GeneratedContractDto> = await this.contractQueue.getJob(
+    const job: Job<GetGeneratedContractDto> = await this.contractQueue.getJob(
       payload.jobId,
     );
 
@@ -79,10 +84,10 @@ export class ContractProducer {
   /**
    * Retrieves the status of a job.
    *
-   * @param {Job<GeneratedContractDto>} payload - The job payload.
+   * @param {Job<GeneratedContractRequest>} payload - The job payload.
    * @returns An object containing the job status properties.
    */
-  async getJobStatus(payload: Job<GeneratedContractDto>) {
+  async getJobStatus(payload: Job<GetGeneratedContractDto>) {
     const [
       state,
       progress,

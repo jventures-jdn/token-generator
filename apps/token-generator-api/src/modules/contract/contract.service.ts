@@ -9,14 +9,17 @@ import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { spawn } from 'child_process';
 import { Job } from 'bull';
-import {
-  GenerateContractDto,
-  GeneratedContractDto,
-  OriginalContractDto,
-  VerifyERC20ContractERC2Dto,
-} from './contract.dto';
 import JSON from 'json-bigint';
-import { ContentManagement } from '@jventures-jdn/tools';
+import ContentManagement from '@jventures-jdn/tools/content-management';
+import {
+  CompileContractDto,
+  GenerateContractDto,
+  GetAbiContractDto,
+  GetCompiledContractDto,
+  GetGeneratedContractDto,
+  GetOriginalContractDto,
+  VerifyERC20ContractDto,
+} from '@jventures-jdn/api-fetcher/dto';
 
 @Injectable()
 export class ContractService {
@@ -32,11 +35,11 @@ export class ContractService {
   /**
    * Read a original contract file based on the contract type.
    *
-   * @param {OriginalContractDto} payload - Type of contract
+   * @param {GetOriginalContractDto} payload - Type of contract
    * @returns Content and path of the contract file
    * @throws NotFoundException if the compiled contract does not exist.
    */
-  async readOriginalContract(payload: OriginalContractDto) {
+  async readOriginalContract(payload: GetOriginalContractDto) {
     const existPath = `${this.originalContractPath}/${
       payload.contractType
     }/${payload.contractType.toUpperCase()}Generator.sol`;
@@ -54,11 +57,11 @@ export class ContractService {
   /**
    * Read a generated contract file based on the provided name and contract type.
    *
-   * @param {GeneratedContractDto} payload - Type and name of contract
+   * @param {GetGeneratedContractDto} payload - Type and name of contract
    * @returns Content and path of the contract file
    * @throws NotFoundException if the compiled contract does not exist.
    */
-  async readGeneratedContract(payload: GeneratedContractDto) {
+  async readGeneratedContract(payload: GetGeneratedContractDto) {
     const existPath = `${this.generateContractPath}/${payload.contractType}/${payload.contractName}.sol`;
 
     if (existsSync(existPath)) {
@@ -74,14 +77,14 @@ export class ContractService {
   /**
    * Reads the compiled contract file based on the provided name and contract type.
    *
-   * @param {GeneratedContractDto} payload - Type and name of contract
+   * @param {GetCompiledContractDto} payload - Type and name of contract
    * @returns Content and path of the contract file
    * @throws NotFoundException if the compiled contract does not exist.
    */
-  async readCompiledContract(payload: GeneratedContractDto) {
+  async readCompiledContract(payload: GetCompiledContractDto) {
     const existPath = `${this.compiledContractPath}/artifacts/contracts/generated/${payload.contractType}/${payload.contractName}.sol/${payload.contractName}.json`;
 
-    if (existsSync(existPath)) {
+    try {
       return {
         raw: JSON.parse(readFileSync(existPath).toString()) as Record<
           string,
@@ -89,7 +92,7 @@ export class ContractService {
         >,
         path: existPath,
       };
-    } else {
+    } catch (error) {
       throw new NotFoundException(undefined, {
         description: 'This compiled contract does not exist',
       });
@@ -140,9 +143,21 @@ export class ContractService {
     // write new contract
     const writePath = `${this.generateContractPath}/${filePath}`;
     writeFileSync(writePath, generatedFeatureContractRaw);
-    return filePath;
+    return { path: filePath };
   }
 
+  /**
+   * Modifies a contract by disabling certain features based on the provided options.
+   * @param contractRaw - The raw contract string.
+   * @param disable - An optional object specifying which features to disable.
+   * @param disable.supplyCap - Set to `true` to disable the supplyCap feature.
+   * @param disable.mint - Set to `true` to disable the mint feature.
+   * @param disable.burn - Set to `true` to disable the self burn feature.
+   * @param disable.adminBurn - Set to `true` to disable the admin burn feature.
+   * @param disable.pause - Set to `true` to disable the pause feature.
+   * @param disable.adminTransfer - Set to `true` to disable the admin transfer feature.
+   * @returns The modified contract string.
+   */
   contractFeatureGenerator(
     contractRaw: string,
     disable?: {
@@ -157,7 +172,7 @@ export class ContractService {
     let newContractRaw = contractRaw;
 
     // no supply cap
-    if (disable.supplyCap) {
+    if (disable?.supplyCap) {
       newContractRaw = ContentManagement.editContent(
         newContractRaw,
         'LINE',
@@ -172,7 +187,7 @@ export class ContractService {
     }
 
     // no mint
-    if (disable.mint) {
+    if (disable?.mint) {
       newContractRaw = ContentManagement.editContent(
         newContractRaw,
         'LINE',
@@ -187,7 +202,7 @@ export class ContractService {
     }
 
     // no self burn
-    if (disable.burn) {
+    if (disable?.burn) {
       newContractRaw = ContentManagement.editContent(
         newContractRaw,
         'RANGE',
@@ -196,7 +211,7 @@ export class ContractService {
     }
 
     // no admin burn
-    if (disable.adminBurn) {
+    if (disable?.adminBurn) {
       newContractRaw = ContentManagement.editContent(
         newContractRaw,
         'LINE',
@@ -211,7 +226,7 @@ export class ContractService {
     }
 
     // no brun
-    if (disable.burn && disable.adminBurn) {
+    if (disable?.burn && disable?.adminBurn) {
       newContractRaw = ContentManagement.editContent(
         newContractRaw,
         'LINE',
@@ -226,7 +241,7 @@ export class ContractService {
     }
 
     // no pause
-    if (disable.pause) {
+    if (disable?.pause) {
       newContractRaw = ContentManagement.editContent(
         newContractRaw,
         'REPLACE',
@@ -247,7 +262,7 @@ export class ContractService {
     }
 
     // no admin transfer
-    if (disable.adminTransfer) {
+    if (disable?.adminTransfer) {
       newContractRaw = ContentManagement.editContent(
         newContractRaw,
         'RANGE',
@@ -268,12 +283,10 @@ export class ContractService {
   /**
    * Compiles the generated contract.
    *
-   * @param {Job<GeneratedContractDto> | GeneratedContractDto} payload Job or payload with containing `contractName` and `contractType` of contract
+   * @param {Job<CompileContractDto> | CompileContractDto} payload Job or payload with containing `contractName` and `contractType` of contract
    * @returns Compiled output
    */
-  async compileContract(
-    payload: GeneratedContractDto | Job<GeneratedContractDto>,
-  ) {
+  async compileContract(payload: CompileContractDto | Job<CompileContractDto>) {
     const isJob = payload.hasOwnProperty('id');
 
     // create execute streams
@@ -282,56 +295,58 @@ export class ContractService {
       shell: true,
     });
 
-    return new Promise((resolve, reject) => {
-      let output = '';
+    return {
+      output: await new Promise((resolve, reject) => {
+        let output = '';
 
-      // log in data
-      command.stdout.on('data', (data) => {
-        output += `\n${data.toString()}`;
-        this.logger.verbose(
-          `[compileContract] ${data.toString()?.replaceAll('\n', '')}`,
-        );
-      });
-      // reject on error
-      command.stderr.on('data', async (data) => {
-        this.logger.error(
-          `[compileContract] ${data.toString()?.replaceAll('\n', '')}`,
-        );
-        if (isJob) {
-          const job = payload as Job<GeneratedContractDto>;
-          await Promise.all([
-            job.moveToFailed({ message: data.toString() }),
-            job.progress(100),
-          ]);
-        }
-        reject(
-          new InternalServerErrorException({
-            error: data.toString(),
-            cause: 'hardhat',
-          }),
-        );
-      });
+        // log in data
+        command.stdout.on('data', (data) => {
+          output += `\n${data.toString()}`;
+          this.logger.verbose(
+            `[compileContract] ${data.toString()?.replaceAll('\n', '')}`,
+          );
+        });
+        // reject on error
+        command.stderr.on('data', async (data) => {
+          this.logger.error(
+            `[compileContract] ${data.toString()?.replaceAll('\n', '')}`,
+          );
+          if (isJob) {
+            const job = payload as Job<CompileContractDto>;
+            await Promise.all([
+              job.moveToFailed({ message: data.toString() }),
+              job.progress(100),
+            ]);
+          }
+          reject(
+            new InternalServerErrorException({
+              error: data.toString(),
+              cause: 'hardhat',
+            }),
+          );
+        });
 
-      // resolve on exit
-      command.on('exit', async () => {
-        if (isJob) {
-          const job = payload as Job<GeneratedContractDto>;
-          await Promise.all([job.moveToCompleted(output), job.progress(100)]);
-        }
-        await new Promise((resolve) => setTimeout(() => resolve(true), 3000));
-        resolve(output);
-      });
-    });
+        // resolve on exit
+        command.on('exit', async () => {
+          if (isJob) {
+            const job = payload as Job<CompileContractDto>;
+            await Promise.all([job.moveToCompleted(output), job.progress(100)]);
+          }
+          await new Promise((resolve) => setTimeout(() => resolve(true), 3000));
+          resolve(output);
+        });
+      }),
+    };
   }
 
   /* ---------------------------- Compile Contract ---------------------------- */
   /**
    * Verify the generated contract.
    *
-   * @param {VerifyERC20ContractERC2Dto} payload payload with containing `contractName`, `contractType`, `address`, `chainName` of contract
+   * @param {VerifyERC20ContractDto} payload payload with containing `contractName`, `contractType`, `address`, `chainName` of contract
    * @returns Verify output
    */
-  async verifyContract(payload: VerifyERC20ContractERC2Dto) {
+  async verifyContract(payload: VerifyERC20ContractDto) {
     // creates an argument file for use in contract verify
     const argsName = `${payload.contractName}.js`;
     const argsPath = `${this.argsContractPath}/${argsName}`;
@@ -351,34 +366,36 @@ export class ContractService {
       },
     );
 
-    return new Promise((resolve, reject) => {
-      let output = '';
+    return {
+      output: await new Promise((resolve, reject) => {
+        let output = '';
 
-      // log in data
-      command.stdout.on('data', (data) => {
-        output += `\n${data.toString()}`;
-        this.logger.verbose(
-          `[verifyContract] ${data.toString()?.replaceAll('\n', '')}`,
-        );
-      });
-      // reject on error
-      command.stderr.on('data', async (data) => {
-        this.logger.error(
-          `[verifyContract] ${data.toString()?.replaceAll('\n', '')}`,
-        );
-        reject(
-          new InternalServerErrorException({
-            error: data.toString(),
-            cause: 'hardhat',
-          }),
-        );
-      });
+        // log in data
+        command.stdout.on('data', (data) => {
+          output += `\n${data.toString()}`;
+          this.logger.verbose(
+            `[verifyContract] ${data.toString()?.replaceAll('\n', '')}`,
+          );
+        });
+        // reject on error
+        command.stderr.on('data', async (data) => {
+          this.logger.error(
+            `[verifyContract] ${data.toString()?.replaceAll('\n', '')}`,
+          );
+          reject(
+            new InternalServerErrorException({
+              error: data.toString(),
+              cause: 'hardhat',
+            }),
+          );
+        });
 
-      // resolve on exit
-      command.on('exit', async () => {
-        resolve(output);
-      });
-    });
+        // resolve on exit
+        command.on('exit', async () => {
+          resolve(output);
+        });
+      }),
+    };
   }
 
   /* ----------------------------- Remove Contract ---------------------------- */
@@ -386,11 +403,11 @@ export class ContractService {
    * Removes a contract.
    * if providing contract name is not exist, then throws an error.
    *
-   * @param {GeneratedContractDto} payload - `contractType` and `contractName` of contract
+   * @param {GetGeneratedContractDto} payload - `contractType` and `contractName` of contract
    * @returns void
    * @throws InternalServerErrorException if there is an error removing the contract.
    */
-  async removeContract(payload: GeneratedContractDto) {
+  async removeContract(payload: GetGeneratedContractDto) {
     // if giving generated contract name is not exist, throw error
     const generatedContract = await this.readGeneratedContract(payload);
 
@@ -409,10 +426,10 @@ export class ContractService {
   /* -------------------------------- Read ABI -------------------------------- */
   /**
    * Reads the ABI and bytecode of a generated contract.
-   * @param {GeneratedContractDto} payload - The payload containing the generated contract information.
+   * @param {GetAbiContractDto} payload - The payload containing the generated contract information.
    * @returns An object containing the ABI and bytecode of the contract.
    */
-  async readAbi(payload: GeneratedContractDto) {
+  async readAbi(payload: GetAbiContractDto) {
     // if giving generated contract name is not exist, throw error
     const { raw } = await this.readCompiledContract(payload);
     return {
