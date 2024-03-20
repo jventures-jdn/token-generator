@@ -7,7 +7,6 @@
     "@jventures-jdn/eslint-config-nest": "*",
     "axios": "^1.6.8"
   },
-  "type": "module",
   "main": "./index.js",
   "types": "./index.d.ts",
   "exports": {
