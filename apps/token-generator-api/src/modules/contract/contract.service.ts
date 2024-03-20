@@ -190,12 +190,6 @@ export class ContractService {
     if (disable.burn) {
       newContractRaw = ContentManagement.editContent(
         newContractRaw,
-        'LINE',
-        'selfBurn',
-      );
-
-      newContractRaw = ContentManagement.editContent(
-        newContractRaw,
         'RANGE',
         'selfBurn',
       );
