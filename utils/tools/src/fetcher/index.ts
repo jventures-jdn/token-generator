@@ -1,6 +1,12 @@
 import { environmentConfig } from '@jventures-jdn/config-consts';
 import axios, { AxiosRequestConfig } from 'axios';
-
+export type FetcherApiResponse<T> = {
+  status: number;
+  timestamp: number;
+  isSuccess: boolean;
+  message?: string;
+  data: T;
+};
 export default class FetcherAPI {
   constructor(version?: number, endpoint?: string, baseUrl?: string) {
     this.version = version || 1;
@@ -19,14 +25,18 @@ export default class FetcherAPI {
       body?: any;
       config?: AxiosRequestConfig;
     },
-  ) => {
+  ): Promise<FetcherApiResponse<Response>> => {
     return (
       ['post', 'patch'].includes(method)
-        ? axios[method]<Response>(`${path}`, options?.body || {}, {
-            baseURL: this.baseUrl,
-            ...options?.config,
-          })
-        : axios[method]<Response>(`${path}`, {
+        ? axios[method]<FetcherApiResponse<Response>>(
+            `${path}`,
+            options?.body || {},
+            {
+              baseURL: this.baseUrl,
+              ...options?.config,
+            },
+          )
+        : axios[method]<FetcherApiResponse<Response>>(`${path}`, {
             baseURL: this.baseUrl,
             ...options?.config,
           })

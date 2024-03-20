@@ -3,10 +3,12 @@
   "version": "0.0.0",
   "author": "J Ventures Co., Ltd.",
   "dependencies": {
+    "class-validator": "^0.14.0",
     "json-bigint": "^1.0.0",
     "swr": "^2.2.4"
   },
   "devDependencies": {
+    "@jventures-jdn/config-chains": "*",
     "@jventures-jdn/config-consts": "*",
     "@jventures-jdn/config-tsconfig": "*",
     "@jventures-jdn/eslint-config-nest": "*",
@@ -19,6 +21,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.cjs"
+    },
+    "./dto": {
+      "types": "./dist/src/dto/index.d.ts",
+      "default": "./dist/src/dto/index.cjs"
     }
   },
   "license": "MIT",
@@ -34,6 +40,5 @@
     "clean": "rm -rf node_modules && rm -rf dist",
     "lint": "eslint \"./**/*.ts\""
   },
-  "type": "module",
   "types": "./index.d.ts"
 }

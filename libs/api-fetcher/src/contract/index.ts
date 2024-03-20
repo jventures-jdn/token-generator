@@ -1,13 +1,24 @@
 import useSWR from 'swr';
 import useSWRMutation from 'swr/mutation';
 import { fetcherAPI } from '@jventures-jdn/tools/fetcher';
-import {
-  GenerateContractRequest,
-  JobRequest,
-  OriginalContractRequest,
-  VerifyERC20ContractRequest,
-} from '@jventures-jdn/config-consts';
+import { JobRequest } from '@jventures-jdn/config-consts';
 import JSONbig from 'json-bigint';
+import {
+  CompileContractDto,
+  CompileContractResponse,
+  GenerateContractDto,
+  GenerateContractResponse,
+  GetAbiContractDto,
+  GetAbiContractResponse,
+  GetCompiledContractDto,
+  GetCompiledContractResponse,
+  GetGeneratedContractDto,
+  GetGeneratedContractResponse,
+  GetOriginalContractDto,
+  GetOriginalContractResponse,
+  VerifyERC20ContractDto,
+  VerifyERC20ContractResponse,
+} from '../dto/contract';
 
 export default class ContractFetcherAPI {
   private readonly key = 'contract';
@@ -16,27 +27,35 @@ export default class ContractFetcherAPI {
   /* ----------------------------------- Get ---------------------------------- */
   public fetch = this.fetcher;
 
-  public getOriginalContract(payload: OriginalContractRequest) {
+  public getOriginalContract(payload: GetOriginalContractDto) {
     return useSWR([`${this.key}/get/original`, payload], () =>
-      this.fetcher('get', '/original', { config: { params: payload } }),
+      this.fetcher<GetOriginalContractResponse>('get', '/original', {
+        config: { params: payload },
+      }),
     );
   }
 
-  public getGeneratedContract(payload: GenerateContractRequest) {
+  public getGeneratedContract(payload: GetGeneratedContractDto) {
     return useSWR([`${this.key}/get/generated`, payload], () =>
-      this.fetcher('get', '/generated', { config: { params: payload } }),
+      this.fetcher<GetGeneratedContractResponse>('get', '/generated', {
+        config: { params: payload },
+      }),
     );
   }
 
-  public getCompiledContract(payload: GenerateContractRequest) {
+  public getCompiledContract(payload: GetCompiledContractDto) {
     return useSWR([`${this.key}/get/compiled`, payload], () =>
-      this.fetcher('get', '/compiled', { config: { params: payload } }),
+      this.fetcher<GetCompiledContractResponse>('get', '/compiled', {
+        config: { params: payload },
+      }),
     );
   }
 
-  public getCompiledContractABI(payload: GenerateContractRequest) {
+  public getCompiledContractABI(payload: GetAbiContractDto) {
     return useSWR([`${this.key}/get/abi`, payload], () =>
-      this.fetcher('get', '/abi', { config: { params: payload } }),
+      this.fetcher<GetAbiContractResponse>('get', '/abi', {
+        config: { params: payload },
+      }),
     );
   }
 
@@ -50,8 +69,8 @@ export default class ContractFetcherAPI {
   public generateContract() {
     return useSWRMutation(
       [`${this.key}/generate`],
-      (_, { arg }: { arg: GenerateContractRequest }) => {
-        return this.fetcher('post', '/generate', {
+      (_, { arg }: { arg: GenerateContractDto }) => {
+        return this.fetcher<GenerateContractResponse>('post', '/generate', {
           body: arg,
         });
       },
@@ -61,8 +80,8 @@ export default class ContractFetcherAPI {
   public compileContract() {
     return useSWRMutation(
       [`${this.key}/compile`],
-      (_, { arg }: { arg: GenerateContractRequest }) => {
-        return this.fetcher('post', '/compile', {
+      (_, { arg }: { arg: CompileContractDto }) => {
+        return this.fetcher<CompileContractResponse>('post', '/compile', {
           body: arg,
         });
       },
@@ -72,8 +91,8 @@ export default class ContractFetcherAPI {
   public verifyContract() {
     return useSWRMutation(
       [`${this.key}/verify`],
-      (_, { arg }: { arg: VerifyERC20ContractRequest }) => {
-        return this.fetcher('post', '/verify', {
+      (_, { arg }: { arg: VerifyERC20ContractDto }) => {
+        return this.fetcher<VerifyERC20ContractResponse>('post', '/verify', {
           body: JSONbig({ storeAsString: true }).parse(
             JSONbig({ storeAsString: true }).stringify(arg),
           ),
