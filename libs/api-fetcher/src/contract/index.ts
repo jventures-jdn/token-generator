@@ -1,7 +1,6 @@
 import useSWR from 'swr';
 import useSWRMutation from 'swr/mutation';
 import { fetcherAPI } from '@jventures-jdn/tools/fetcher';
-import { JobRequest } from '@jventures-jdn/config-consts';
 import JSONbig from 'json-bigint';
 import {
   CompileContractDto,
@@ -16,6 +15,7 @@ import {
   GetGeneratedContractResponse,
   GetOriginalContractDto,
   GetOriginalContractResponse,
+  JobDto,
   VerifyERC20ContractDto,
   VerifyERC20ContractResponse,
 } from '../dto/contract';
@@ -59,7 +59,7 @@ export default class ContractFetcherAPI {
     );
   }
 
-  public getJob(payload: JobRequest) {
+  public getJob(payload: JobDto) {
     return useSWR([`${this.key}/get/job`, payload], () =>
       this.fetcher('get', '/job', { config: { params: payload } }),
     );
