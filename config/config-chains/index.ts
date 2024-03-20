@@ -6,6 +6,7 @@ export enum InternalChainEnum {
   JFIN = 'JFIN',
   JFINT = 'JFINT',
 }
+export const InternalChains = [InternalChainEnum.JFIN, InternalChainEnum.JFINT];
 export const CHAIN_DECIMAL_UNIT = 18;
 export const CHAIN_DECIMAL = BigInt('10') ** BigInt(CHAIN_DECIMAL_UNIT);
 
