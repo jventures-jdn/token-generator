@@ -60,10 +60,10 @@ importers:
         specifier: workspace:*
         version: link:../../config/config-chains
       '@jventures-jdn/config-consts':
-        specifier: workspace:*
+        specifier: '*'
         version: link:../../config/config-consts
       '@jventures-jdn/tools':
-        specifier: workspace:*
+        specifier: '*'
         version: link:../../utils/tools
       '@nestjs/bull':
         specifier: ^10.0.1
