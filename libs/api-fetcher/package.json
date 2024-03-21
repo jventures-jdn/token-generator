@@ -20,11 +20,13 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "default": "./dist/index.cjs"
+      "import": "./dist/index.mjs",
+      "default": "./index.ts"
     },
     "./dto": {
       "types": "./dist/src/dto/index.d.ts",
-      "default": "./dist/src/dto/index.cjs"
+      "import": "./dist/src/dto/index.mjs",
+      "default": "./src/dto/index.ts"
     }
   },
   "license": "MIT",
