@@ -1,39 +1,41 @@
 {
-  "name": "@jventures-jdn/fetcher",
+  "name": "@jventures-jdn/tools",
   "version": "0.1.0",
   "author": "J Ventures Co., Ltd.",
   "dependencies": {
     "@jventures-jdn/config-consts": "*",
     "@jventures-jdn/eslint-config-nest": "*",
-    "axios": "^1.6.7",
-    "json-bigint": "^1.0.0",
-    "swr": "^2.2.4"
+    "axios": "^1.6.8"
   },
-  "type": "module",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./index.js",
+  "types": "./index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.js"
+      "default": "./dist/index.cjs"
+    },
+    "./content-management": {
+      "types": "./dist/src/content-management/index.d.ts",
+      "default": "./dist/src/content-management/index.cjs"
+    },
+    "./fetcher": {
+      "types": "./dist/src/fetcher/index.d.ts",
+      "default": "./dist/src/fetcher/index.cjs"
     }
   },
   "devDependencies": {
     "@jventures-jdn/config-tsconfig": "*",
-    "@types/json-bigint": "^1.0.4",
     "tsup": "^8.0.1"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/jventures-jdn/token-generator.git",
-    "directory": "utils/fetcher"
+    "directory": "utils/tools"
   },
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "tsup index.ts --format cjs,esm --dts",
+    "build": "tsup --format cjs,esm --dts",
     "clean": "rm -rf node_modules && rm -rf dist",
     "lint": "eslint \"./**/*.ts\""
   }

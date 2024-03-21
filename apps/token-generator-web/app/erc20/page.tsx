@@ -14,7 +14,10 @@ import {
 } from '@jventures-jdn/config-chains';
 import { useErc20 } from './hooks';
 import { deployContract } from './deploy';
-import { contractFetcherApi } from '@jventures-jdn/fetcher';
+import {
+  GetAbiContractResponse,
+  contractFetcherApi,
+} from '@jventures-jdn/api-fetcher';
 import { ContractTypeEnum } from '@jventures-jdn/config-consts';
 import { getNetwork } from 'wagmi/actions';
 
@@ -102,14 +105,18 @@ export default function ERC20Page() {
 
     /* --------------------------------- Get ABI -------------------------------- */
     add(`📝 Processing Bytecode & ABI ...`, { color: 'info' });
-    const getABIResp = await contractFetcherApi.fetch('get', '/abi', {
-      config: {
-        params: {
-          contractType: ContractTypeEnum.ERC20,
-          contractName: form.name,
+    const getABIResp = await contractFetcherApi.fetch<GetAbiContractResponse>(
+      'get',
+      '/abi',
+      {
+        config: {
+          params: {
+            contractType: ContractTypeEnum.ERC20,
+            contractName: form.name,
+          },
         },
       },
-    });
+    );
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
     pop();

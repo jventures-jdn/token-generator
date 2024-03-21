@@ -3,10 +3,11 @@
   "display": "NestJs",
   "extends": "./base.json",
   "compilerOptions": {
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "Node16",
+    "moduleResolution": "node16",
     "removeComments": true,
     "emitDecoratorMetadata": true,
+    "isolatedModules": false,
     "experimentalDecorators": true,
     "target": "ESNext",
     "sourceMap": true,

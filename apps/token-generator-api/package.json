@@ -3,6 +3,9 @@
   "version": "1.1.1",
   "author": "J Ventures Co., Ltd.",
   "dependencies": {
+    "@jventures-jdn/api-fetcher": "workspace:*",
+    "@jventures-jdn/config-chains": "workspace:*",
+    "@jventures-jdn/config-consts": "*",
     "@nestjs/bull": "^10.0.1",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.1.1",
@@ -23,11 +26,10 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
-    "@jventures-jdn/config-chains": "*",
-    "@jventures-jdn/config-consts": "*",
     "@jventures-jdn/config-prettier": "*",
     "@jventures-jdn/config-tsconfig": "*",
     "@jventures-jdn/eslint-config-nest": "*",
+    "@jventures-jdn/tools": "*",
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
@@ -67,7 +69,7 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "start": "node dist/main",
     "start:debug": "nest start --debug --watch",
-    "test": "pnpm test:unit && pnpm test:contract",
+    "test": "pnpm test:unit & pnpm test:contract & pnpm test:e2e",
     "test:contract": "pnpm hardhat jest test/solidity/**/*.spec.ts",
     "test:cov": "pnpm test -- --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",

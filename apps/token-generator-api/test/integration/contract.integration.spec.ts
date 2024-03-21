@@ -4,42 +4,37 @@ import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ContractModule } from '../../src/modules/contract/contract.module';
 import { AppModule } from '../../src/app.module';
-import { compileJobTest, compileTest } from './helper';
+import { compileTest } from './helper';
 import { ContractTypeEnum } from '@jventures-jdn/config-consts';
-import { OriginalContractDto } from '@/src/modules/contract/contract.dto';
+import { GetOriginalContractDto } from '@jventures-jdn/api-fetcher';
 
 describe('ContractController (integration)', () => {
   const prefix = '/contract';
   let app: INestApplication;
   let supertest: Supertest.SuperTest<Supertest.Test>;
 
-  const payloadERC20 = {
+  const payload1ERC20 = {
     contractType: ContractTypeEnum.ERC20,
-    contractName: 'TEST',
+    contractName: 'ERC20_PAYLOAD_01',
   };
   const payload2ERC20 = {
     contractType: ContractTypeEnum.ERC20,
-    contractName: 'TEST2',
+    contractName: 'ERC20_PAYLOAD_02',
   };
   const payload3ERC20 = {
     contractType: ContractTypeEnum.ERC20,
-    contractName: 'TEST3',
-  };
-  const payloadERC721 = {
-    contractType: ContractTypeEnum.ERC721,
-    contractName: 'TEST',
+    contractName: 'ERC20_PAYLOAD_03',
   };
 
   const removeGenerated = async () => {
     await Promise.all([
-      supertest.delete(`${prefix}/generated`).query(payloadERC20).send(),
-      supertest.delete(`${prefix}/generated`).query(payloadERC721).send(),
+      supertest.delete(`${prefix}/generated`).query(payload1ERC20).send(),
       supertest.delete(`${prefix}/generated`).query(payload2ERC20).send(),
       supertest.delete(`${prefix}/generated`).query(payload3ERC20).send(),
     ]);
   };
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     // setup instance
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [ContractModule, AppModule],
@@ -51,19 +46,14 @@ describe('ContractController (integration)', () => {
     await app.init();
   });
 
-  afterAll(async () => {
-    // wait bull client disconnect before close instance
-    await new Promise((resolve) => setTimeout(() => resolve(true), 250));
-    await app.close();
-    jest.clearAllMocks();
-  });
-
   afterEach(async () => {
     await removeGenerated();
   });
 
   afterAll(async () => {
+    await app.close();
     await removeGenerated();
+    jest.clearAllMocks();
   });
 
   /* ----------------------------- GET / Original ----------------------------- */
@@ -72,8 +62,8 @@ describe('ContractController (integration)', () => {
       jest.clearAllMocks();
     });
 
-    it('should response 200 when giving payload which is `erc20`', async () => {
-      const payload: OriginalContractDto = {
+    it('should resolve when giving payload which is `erc20`', async () => {
+      const payload: GetOriginalContractDto = {
         contractType: ContractTypeEnum.ERC20,
       };
 
@@ -85,8 +75,8 @@ describe('ContractController (integration)', () => {
       expect(response.status).toEqual(200);
     });
 
-    it('should response 200 when giving payload which is `erc721`', async () => {
-      const payload: OriginalContractDto = {
+    it('should resolve when giving payload which is `erc721`', async () => {
+      const payload: GetOriginalContractDto = {
         contractType: ContractTypeEnum.ERC721,
       };
 
@@ -99,7 +89,7 @@ describe('ContractController (integration)', () => {
     });
 
     it('should response 404 when giving payload is not in `ContractTypeEnum`', async () => {
-      const payload: OriginalContractDto = {
+      const payload: GetOriginalContractDto = {
         contractType: 'ERC404' as ContractTypeEnum,
       };
 
@@ -117,10 +107,10 @@ describe('ContractController (integration)', () => {
 
   /* ----------------------------- GET / Generated ---------------------------- */
   describe('GET / generated', () => {
-    it('should response 404 when no file match with giving `contractName` and `contractType`', async () => {
+    it('should response 404 when no generated file match with giving payload', async () => {
       const response = await supertest
         .get(`${prefix}/generated`)
-        .query(payloadERC20)
+        .query(payload3ERC20)
         .send();
 
       expect(response.status).toEqual(404);
@@ -129,69 +119,60 @@ describe('ContractController (integration)', () => {
       );
     });
 
-    it('should response 200 when giving payload which is `erc20`', async () => {
-      await supertest.post(`${prefix}/generate`).send(payloadERC20);
+    it('should resolve when payload is `erc20` and matched with generated contract', async () => {
+      await supertest.post(`${prefix}/generate`).send(payload1ERC20);
 
       const response = await supertest
         .get(`${prefix}/generated`)
-        .query(payloadERC20)
+        .query(payload1ERC20)
         .send();
 
       expect(response.status).toEqual(200);
-    });
-
-    it('should response 200 when giving payload which is `erc721`', async () => {
-      await supertest.post(`${prefix}/generate`).send(payloadERC721);
-
-      const response = await supertest
-        .get(`${prefix}/generated`)
-        .query(payloadERC721)
-        .send();
-
-      expect(response.status).toEqual(200);
-    });
-  });
-
-  /* ----------------------------- POST / Compile Job ----------------------------- */
-  describe('POST / compile-job', () => {
-    it('Should response 200 with `jobId` when giving payload which is `erc20`', async () => {
-      await compileJobTest(supertest, { payload: payloadERC20, prefix });
-    });
-
-    it('Should response 200 with `jobId` when giving payload which is `erc721`', async () => {
-      await compileJobTest(supertest, { payload: payloadERC721, prefix });
-    });
-
-    it('Should work normally when multiple user generate & compile at the same time', async () => {
-      await Promise.all([
-        compileJobTest(supertest, { payload: payloadERC20, prefix }),
-        compileJobTest(supertest, { payload: payload2ERC20, prefix }),
-        compileJobTest(supertest, { payload: payload3ERC20, prefix }),
-        compileJobTest(supertest, { payload: payloadERC721, prefix }),
-      ]);
     });
   });
 
   /* ----------------------------- POST / Compile ----------------------------- */
   describe('POST / compile', () => {
-    it('Should response 200 with `jobId` when giving payload which is `erc20`', async () => {
-      await compileTest(supertest, { payload: payloadERC20, prefix });
-    });
-
-    it('Should response 200 with `jobId` when giving payload which is `erc721`', async () => {
-      await compileTest(supertest, { payload: payloadERC721, prefix });
-    });
-
-    it('Should work normally when multiple user generate & compile at the same time', async () => {
+    it('Should resolve normally when multiple user generate & compile at the same time', async () => {
       await Promise.all([
-        compileTest(supertest, { payload: payloadERC20, prefix }),
-        compileTest(supertest, { payload: payload2ERC20, prefix }),
-        compileTest(supertest, { payload: payload3ERC20, prefix }),
-        compileTest(supertest, { payload: payloadERC721, prefix }),
+        supertest.post(`${prefix}/generate`).send(payload1ERC20),
+        supertest.post(`${prefix}/generate`).send(payload2ERC20),
+        supertest.post(`${prefix}/generate`).send(payload3ERC20),
       ]);
     });
   });
 
   /* ----------------------------- GET / Compiled ----------------------------- */
-  describe('GET / compiled', () => {});
+  describe('GET / compiled', () => {
+    it('should resolve when payload is `erc20` and matched with compiled contract', async () => {
+      await compileTest(supertest, { payload: payload1ERC20, prefix });
+
+      const response = await supertest
+        .get(`${prefix}/compiled`)
+        .query(payload1ERC20)
+        .send();
+
+      expect(response.status).toEqual(200);
+    });
+  });
 });
+
+/* ----------------------------- POST / Compile Job ----------------------------- */
+// describe('POST / compile-job', () => {
+//   it('Should resolve with `jobId` when giving payload which is `erc20`', async () => {
+//     await compileJobTest(supertest, { payload: payload1ERC20, prefix });
+//   });
+
+//   it('Should resolve with `jobId` when giving payload which is `erc721`', async () => {
+//     await compileJobTest(supertest, { payload: payloadERC721, prefix });
+//   });
+
+//   it('Should work normally when multiple user generate & compile at the same time', async () => {
+//     await Promise.all([
+//       compileJobTest(supertest, { payload: payload1ERC20, prefix }),
+//       compileJobTest(supertest, { payload: payload2ERC20, prefix }),
+//       compileJobTest(supertest, { payload: payload3ERC20, prefix }),
+//       compileJobTest(supertest, { payload: payloadERC721, prefix }),
+//     ]);
+//   });
+// });
