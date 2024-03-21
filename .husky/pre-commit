@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-pnpm lint && pnpm syncpack:sync && pnpm syncpack:format
+pnpm lint && pnpm syncpack:sync && pnpm syncpack:format && pnpm i
