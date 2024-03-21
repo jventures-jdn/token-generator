@@ -1,5 +1,11 @@
 # @jventures-jdn/config-chains
 
+## 0.2.1
+
+### Patch Changes
+
+- [#42](https://github.com/jventures-jdn/token-generator/pull/42) [`b0bd7e5`](https://github.com/jventures-jdn/token-generator/commit/b0bd7e5dd12d5b26e6d52916e4a96fc2097e2f86) Thanks [@vasin-peach](https://github.com/vasin-peach)! - fix explorer url is invalid
+
 ## 0.2.0
 
 ### Minor Changes
