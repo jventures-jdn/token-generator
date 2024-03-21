@@ -1,6 +1,6 @@
 {
   "name": "@jventures-jdn/api-fetcher",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "author": "J Ventures Co., Ltd.",
   "dependencies": {
     "class-validator": "^0.14.0",

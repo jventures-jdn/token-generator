@@ -1,6 +1,6 @@
 {
   "name": "@jventures-jdn/config-chains",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "J Ventures Co., Ltd.",
   "devDependencies": {
     "@jventures-jdn/config-tsconfig": "*",

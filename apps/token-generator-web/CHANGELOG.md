@@ -1,5 +1,15 @@
 # token-generator-web
 
+## 1.1.2
+
+### Patch Changes
+
+- [#39](https://github.com/jventures-jdn/token-generator/pull/39) [`267121e`](https://github.com/jventures-jdn/token-generator/commit/267121e9606918858caacfb847383407ac109a52) Thanks [@vasin-peach](https://github.com/vasin-peach)! - update manully fetch type
+
+- Updated dependencies [[`267121e`](https://github.com/jventures-jdn/token-generator/commit/267121e9606918858caacfb847383407ac109a52)]:
+  - @jventures-jdn/api-fetcher@0.1.0
+  - @jventures-jdn/tools@0.2.0
+
 ## 1.1.1
 
 ### Patch Changes
