@@ -1,5 +1,12 @@
 # @jventures-jdn/token-generator-api
 
+## 1.1.3
+
+### Patch Changes
+
+- Updated dependencies [[`b0bd7e5`](https://github.com/jventures-jdn/token-generator/commit/b0bd7e5dd12d5b26e6d52916e4a96fc2097e2f86)]:
+  - @jventures-jdn/config-chains@0.2.1
+
 ## 1.1.2
 
 ### Patch Changes
