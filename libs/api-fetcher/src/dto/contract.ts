@@ -114,12 +114,6 @@ export const CompileContractResponseExample = convertObjectToExample({
 });
 
 /* -------------------------------- Generate -------------------------------- */
-
-export class GenerateContractDto extends GetGeneratedContractDto {
-  @IsOptional()
-  disable?: GenerateContractDisable;
-}
-
 class GenerateContractDisable {
   @IsBoolean()
   @IsOptional()
@@ -146,6 +140,11 @@ class GenerateContractDisable {
   adminTransfer?: boolean;
 }
 
+export class GenerateContractDto extends GetGeneratedContractDto {
+  @IsOptional()
+  disable?: GenerateContractDisable;
+}
+
 export class GenerateContractResponse {
   path: string;
 }
@@ -158,23 +157,6 @@ export const GenerateContractResponseExample = convertObjectToExample(
 );
 
 /* --------------------------------- Verify --------------------------------- */
-export class VerifyERC20ContractDto extends GetGeneratedContractDto {
-  @IsEnum(InternalChainEnum)
-  @IsNotEmpty()
-  chainName: InternalChainEnum;
-
-  @IsEthereumAddress()
-  @IsNotEmpty()
-  address: string;
-
-  @IsString()
-  @IsNotEmpty()
-  sourceName: string;
-
-  @IsNotEmpty()
-  body: VerifyERC20ContractBody;
-}
-
 export class VerifyERC20ContractBody {
   @IsNotEmpty()
   @IsString()
@@ -209,6 +191,23 @@ export class VerifyERC20ContractBody {
   @IsOptional()
   @IsBtcAddress()
   pauser?: `0x${string}` | string;
+}
+
+export class VerifyERC20ContractDto extends GetGeneratedContractDto {
+  @IsEnum(InternalChainEnum)
+  @IsNotEmpty()
+  chainName: InternalChainEnum;
+
+  @IsEthereumAddress()
+  @IsNotEmpty()
+  address: string;
+
+  @IsString()
+  @IsNotEmpty()
+  sourceName: string;
+
+  @IsNotEmpty()
+  body: VerifyERC20ContractBody;
 }
 
 export class VerifyERC20ContractResponse {
