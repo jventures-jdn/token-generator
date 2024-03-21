@@ -5,12 +5,6 @@ on:
   push:
     tags:
       - '**'
-    paths:
-      - 'apps/token-generator-web/*'
-      - 'libs/*'
-      - 'utils/*'
-      - 'Dockerfile.API'
-      - '.github/workflows/deploy-api-workflow.yaml'
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 

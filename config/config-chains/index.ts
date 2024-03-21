@@ -12,7 +12,7 @@ export const CHAIN_DECIMAL = BigInt('10') ** BigInt(CHAIN_DECIMAL_UNIT);
 
 /* ----------------------- Chain property declearation ---------------------- */
 export const CHAIN_EXPLORER: { [key in InternalChain]: string } = {
-  JFIN: 'https://exp.jfinchain.com/',
+  JFIN: 'https://exp.jfinchain.com',
   JFINT: 'https://exp.testnet.jfinchain.com',
 };
 
