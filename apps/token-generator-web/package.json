@@ -4,9 +4,9 @@
   "author": "J Ventures Co., Ltd.",
   "dependencies": {
     "@jventures-jdn/api-fetcher": "workspace:*",
+    "@jventures-jdn/react-component": "workspace:*",
     "@jventures-jdn/react-logger": "workspace:*",
     "@jventures-jdn/react-rainbowkit-provider": "workspace:*",
-    "@jventures-jdn/react-component": "workspace:*",
     "@jventures-jdn/tools": "*",
     "@rainbow-me/rainbowkit": "^1.3.0",
     "next": "^14.0.3",

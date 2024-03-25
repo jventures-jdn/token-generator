@@ -33,5 +33,8 @@ module.exports = {
     {
       pattern: /tooltip-./,
     },
+    {
+      pattern: /input-./,
+    },
   ],
 };
