@@ -1,0 +1,7 @@
+.input-basic {
+  @apply input input-bordered w-full text-xs input-sm px-3 disabled:bg-base-300/0 disabled:border-gray-400/25 !important;
+}
+
+.input-controller {
+  @apply flex flex-col gap-1 
+}

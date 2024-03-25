@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 @import './layout';
+@import './input';
 
 :root {
   --nav-height: 76px;
