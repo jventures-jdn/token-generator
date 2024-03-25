@@ -1,0 +1,37 @@
+{
+  "name": "@jventures-jdn/react-component",
+  "version": "0.0.0",
+  "author": "J Ventures Co., Ltd.",
+  "dependencies": {
+    "react": "^18",
+    "react-dom": "^18",
+    "react-hook-form": "^7.51.1",
+    "react-icons": "^4.12.0"
+  },
+  "devDependencies": {
+    "@jventures-jdn/config-tsconfig": "*",
+    "@jventures-jdn/eslint-config-react": "*",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "tsup": "^8.0.1"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "require": "./dist/index.mjs"
+    }
+  },
+  "license": "MIT",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jventures-jdn/token-generator.git",
+    "directory": "utils/react-component"
+  },
+  "scripts": {
+    "build": "tsup ./src/index.ts --format cjs,esm --dts",
+    "clean": "rm -rf node_modules && rm -rf dist",
+    "lint": "eslint \"./**/*.ts\""
+  }
+}
