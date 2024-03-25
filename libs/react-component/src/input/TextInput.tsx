@@ -20,8 +20,13 @@ export function TextInput<Inputs extends Record<string, any>>({
   /* -------------------------------------------------------------------------- */
   /*                                   States                                   */
   /* -------------------------------------------------------------------------- */
-  const { field, fieldState } = useController(controller);
+  const {
+    field,
+    formState: { errors },
+  } = useController(controller);
   const inputSize = size ? `!input-${size}` : '';
+  const error = errors[controller.name];
+  const message = error?.message as string | undefined;
 
   /* -------------------------------------------------------------------------- */
   /*                                    Doms                                    */
@@ -38,11 +43,14 @@ export function TextInput<Inputs extends Record<string, any>>({
       <input
         type={type}
         placeholder={placeholder || controller.name}
-        className={`input input-basic ${inputSize}`}
+        className={`input input-basic ${inputSize}${
+          message ? '!input-warning' : ''
+        }`}
         {...field}
       />
 
       {/* Message */}
+      {message && <p className="ml-1 text-xs text-warning/70">{message}</p>}
     </div>
   );
 }
