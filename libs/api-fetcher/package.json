@@ -18,16 +18,8 @@
     "tsup": "^8.0.1"
   },
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "require": "./dist/index.mjs",
-      "import": "./index.ts"
-    },
-    "./dto": {
-      "types": "./dist/src/dto/index.d.ts",
-      "require": "./dist/src/dto/index.mjs",
-      "import": "./src/dto/index.ts"
-    }
+    ".": "./src/index.ts",
+    "./dto": "./src/dto/index.ts"
   },
   "license": "MIT",
   "private": true,
