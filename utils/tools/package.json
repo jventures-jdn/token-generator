@@ -12,18 +12,18 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "default": "./dist/index.cjs"
+      "require": "./dist/index.mjs",
+      "import": "./src/index.ts"
     },
     "./content-management": {
       "types": "./dist/src/content-management/index.d.ts",
-      "import": "./dist/src/content-management/index.mjs",
-      "default": "./src/content-management/index.ts"
+      "require": "./dist/src/content-management/index.mjs",
+      "import": "./src/content-management/index.ts"
     },
     "./fetcher": {
       "types": "./dist/src/fetcher/index.d.ts",
-      "import": "./dist/src/fetcher/index.mjs",
-      "default": "./src/fetcher/index.ts"
+      "require": "./dist/src/fetcher/index.mjs",
+      "import": "./src/fetcher/index.ts"
     }
   },
   "devDependencies": {
