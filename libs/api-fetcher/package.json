@@ -20,17 +20,16 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "default": "./index.ts"
+      "require": "./dist/index.mjs",
+      "import": "./index.ts"
     },
     "./dto": {
       "types": "./dist/src/dto/index.d.ts",
-      "import": "./dist/src/dto/index.mjs",
-      "default": "./src/dto/index.ts"
+      "require": "./dist/src/dto/index.mjs",
+      "import": "./src/dto/index.ts"
     }
   },
   "license": "MIT",
-  "main": "./index.js",
   "private": true,
   "repository": {
     "type": "git",
@@ -41,6 +40,5 @@
     "build": "tsup --format cjs,esm --dts",
     "clean": "rm -rf node_modules && rm -rf dist",
     "lint": "eslint \"./**/*.ts\""
-  },
-  "types": "./index.d.ts"
+  }
 }
