@@ -1,7 +1,15 @@
-.input-basic {
+.text-input {
   @apply input input-bordered w-full text-xs input-sm px-3 disabled:bg-base-300/0 disabled:border-gray-400/25 !important;
 }
 
-.input-controller {
-  @apply flex flex-col gap-1 
+.input-container {
+  @apply flex flex-col gap-1;
+}
+
+.btn-submit {
+  @apply !btn btn-primary w-full disabled:bg-primary/25;
+}
+
+.range-input {
+  @apply range range-sm lg:range-md disabled:opacity-10 disabled:cursor-not-allowed;
 }

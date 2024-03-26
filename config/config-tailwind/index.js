@@ -36,5 +36,8 @@ module.exports = {
     {
       pattern: /input-./,
     },
+    {
+      pattern: /range-./,
+    },
   ],
 };
