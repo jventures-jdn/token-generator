@@ -1,36 +1,15 @@
+import { contractFetcherApi } from '@jventures-jdn/api-fetcher';
+import { ContractTypeEnum } from '@jventures-jdn/config-consts';
 import { LoggerStore } from '@jventures-jdn/react-logger';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PublicClient } from 'wagmi';
 import { GetAccountResult, getAccount, watchAccount } from 'wagmi/actions';
-
-export interface ERC20Form {
-  symbol: string;
-  name: string;
-  initialSupply: number;
-  supplyCap: number;
-  payee?: string;
-  transferor?: string;
-  minter?: string;
-  burner?: string;
-  pauser?: string;
-}
-
-export const ERC20FormDefaultState: ERC20Form = {
-  symbol: '',
-  name: '',
-  initialSupply: 2000000,
-  supplyCap: 5000000,
-  payee: '',
-  transferor: undefined,
-  minter: '',
-  burner: '',
-  pauser: '',
-};
 
 export function useErc20() {
   /* -------------------------------------------------------------------------- */
   /*                                   States                                   */
   /* -------------------------------------------------------------------------- */
+  /* ---------------------------------- Hooks --------------------------------- */
   const {
     loading,
     setLoading,
@@ -39,58 +18,33 @@ export function useErc20() {
     initiating,
     clear,
     add,
+    pop,
   } = LoggerStore();
-  const [form, setForm] = useState(ERC20FormDefaultState);
-  const [account, setAccount] =
-    useState<GetAccountResult<PublicClient>>(getAccount());
-  const [feature, setFeature] = useState({
+  const generateContract = contractFetcherApi.generateContract();
+
+  /* ------------------------------ Field States ------------------------------ */
+  const [fieldStates, setFieldStates] = useState<Record<string, boolean>>({
     supplyCap: true,
-    mint: true,
-    burn: true,
+    mintable: true,
     adminBurn: false,
-    pause: true,
+    pausable: true,
     adminTransfer: false,
   });
 
+  // State
   const minSupply = 0;
   const maxSupply = 10000000;
   const stepSupply = 10000;
   const isDisabled = !!loading[logSelectId] || initiating[logSelectId];
+
+  // Account
+  const [account, setAccount] =
+    useState<GetAccountResult<PublicClient>>(getAccount());
   watchAccount((account) => setAccount(account));
 
   /* -------------------------------------------------------------------------- */
   /*                                   Methods                                  */
   /* -------------------------------------------------------------------------- */
-  const handleInitialSupplyChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = +e.target.value;
-    if (value > maxSupply || value < minSupply) return;
-    if (value > form.supplyCap)
-      setForm((form) => ({
-        ...form,
-        supplyCap: value,
-      }));
-
-    setForm((form) => ({
-      ...form,
-      initialSupply: value,
-    }));
-  };
-
-  const handleSupplyCapChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = +e.target.value;
-    if (value > maxSupply || value < minSupply) return;
-    if (value < form.initialSupply)
-      setForm((form) => ({
-        ...form,
-        initialSupply: value,
-      }));
-
-    setForm((form) => ({
-      ...form,
-      supplyCap: value,
-    }));
-  };
-
   const handleAccountChange = () => {
     clear();
     !account?.address
@@ -102,16 +56,47 @@ export function useErc20() {
           </span>,
           { color: 'success' },
         );
-    // update feature admin
-    setForm((form) => ({
-      ...form,
-      payee: form.payee || account?.address,
-      minter: form.minter || account?.address,
-      burner: form.burner || account?.address,
-      pauser: form.pauser || account?.address,
-      transferor: form.transferor || account?.address,
-    }));
   };
+
+  async function handleGenerate<
+    T extends Record<string, any>,
+    F extends Record<string, boolean>,
+  >(data: T, features: F) {
+    add(`✨ Generating contract ...`, { color: 'info' });
+    // generate contract
+    const generateContractResp = await generateContract.trigger({
+      contractType: ContractTypeEnum.ERC20,
+      contractName: data.name,
+      disable: Object.entries(features).reduce(
+        (prev, [index, value]) => {
+          prev[index] = !value;
+          return prev;
+        },
+        {} as Record<string, boolean>,
+      ),
+    });
+
+    // wait logger animation
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    // log result
+    pop();
+    if (generateContractResp.status === 409) {
+      add('🚫 Contract name is already in used, Please try again', {
+        color: 'warning',
+      });
+      return;
+    } else if (generateContractResp.status !== 201) {
+      add(`🚫 ${generateContractResp.message}`, {
+        color: 'warning',
+      });
+      return;
+    } else {
+      add(`✅ Generate contract successfully`, {
+        color: 'success',
+      });
+    }
+  }
 
   /* -------------------------------------------------------------------------- */
   /*                                   Watches                                  */
@@ -133,14 +118,11 @@ export function useErc20() {
     minSupply,
     maxSupply,
     stepSupply,
-    form,
     account,
-    feature,
-    handleInitialSupplyChange,
-    handleSupplyCapChange,
+    fieldStates,
+    setFieldStates,
     handleAccountChange,
-    setFeature,
-    setForm,
+    handleGenerate,
     isDisabled,
   };
 }

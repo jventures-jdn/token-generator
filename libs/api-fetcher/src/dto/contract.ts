@@ -174,7 +174,7 @@ export class VerifyERC20ContractBody {
 
   @IsOptional()
   @IsBtcAddress()
-  payee?: `0x${string}` | string;
+  recipient?: `0x${string}` | string;
 
   @IsOptional()
   @IsBtcAddress()
