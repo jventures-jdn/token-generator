@@ -20,6 +20,7 @@ export function TextInput<Inputs extends Record<string, any>>({
   tooltip,
   toggleFields,
   hideMessage,
+  alwayShowInput,
 }: {
   controller: UseControllerProps<Inputs> & {
     unregister?: UseFormUnregister<Inputs>;
@@ -34,6 +35,7 @@ export function TextInput<Inputs extends Record<string, any>>({
     value: { [key in keyof Inputs]: boolean };
   };
   hideMessage?: boolean;
+  alwayShowInput?: boolean;
 }) {
   /* -------------------------------------------------------------------------- */
   /*                                   States                                   */
@@ -42,20 +44,22 @@ export function TextInput<Inputs extends Record<string, any>>({
     field,
     formState: { errors },
   } = useController(controller);
-  const inputSize = size ? `!input-${size}` : '';
   const error = errors[controller.name];
   const message = error?.message as string | undefined;
-  const disableFieldState = toggleFields?.value[controller.name];
+  const fieldState = toggleFields?.value[controller.name];
+  const shouldShowField =
+    fieldState === true || fieldState === undefined || alwayShowInput;
+  const shouldDisableField = fieldState === false;
 
   /* -------------------------------------------------------------------------- */
   /*                                   Watches                                  */
   /* -------------------------------------------------------------------------- */
   // If input is disabled asuuming it is not required --> unregister validation
   useEffect(() => {
-    if (disableFieldState === false) {
+    if (fieldState === false) {
       controller?.unregister?.(controller.name as never, { keepValue: false });
     }
-  }, [disableFieldState]);
+  }, [fieldState]);
 
   /* -------------------------------------------------------------------------- */
   /*                                    Doms                                    */
@@ -68,7 +72,7 @@ export function TextInput<Inputs extends Record<string, any>>({
         <InputTooltip options={tooltip} />
         {toggleFields && (
           <input
-            checked={disableFieldState}
+            checked={fieldState}
             onChange={() =>
               toggleFields.setter((s) => ({
                 ...s,
@@ -83,6 +87,10 @@ export function TextInput<Inputs extends Record<string, any>>({
       </div>
 
       {/* Input */}
+      {shouldShowField && (
+        <input
+          type={type}
+          placeholder={placeholder || controller.name}
           className={`input text-input ${
             size === 'xs'
               ? `!input-xs`
@@ -94,6 +102,11 @@ export function TextInput<Inputs extends Record<string, any>>({
                     ? '!input-lg'
                     : ''
           } ${message ? '!input-error' : ''}`}
+          {...field}
+          disabled={field.disabled || shouldDisableField}
+          ref={field.ref}
+        />
+      )}
 
       {/* Message */}
       {!hideMessage && message && (
