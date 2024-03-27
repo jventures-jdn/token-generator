@@ -15,6 +15,7 @@ export function RangeInput<Inputs extends Record<string, any>>({
   tooltip,
   min,
   max,
+  step,
   toggleFields,
 }: {
   controller: UseControllerProps<Inputs> & {
@@ -26,6 +27,7 @@ export function RangeInput<Inputs extends Record<string, any>>({
   tooltip?: InputTooltipProps;
   min?: number;
   max?: number;
+  step?: number;
   toggleFields?: {
     setter: Dispatch<SetStateAction<{ [key in keyof Inputs]: boolean }>>;
     value: { [key in keyof Inputs]: boolean };
@@ -38,7 +40,6 @@ export function RangeInput<Inputs extends Record<string, any>>({
     field,
     formState: { errors },
   } = useController(controller);
-  const rangeInputSize = size ? `!range-${size}` : 'range-sm';
   const error = errors[controller.name];
   const message = error?.message as string | undefined;
   const disableFieldState = toggleFields?.value[controller.name];
@@ -69,6 +70,7 @@ export function RangeInput<Inputs extends Record<string, any>>({
         size="xs"
         toggleFields={toggleFields}
         hideMessage
+        alwayShowInput
       />
 
       {/* Range Input */}
@@ -76,6 +78,7 @@ export function RangeInput<Inputs extends Record<string, any>>({
         type="range"
         min={min || 0}
         max={max || 100}
+        step={step || 1}
         {...field}
         className={`range-input mt-1 ${
           size === 'xs'
