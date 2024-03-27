@@ -39,5 +39,8 @@ module.exports = {
     {
       pattern: /range-./,
     },
+    {
+      pattern: /toggle-./,
+    },
   ],
 };
