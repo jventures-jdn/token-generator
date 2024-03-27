@@ -151,10 +151,10 @@ export class ContractService {
    * @param contractRaw - The raw contract string.
    * @param disable - An optional object specifying which features to disable.
    * @param disable.supplyCap - Set to `true` to disable the supplyCap feature.
-   * @param disable.mint - Set to `true` to disable the mint feature.
-   * @param disable.burn - Set to `true` to disable the self burn feature.
+   * @param disable.mintable - Set to `true` to disable the mintable feature.
+   * @param disable.burnable - Set to `true` to disable the self burnable feature.
    * @param disable.adminBurn - Set to `true` to disable the admin burn feature.
-   * @param disable.pause - Set to `true` to disable the pause feature.
+   * @param disable.pausable - Set to `true` to disable the pausable feature.
    * @param disable.adminTransfer - Set to `true` to disable the admin transfer feature.
    * @returns The modified contract string.
    */
@@ -162,10 +162,10 @@ export class ContractService {
     contractRaw: string,
     disable?: {
       supplyCap?: boolean;
-      mint?: boolean;
-      burn?: boolean;
+      mintable?: boolean;
+      burnable?: boolean;
       adminBurn?: boolean;
-      pause?: boolean;
+      pausable?: boolean;
       adminTransfer?: boolean;
     },
   ) {
@@ -187,7 +187,7 @@ export class ContractService {
     }
 
     // no mint
-    if (disable?.mint) {
+    if (disable?.mintable) {
       newContractRaw = ContentManagement.editContent(
         newContractRaw,
         'LINE',
@@ -202,7 +202,7 @@ export class ContractService {
     }
 
     // no self burn
-    if (disable?.burn) {
+    if (disable?.burnable) {
       newContractRaw = ContentManagement.editContent(
         newContractRaw,
         'RANGE',
@@ -226,7 +226,7 @@ export class ContractService {
     }
 
     // no brun
-    if (disable?.burn && disable?.adminBurn) {
+    if (disable?.burnable && disable?.adminBurn) {
       newContractRaw = ContentManagement.editContent(
         newContractRaw,
         'LINE',
@@ -241,7 +241,7 @@ export class ContractService {
     }
 
     // no pause
-    if (disable?.pause) {
+    if (disable?.pausable) {
       newContractRaw = ContentManagement.editContent(
         newContractRaw,
         'REPLACE',

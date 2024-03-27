@@ -10,7 +10,7 @@ describe('Contract Service', () => {
     symbol: string;
     initialSupply: string;
     supplyCap: string;
-    payee: `0x${string}` | string;
+    recipient: `0x${string}` | string;
     transferor: `0x${string}` | string;
     minter: `0x${string}` | string;
     burner: `0x${string}` | string;
@@ -39,7 +39,7 @@ describe('Contract Service', () => {
       symbol: 'JDB',
       initialSupply: '1000000000000000000000000', // 1*10^24
       supplyCap: '2000000000000000000000000', // 2*10^24
-      payee: '0x',
+      recipient: '0x',
       transferor: '0x',
       minter: '0x',
       burner: '0x',
@@ -61,7 +61,7 @@ describe('Contract Service', () => {
       const [deployer] = await ethers.getSigners();
       initialArgs = {
         ...initialArgs,
-        payee: deployer.address,
+        recipient: deployer.address,
         transferor: deployer.address,
         minter: deployer.address,
         burner: deployer.address,
