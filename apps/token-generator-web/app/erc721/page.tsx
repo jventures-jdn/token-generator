@@ -1,12 +1,22 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
-import { RangeInput, TextInput } from '@jventures-jdn/react-component';
+import {
+  RangeInput,
+  TextInput,
+  ToggleInput,
+} from '@jventures-jdn/react-component';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useState } from 'react';
 
 export default function ERC721Page() {
+  const [toggleFields, setToggleFields] = useState<Record<string, boolean>>({
+    supplyCap: true,
+    mintable: true,
+    pausable: true,
+  });
+
   const schema = z.object({
     name: z
       .string({
@@ -40,12 +50,21 @@ export default function ERC721Page() {
         .regex(/^(\s*|\d+)$/, 'Supply cap must be number')
         .transform(Number),
     ),
-  });
-
-  const [toggleFields, setToggleFields] = useState<{
-    [key in keyof typeof schema._type]: boolean;
-  }>({
-    supplyCap: true,
+    burnable: z.boolean(),
+    adminBurn: z.boolean(),
+    mintable: z
+      .string({ required_error: 'Minter address is required' })
+      .refine(
+        (v) => !toggleFields['mintable'] || /^0x[a-fA-F0-9]{40}$/.test(v),
+        'Invalid address',
+      ),
+    pausable: z
+      .string({ required_error: 'Pauser address is required' })
+      .refine(
+        (v) => !toggleFields['pausable'] || /^0x[a-fA-F0-9]{40}$/.test(v),
+        'Invalid address',
+      ),
+    adminTransfer: z.boolean(),
   });
 
   const { handleSubmit, watch, control, unregister, setValue } = useForm<
@@ -113,11 +132,62 @@ export default function ERC721Page() {
             defaultValue: '0',
             rules: { required: true },
             unregister,
-            setValue,
           }}
           toggleFields={{ setter: setToggleFields, value: toggleFields }}
           title="Supply Cap"
           tooltip={{ text: 'Supply Cap' }}
+        />
+        <ToggleInput
+          controller={{
+            control: control,
+            name: 'burnable',
+            defaultValue: true,
+            rules: { required: true },
+          }}
+          title="Burnable"
+          tooltip={{ text: 'can user burn them self' }}
+        />
+        <ToggleInput
+          controller={{
+            control: control,
+            name: 'adminBurn',
+            defaultValue: false,
+            rules: { required: true },
+          }}
+          title="Admin Burn"
+          tooltip={{ text: 'can admin burn other' }}
+        />
+        <TextInput
+          controller={{
+            control: control,
+            name: 'mintable',
+            defaultValue: '0x',
+            rules: { required: true },
+          }}
+          title="Mintable"
+          tooltip={{ text: 'can minter mint token?' }}
+          toggleFields={{ setter: setToggleFields, value: toggleFields }}
+        />
+        <TextInput
+          controller={{
+            control: control,
+            name: 'pausable',
+            defaultValue: '0x',
+            rules: { required: true },
+          }}
+          title="Pausable"
+          tooltip={{ text: 'can pauser pause contract?' }}
+          toggleFields={{ setter: setToggleFields, value: toggleFields }}
+        />
+        <ToggleInput
+          controller={{
+            control: control,
+            name: 'adminTransfer',
+            defaultValue: false,
+            rules: { required: true },
+          }}
+          title="Admin Transfer"
+          tooltip={{ text: 'can admin transfer token?' }}
         />
       </div>
       <input type="submit" className="btn-submit my-5" />
