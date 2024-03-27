@@ -1,6 +1,15 @@
-import { UseControllerProps, useController } from 'react-hook-form';
+import {
+  UseControllerProps,
+  UseFormUnregister,
+  useController,
+} from 'react-hook-form';
 import { InputTooltip, InputTooltipProps } from './Fragment';
-import { Dispatch, HTMLInputTypeAttribute, SetStateAction } from 'react';
+import {
+  Dispatch,
+  HTMLInputTypeAttribute,
+  SetStateAction,
+  useEffect,
+} from 'react';
 
 export function TextInput<Inputs extends Record<string, any>>({
   controller,
@@ -12,7 +21,9 @@ export function TextInput<Inputs extends Record<string, any>>({
   toggleFields,
   hideMessage,
 }: {
-  controller: UseControllerProps<Inputs>;
+  controller: UseControllerProps<Inputs> & {
+    unregister?: UseFormUnregister<Inputs>;
+  };
   type?: HTMLInputTypeAttribute;
   size?: 'xs' | 'sm' | 'md' | 'lg';
   title?: string;
@@ -35,6 +46,16 @@ export function TextInput<Inputs extends Record<string, any>>({
   const error = errors[controller.name];
   const message = error?.message as string | undefined;
   const disableFieldState = toggleFields?.value[controller.name];
+
+  /* -------------------------------------------------------------------------- */
+  /*                                   Watches                                  */
+  /* -------------------------------------------------------------------------- */
+  // If input is disabled asuuming it is not required --> unregister validation
+  useEffect(() => {
+    if (disableFieldState === false) {
+      controller?.unregister?.(controller.name as never, { keepValue: false });
+    }
+  }, [disableFieldState]);
 
   /* -------------------------------------------------------------------------- */
   /*                                    Doms                                    */
