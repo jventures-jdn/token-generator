@@ -78,7 +78,7 @@ export function RangeInput<Inputs extends Record<string, any>>({
         max={max || 100}
         {...field}
         className={`range-input mt-1 ${rangeInputSize}`}
-        disabled={field.disabled || !toggleFields?.value?.[controller.name]}
+        disabled={field.disabled || disableFieldState === false}
       />
 
       {/* Message */}
