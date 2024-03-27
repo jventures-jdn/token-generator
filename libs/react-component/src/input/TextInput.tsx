@@ -1,16 +1,6 @@
-import {
-  UseControllerProps,
-  UseFormSetValue,
-  UseFormUnregister,
-  useController,
-} from 'react-hook-form';
+import { UseControllerProps, useController } from 'react-hook-form';
 import { InputTooltip, InputTooltipProps } from './Fragment';
-import {
-  Dispatch,
-  HTMLInputTypeAttribute,
-  SetStateAction,
-  useEffect,
-} from 'react';
+import { Dispatch, HTMLInputTypeAttribute, SetStateAction } from 'react';
 
 export function TextInput<Inputs extends Record<string, any>>({
   controller,
@@ -22,10 +12,7 @@ export function TextInput<Inputs extends Record<string, any>>({
   toggleFields,
   hideMessage,
 }: {
-  controller: UseControllerProps<Inputs> & {
-    unregister?: UseFormUnregister<Inputs>;
-    setValue?: UseFormSetValue<Inputs>;
-  };
+  controller: UseControllerProps<Inputs>;
   type?: HTMLInputTypeAttribute;
   size?: 'xs' | 'sm' | 'md' | 'lg';
   title?: string;
@@ -48,16 +35,6 @@ export function TextInput<Inputs extends Record<string, any>>({
   const error = errors[controller.name];
   const message = error?.message as string | undefined;
   const disableFieldState = toggleFields?.value[controller.name];
-
-  /* -------------------------------------------------------------------------- */
-  /*                                   Watches                                  */
-  /* -------------------------------------------------------------------------- */
-  // If input is disabled asuuming it is not required --> unregister validation
-  useEffect(() => {
-    if (toggleFields?.value[controller.name] === false) {
-      controller?.unregister?.('supplyCap' as never);
-    }
-  }, [disableFieldState]);
 
   /* -------------------------------------------------------------------------- */
   /*                                    Doms                                    */

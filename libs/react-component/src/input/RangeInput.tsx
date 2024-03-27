@@ -1,10 +1,8 @@
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect } from 'react';
 import {
   UseControllerProps,
-  UseFormSetValue,
   UseFormUnregister,
   useController,
-  useFieldArray,
 } from 'react-hook-form';
 import { InputTooltipProps } from './Fragment';
 import { TextInput } from '.';
@@ -21,10 +19,7 @@ export function RangeInput<Inputs extends Record<string, any>>({
 }: {
   controller: UseControllerProps<Inputs> & {
     unregister?: UseFormUnregister<Inputs>;
-    setValue?: UseFormSetValue<Inputs>;
   };
-
-  textInputSize?: 'xs' | 'sm' | 'md' | 'lg';
   size?: 'xs' | 'sm' | 'md' | 'lg';
   title?: string;
   placeholder?: string;
@@ -46,6 +41,17 @@ export function RangeInput<Inputs extends Record<string, any>>({
   const rangeInputSize = size ? `!range-${size}` : 'range-sm';
   const error = errors[controller.name];
   const message = error?.message as string | undefined;
+  const disableFieldState = toggleFields?.value[controller.name];
+
+  /* -------------------------------------------------------------------------- */
+  /*                                   Watches                                  */
+  /* -------------------------------------------------------------------------- */
+  // If input is disabled asuuming it is not required --> unregister validation
+  useEffect(() => {
+    if (disableFieldState === false) {
+      controller?.unregister?.(controller.name as never);
+    }
+  }, [disableFieldState]);
 
   /* -------------------------------------------------------------------------- */
   /*                                    Doms                                    */
