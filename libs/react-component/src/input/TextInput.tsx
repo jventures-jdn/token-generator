@@ -83,16 +83,17 @@ export function TextInput<Inputs extends Record<string, any>>({
       </div>
 
       {/* Input */}
-      <input
-        type={type}
-        placeholder={placeholder || controller.name}
-        className={`input text-input ${inputSize} ${
-          message ? '!input-error' : ''
-        }`}
-        {...field}
-        disabled={field.disabled || disableFieldState === false}
-        ref={field.ref}
-      />
+          className={`input text-input ${
+            size === 'xs'
+              ? `!input-xs`
+              : size === 'sm'
+                ? '!input-sm'
+                : size === 'md'
+                  ? '!input-md'
+                  : size === 'lg'
+                    ? '!input-lg'
+                    : ''
+          } ${message ? '!input-error' : ''}`}
 
       {/* Message */}
       {!hideMessage && message && (

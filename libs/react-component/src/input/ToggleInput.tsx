@@ -1,6 +1,5 @@
 import { UseControllerProps, useController } from 'react-hook-form';
 import { InputTooltip, InputTooltipProps } from './Fragment';
-import { HTMLInputTypeAttribute } from 'react';
 
 export function ToggleInput<Inputs extends Record<string, any>>({
   controller,
@@ -22,7 +21,6 @@ export function ToggleInput<Inputs extends Record<string, any>>({
     field,
     formState: { errors },
   } = useController(controller);
-  const inputSize = size ? `!toggle-${size}` : '';
   const error = errors[controller.name];
   const message = error?.message as string | undefined;
 
@@ -37,8 +35,19 @@ export function ToggleInput<Inputs extends Record<string, any>>({
         <InputTooltip options={tooltip} />
         <input
           {...field}
+          defaultChecked={field.value}
           type="checkbox"
-          className={`toggle toggle-sm ${inputSize}`}
+          className={`toggle toggle-sm ${
+            size === 'xs'
+              ? `!toggle-xs`
+              : size === 'sm'
+                ? '!toggle-sm'
+                : size === 'md'
+                  ? '!toggle-md'
+                  : size === 'lg'
+                    ? '!toggle-lg'
+                    : ''
+          }`}
           disabled={field.disabled}
         />
       </div>

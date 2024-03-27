@@ -77,7 +77,17 @@ export function RangeInput<Inputs extends Record<string, any>>({
         min={min || 0}
         max={max || 100}
         {...field}
-        className={`range-input mt-1 ${rangeInputSize}`}
+        className={`range-input mt-1 ${
+          size === 'xs'
+            ? `!range-xs`
+            : size === 'sm'
+              ? '!range-sm'
+              : size === 'md'
+                ? '!range-md'
+                : size === 'lg'
+                  ? '!range-lg'
+                  : '!range-sm'
+        }`}
         disabled={field.disabled || disableFieldState === false}
       />
 

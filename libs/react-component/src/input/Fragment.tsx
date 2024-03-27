@@ -25,9 +25,17 @@ export function InputTooltip({
   if (!options) return;
   return (
     <div
-      className={`tooltip tooltip-secondary ${tooltipPosition} ${
-        className || ''
-      }`}
+      className={`tooltip tooltip-secondary hidden md:flex ${
+        options?.position === 'top'
+          ? `!tooltip-top`
+          : options?.position === 'bottom'
+            ? '!tooltip-bottom'
+            : options?.position === 'left'
+              ? '!tooltip-left'
+              : options?.position === 'right'
+                ? '!tooltip-right'
+                : '!tooltip-right'
+      } ${className || ''}`}
       data-tip={options.text}
     >
       {options.icon || <HiInformationCircle />}
