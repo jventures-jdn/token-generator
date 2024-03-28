@@ -11,6 +11,29 @@ import { ContractTypeEnum } from '@jventures-jdn/config-consts';
 import { LoggerStore } from '@jventures-jdn/react-logger';
 import { getNetwork, getPublicClient, getWalletClient } from 'wagmi/actions';
 
+//! we should use type from form schema instead of redefining it
+type _ERC20FormSchema = {
+  name?: string;
+  symbol?: string;
+  recipient?: string;
+  initialSupply?: number;
+  supplyCap?: number;
+  burnable?: boolean;
+  burner?: string;
+  minter?: string;
+  pauser?: string;
+  transferor?: string;
+};
+
+type _FieldStates = {
+  supplyCap: boolean;
+  minter: boolean;
+  burner: boolean;
+  pauser: boolean;
+  transferor: boolean;
+  burnable: boolean;
+};
+
 export function useDeployErc20() {
   /* --------------------------------- States --------------------------------- */
   // Hooks
@@ -20,224 +43,242 @@ export function useDeployErc20() {
   const verifyContract = contractFetcherApi.verifyContract();
 
   /* -------------------------------- Generate -------------------------------- */
-  async function generate<
-    T extends Record<string, any>,
-    F extends Record<string, boolean>,
-  >(data: T, fieldStates: F) {
-    add(`✨ Generating contract ...`, { color: 'info' });
+  function generate(contractName: string, fieldStates: _FieldStates) {
+    return new Promise<void>(async (resolve, reject) => {
+      add(`✨ Generating contract ...`, { color: 'info' });
 
-    // generate contract
-    const generateContractResp = await generateContract.trigger({
-      contractType: ContractTypeEnum.ERC20,
-      contractName: data.name,
-      disable: Object.entries(fieldStates).reduce(
-        (prev, [index, value]) => {
-          prev[index] = !value;
-          return prev;
-        },
-        {} as Record<string, boolean>,
-      ),
+      // generate contract
+      const generateContractResp = await generateContract.trigger({
+        contractType: ContractTypeEnum.ERC20,
+        contractName,
+        disable: Object.entries(fieldStates).reduce(
+          (prev, [index, value]) => {
+            prev[index] = !value;
+            return prev;
+          },
+          {} as Record<string, boolean>,
+        ),
+      });
+
+      // wait logger animation
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // log result
+      pop();
+      if (generateContractResp.status === 409) {
+        add('🚫 Contract name is already in used, Please try again', {
+          color: 'warning',
+        });
+        return reject('Contract name is already in used, Please try again');
+      } else if (generateContractResp.status !== 201) {
+        add(`🚫 ${generateContractResp.message}`, {
+          color: 'warning',
+        });
+        return reject(generateContractResp.message);
+      } else {
+        add(`✅ Generate contract successfully`, {
+          color: 'success',
+        });
+        return resolve();
+      }
     });
-
-    // wait logger animation
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // log result
-    pop();
-    if (generateContractResp.status === 409) {
-      add('🚫 Contract name is already in used, Please try again', {
-        color: 'warning',
-      });
-      return;
-    } else if (generateContractResp.status !== 201) {
-      add(`🚫 ${generateContractResp.message}`, {
-        color: 'warning',
-      });
-      return;
-    } else {
-      add(`✅ Generate contract successfully`, {
-        color: 'success',
-      });
-    }
   }
 
   /* --------------------------------- Compile -------------------------------- */
-  async function compile<T extends Record<string, any>>(data: T) {
-    add(`⚙️ Compiling contract ...`, { color: 'info' });
+  function compile(contractName: string) {
+    return new Promise<void>(async (resolve, reject) => {
+      add(`⚙️ Compiling contract ...`, { color: 'info' });
 
-    // compile contract
-    const compileContractResp = await compileContract.trigger({
-      contractType: ContractTypeEnum.ERC20,
-      contractName: data.name,
+      // compile contract
+      const compileContractResp = await compileContract.trigger({
+        contractType: ContractTypeEnum.ERC20,
+        contractName,
+      });
+
+      // log result
+      pop();
+      if (compileContractResp.isSuccess) {
+        add(`✅ Compiled contract successfully`, {
+          color: 'success',
+        });
+        return resolve();
+      } else {
+        add(`⚠️ ${compileContractResp?.message}`, {
+          color: 'warning',
+        });
+        return reject(compileContractResp?.message);
+      }
     });
-
-    // log result
-    pop();
-    if (compileContractResp.isSuccess) {
-      add(`✅ Compiled contract successfully`, {
-        color: 'success',
-      });
-    } else {
-      add(`⚠️ ${compileContractResp?.message}`, {
-        color: 'warning',
-      });
-    }
   }
 
   /* ----------------------------------- ABI ---------------------------------- */
-  async function abi<T extends Record<string, any>>(data: T) {
-    add(`📝 Processing Bytecode & ABI ...`, { color: 'info' });
+  async function abi(contractName: string) {
+    return new Promise<GetAbiContractResponse>(async (resolve, reject) => {
+      add(`📝 Processing Bytecode & ABI ...`, { color: 'info' });
 
-    // get abi
-    const getABIResp = await contractFetcherApi.fetch<GetAbiContractResponse>(
-      'get',
-      '/abi',
-      {
-        config: {
-          params: {
-            contractType: ContractTypeEnum.ERC20,
-            contractName: data.name,
+      // get abi
+      const getABIResp = await contractFetcherApi.fetch<GetAbiContractResponse>(
+        'get',
+        '/abi',
+        {
+          config: {
+            params: {
+              contractType: ContractTypeEnum.ERC20,
+              contractName,
+            },
           },
         },
-      },
-    );
+      );
 
-    // wait logger animation
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+      // wait logger animation
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    // log result
-    pop();
-    if (getABIResp.isSuccess) {
-      add(`✅ Processing Bytecode & ABI successfully`, { color: 'success' });
-    } else {
-      add(`⚠️ ${getABIResp?.message}`, {
-        color: 'warning',
-      });
-    }
+      // log result
+      pop();
+      if (getABIResp.isSuccess) {
+        add(`✅ Processing Bytecode & ABI successfully`, { color: 'success' });
+      } else {
+        add(`⚠️ ${getABIResp?.message}`, {
+          color: 'warning',
+        });
+        return reject(getABIResp?.message);
+      }
 
-    return getABIResp.data;
+      return resolve(getABIResp.data);
+    });
   }
 
-  async function deploy<
-    T extends Record<string, any>,
-    F extends Record<string, boolean>,
-  >(data: T, fieldStates: F, contractData: GetAbiContractResponse) {
-    const { chain } = getNetwork();
-    const walletClient = await getWalletClient({ chainId: chain?.id });
-    const publicClient = await getPublicClient({ chainId: chain?.id });
-    const gasPrice = await publicClient.getGasPrice();
-    const transactionFeeDecimal = 10 ** 7;
+  async function deploy(
+    data: _ERC20FormSchema,
+    fieldStates: _FieldStates,
+    contractData: GetAbiContractResponse,
+  ) {
+    return new Promise<{ contractAddress: string; args: Record<string, any> }>(
+      async (resolve, reject) => {
+        const { chain } = getNetwork();
+        const walletClient = await getWalletClient({ chainId: chain?.id });
+        const publicClient = await getPublicClient({ chainId: chain?.id });
+        const gasPrice = await publicClient.getGasPrice();
+        const transactionFeeDecimal = 10 ** 7;
 
-    const args = {
-      symbol: data.symbol,
-      name: data.name,
-      recipient: data.recipient,
-      initialSupply: BigInt(data.initialSupply) * CHAIN_DECIMAL,
-      ...(data.supplyCap && {
-        supplyCap: BigInt(data.supplyCap) * CHAIN_DECIMAL,
-      }),
-      ...(fieldStates.adminTransfer && {
-        transferor: data.adminTransfer,
-      }),
-      ...(fieldStates.mintable && { minter: data.mintable }),
-      ...(fieldStates.adminBurn && { burner: data.adminBurn }),
-      ...(fieldStates.pausable && { pauser: data.pausable }),
-    };
+        const args = {
+          symbol: data.symbol,
+          name: data.name,
+          recipient: data.recipient,
+          initialSupply: BigInt(data.initialSupply) * CHAIN_DECIMAL,
+          ...(data.supplyCap && {
+            supplyCap: BigInt(data.supplyCap) * CHAIN_DECIMAL,
+          }),
+          ...(fieldStates.transferor && {
+            transferor: data.transferor,
+          }),
+          ...(fieldStates.minter && { minter: data.minter }),
+          ...(fieldStates.burner && { burner: data.burner }),
+          ...(fieldStates.pauser && { pauser: data.pauser }),
+        };
 
-    add(`🗳️ Deploying ERC20 to ${chain?.name}`, { color: 'info' });
-    add(
-      <div className="flex flex-col gap-2">
-        {Object.entries(args).map(([arg, value]) => (
-          <div key={arg}>
-            <span className="capitalize">{arg}: </span>
-            <span>{`${value}`}</span>
-          </div>
-        ))}
-      </div>,
-      { color: 'info' },
+        add(`🗳️ Deploying ERC20 to ${chain?.name}`, { color: 'info' });
+        add(
+          <div className="flex flex-col gap-2">
+            {Object.entries(args).map(([arg, value]) => (
+              <div key={arg}>
+                <span className="capitalize">{arg}: </span>
+                <span>{`${value}`}</span>
+              </div>
+            ))}
+          </div>,
+          { color: 'info' },
+        );
+
+        // Sign transaction
+        setLoading('📝 Signing transaction...');
+        let hash: `0x${string}`;
+        try {
+          hash = await walletClient?.deployContract({
+            abi: contractData.abi,
+            bytecode: contractData.bytecode,
+            args: [args],
+            chain: chain,
+          });
+        } catch (e: any) {
+          add(e?.details || e?.message || 'Unknown', {
+            color: 'warning',
+          });
+          setLoading(undefined);
+          return Promise.reject(e?.details || e?.message);
+        }
+
+        // Wait for transaction
+        setLoading(`💫 Deploying...`);
+        try {
+          await setTimeout(() => {
+            setLoading(`⏳ Wait for transaction...`);
+          }, 2000);
+          const transaction = await publicClient.waitForTransactionReceipt({
+            hash: hash || '0x',
+          });
+          pop();
+          pop();
+          add(`✅  Deploying ERC20 to ${chain?.name} successfully`, {
+            color: 'success',
+          });
+
+          add(
+            <a
+              href={`${
+                getChain(`${chain?.network}` as InternalChain).chainExplorer
+                  .homePage
+              }/tx/${transaction.transactionHash}`}
+              target="_blank"
+            >
+              🌍 Transaction Hash:{' '}
+              <span className="underline">
+                [`${transaction.transactionHash.slice(0, 10)}...$
+                {transaction.transactionHash.slice(-10)}`]
+              </span>
+            </a>,
+          );
+          add(
+            <a
+              href={`${
+                getChain(`${chain?.network}` as InternalChain).chainExplorer
+                  .homePage
+              }/address/${transaction.contractAddress}//read-contract`}
+              target="_blank"
+            >
+              🌍 Contract Address:{' '}
+              <span className="underline">
+                [`${transaction.contractAddress?.slice(0, 10)}...$
+                {transaction.contractAddress?.slice(-10)}`]
+              </span>
+            </a>,
+          );
+          add(
+            `🧾 Transaction Fee: ${(
+              Number(
+                (transaction.gasUsed *
+                  gasPrice *
+                  BigInt(transactionFeeDecimal)) /
+                  CHAIN_DECIMAL,
+              ) / transactionFeeDecimal
+            ).toLocaleString(undefined, { minimumFractionDigits: 7 })} ${chain
+              ?.nativeCurrency.symbol}`,
+          );
+
+          return resolve({
+            contractAddress: transaction.contractAddress,
+            args,
+          });
+        } catch (e: any) {
+          add(e?.details || e?.message || 'Unknown', {
+            color: 'danger',
+          });
+          return reject(e?.details || e?.message);
+        } finally {
+          setLoading(undefined);
+        }
+      },
     );
-
-    // Sign transaction
-    setLoading('📝 Signing transaction...');
-    let hash: `0x${string}`;
-    try {
-      hash = await walletClient?.deployContract({
-        abi: contractData.abi,
-        bytecode: contractData.bytecode,
-        args: [args],
-        chain: chain,
-      });
-    } catch (e: any) {
-      add(e?.details || e?.message || 'Unknown', {
-        color: 'warning',
-      });
-      setLoading(undefined);
-      return Promise.reject(e?.details || e?.message);
-    }
-
-    // Wait for transaction
-    setLoading(`💫 Deploying...`);
-    try {
-      await setTimeout(() => {
-        setLoading(`⏳ Wait for transaction...`);
-      }, 2000);
-      const transaction = await publicClient.waitForTransactionReceipt({
-        hash: hash || '0x',
-      });
-      pop();
-      pop();
-      add(`✅  Deploying ERC20 to ${chain?.name} successfully`, {
-        color: 'success',
-      });
-
-      add(
-        <a
-          href={`${
-            getChain(`${chain?.network}` as InternalChain).chainExplorer
-              .homePage
-          }/tx/${transaction.transactionHash}`}
-          target="_blank"
-        >
-          🌍 Transaction Hash:{' '}
-          <span className="underline">
-            [`${transaction.transactionHash.slice(0, 10)}...$
-            {transaction.transactionHash.slice(-10)}`]
-          </span>
-        </a>,
-      );
-      add(
-        <a
-          href={`${
-            getChain(`${chain?.network}` as InternalChain).chainExplorer
-              .homePage
-          }/address/${transaction.contractAddress}//read-contract`}
-          target="_blank"
-        >
-          🌍 Contract Address:{' '}
-          <span className="underline">
-            [`${transaction.contractAddress?.slice(0, 10)}...$
-            {transaction.contractAddress?.slice(-10)}`]
-          </span>
-        </a>,
-      );
-      add(
-        `🧾 Transaction Fee: ${(
-          Number(
-            (transaction.gasUsed * gasPrice * BigInt(transactionFeeDecimal)) /
-              CHAIN_DECIMAL,
-          ) / transactionFeeDecimal
-        ).toLocaleString(undefined, { minimumFractionDigits: 7 })} ${chain
-          ?.nativeCurrency.symbol}`,
-      );
-
-      return { contractAddress: transaction.contractAddress, args };
-    } catch (e: any) {
-      add(e?.details || e?.message || 'Unknown', {
-        color: 'danger',
-      });
-    } finally {
-      setLoading(undefined);
-    }
   }
 
   async function verify(
