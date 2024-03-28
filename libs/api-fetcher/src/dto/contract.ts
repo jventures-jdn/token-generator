@@ -121,23 +121,23 @@ class GenerateContractDisable {
 
   @IsBoolean()
   @IsOptional()
-  mint?: boolean;
+  minter?: boolean;
 
   @IsBoolean()
   @IsOptional()
-  burn?: boolean;
+  burnable?: boolean;
 
   @IsBoolean()
   @IsOptional()
-  adminBurn?: boolean;
+  burner?: boolean;
 
   @IsBoolean()
   @IsOptional()
-  pause?: boolean;
+  pauser?: boolean;
 
   @IsBoolean()
   @IsOptional()
-  adminTransfer?: boolean;
+  transferor?: boolean;
 }
 
 export class GenerateContractDto extends GetGeneratedContractDto {

@@ -23,18 +23,18 @@ export function useErc20() {
   const generateContract = contractFetcherApi.generateContract();
 
   /* ------------------------------ Field States ------------------------------ */
-  const [fieldStates, setFieldStates] = useState<Record<string, boolean>>({
+  const [fieldStates, setFieldStates] = useState({
     supplyCap: true,
-    mintable: true,
-    adminBurn: false,
-    pausable: true,
-    adminTransfer: false,
+    minter: true,
+    burner: false,
+    pauser: true,
+    transferor: false,
   });
 
   // State
   const minSupply = 0;
   const maxSupply = 10000000;
-  const stepSupply = 10000;
+  const stepSupply = 1000000;
   const isDisabled = !!loading[logSelectId] || initiating[logSelectId];
 
   // Account

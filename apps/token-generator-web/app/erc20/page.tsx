@@ -66,28 +66,28 @@ export default function ERC20Page() {
         .transform(Number),
     ),
     burnable: z.boolean(),
-    adminBurn: z
+    burner: z
       .string({ required_error: 'Burner address is required' })
       .refine(
-        (v) => !fieldStates['adminBurn'] || /^0x[a-fA-F0-9]{40}$/.test(v),
+        (v) => !fieldStates['burner'] || /^0x[a-fA-F0-9]{40}$/.test(v),
         'Invalid address',
       ),
-    mintable: z
+    minter: z
       .string({ required_error: 'Minter address is required' })
       .refine(
-        (v) => !fieldStates['mintable'] || /^0x[a-fA-F0-9]{40}$/.test(v),
+        (v) => !fieldStates['minter'] || /^0x[a-fA-F0-9]{40}$/.test(v),
         'Invalid address',
       ),
-    pausable: z
+    pauser: z
       .string({ required_error: 'Pauser address is required' })
       .refine(
-        (v) => !fieldStates['pausable'] || /^0x[a-fA-F0-9]{40}$/.test(v),
+        (v) => !fieldStates['pauser'] || /^0x[a-fA-F0-9]{40}$/.test(v),
         'Invalid address',
       ),
-    adminTransfer: z
+    transferor: z
       .string({ required_error: 'Trasnferor address is required' })
       .refine(
-        (v) => !fieldStates['adminTransfer'] || /^0x[a-fA-F0-9]{40}$/.test(v),
+        (v) => !fieldStates['transferor'] || /^0x[a-fA-F0-9]{40}$/.test(v),
         'Invalid address',
       ),
   });
@@ -102,20 +102,22 @@ export default function ERC20Page() {
 
   const onSubmit = async (data: typeof schema._type) => {
     const handler = async () => {
-      clear();
-      setLoading('🚀 Contract Processing ...');
-      await generate(data, {
+      const _fieldStates = {
         ...fieldStates,
         burnable: data.burnable,
-      });
-      await compile(data);
-      const contractData = await abi(data);
-      const { contractAddress, args } = await deploy(
-        data,
-        fieldStates,
+      };
+      clear();
+      setLoading('🚀 Contract Processing ...');
+      await generate(data.name, _fieldStates);
+      await compile(data.name);
+      const contractData = await abi(data.name);
+      const deployResult = await deploy(data, _fieldStates, contractData);
+      await verify(
+        data.name,
         contractData,
+        deployResult.contractAddress,
+        deployResult.args,
       );
-      await verify(data.name, contractData, contractAddress, args);
     };
 
     await handler().finally(() => setLoading(undefined));
@@ -241,7 +243,7 @@ export default function ERC20Page() {
           <TextInput
             controller={{
               control: control,
-              name: 'adminBurn',
+              name: 'burner',
               defaultValue: account.address,
               rules: { required: true },
               disabled: isDisabled,
@@ -255,7 +257,7 @@ export default function ERC20Page() {
           <TextInput
             controller={{
               control: control,
-              name: 'mintable',
+              name: 'minter',
               defaultValue: account.address,
               rules: { required: true },
               disabled: isDisabled,
@@ -270,7 +272,7 @@ export default function ERC20Page() {
           <TextInput
             controller={{
               control: control,
-              name: 'pausable',
+              name: 'pauser',
               defaultValue: account.address,
               rules: { required: true },
               disabled: isDisabled,
@@ -285,7 +287,7 @@ export default function ERC20Page() {
           <TextInput
             controller={{
               control: control,
-              name: 'adminTransfer',
+              name: 'transferor',
               defaultValue: account.address,
               rules: { required: true },
               disabled: isDisabled,
