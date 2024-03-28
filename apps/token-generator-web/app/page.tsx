@@ -10,7 +10,7 @@ export default function HomePage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 container text-primary-content">
           <div className="col-span-3 lg:pb-[5vh] flex justify-center flex-col items-center">
             <span className="text-3xl lg:text-5xl font-bold ">
-              Token Generator 🎛️
+              Tokenizer 🎛️
             </span>
             <span className="pt-1 text-gray-300 text-center">
               Start generating your tokens. just a few clicks
