@@ -62,7 +62,9 @@ export class ContractService {
    * @throws NotFoundException if the compiled contract does not exist.
    */
   async readGeneratedContract(payload: GetGeneratedContractDto) {
-    const existPath = `${this.generateContractPath}/${payload.contractType}/${payload.contractName}.sol`;
+    // replace filename white space with underscore
+    const filename = payload.contractName.replaceAll(/ /g, '_');
+    const existPath = `${this.generateContractPath}/${payload.contractType}/${filename}.sol`;
 
     if (existsSync(existPath)) {
       return { raw: readFileSync(existPath).toString(), path: existPath };
@@ -82,7 +84,9 @@ export class ContractService {
    * @throws NotFoundException if the compiled contract does not exist.
    */
   async readCompiledContract(payload: GetCompiledContractDto) {
-    const existPath = `${this.compiledContractPath}/artifacts/contracts/generated/${payload.contractType}/${payload.contractName}.sol/${payload.contractName}.json`;
+    // replace filename white space with underscore
+    const filename = payload.contractName.replaceAll(/ /g, '_');
+    const existPath = `${this.compiledContractPath}/artifacts/contracts/generated/${payload.contractType}/${filename}.sol/${filename}.json`;
 
     try {
       return {
@@ -111,16 +115,18 @@ export class ContractService {
    * @returns The path of the generated contract.
    */
   async generateContract(payload: GenerateContractDto) {
-    const filePath = `${payload.contractType}/${payload.contractName}.sol`;
+    // replace filename white space with underscore
+    const filename = payload.contractName.replaceAll(/ /g, '_');
+    const filePath = `${payload.contractType}/${filename}.sol`;
 
     // validate contract name
-    if (!payload.contractName.match(/^[a-zA-Z][A-Za-z0-9_]*$/g))
+    if (!filename.match(/^[a-zA-Z][A-Za-z0-9 _]*$/g))
       throw new BadRequestException(undefined, {
         description:
-          'Contract name must be alphanumeric and start with a letter ([a-zA-Z][A-Za-z0-9_])',
+          'Contract name must be alphanumeric and start with a letter ([a-zA-Z][A-Za-z0-9 _])',
       });
 
-    // if giving generated contract name is already exist, throw error
+    // if giving generated contract name is already exist, remove it
     if (await this.readGeneratedContract(payload).catch(() => {})) {
       this.removeContract(payload);
     }
@@ -131,7 +137,7 @@ export class ContractService {
     // replace contract name
     const generatedContractRaw = raw.replaceAll(
       `${payload.contractType.toUpperCase()}Generator`,
-      payload.contractName,
+      filename,
     );
 
     // disable feature
@@ -286,9 +292,7 @@ export class ContractService {
    * @param {Job<CompileContractDto> | CompileContractDto} payload Job or payload with containing `contractName` and `contractType` of contract
    * @returns Compiled output
    */
-  async compileContract(payload: CompileContractDto | Job<CompileContractDto>) {
-    const isJob = payload.hasOwnProperty('id');
-
+  async compileContract(payload: CompileContractDto) {
     // create execute streams
     const command = spawn('npx hardhat compile', {
       cwd: join(__dirname, '../'),
@@ -311,13 +315,7 @@ export class ContractService {
           this.logger.error(
             `[compileContract] ${data.toString()?.replaceAll('\n', '')}`,
           );
-          if (isJob) {
-            const job = payload as Job<CompileContractDto>;
-            await Promise.all([
-              job.moveToFailed({ message: data.toString() }),
-              job.progress(100),
-            ]);
-          }
+          this.removeContract(payload);
           reject(
             new InternalServerErrorException({
               error: data.toString(),
@@ -328,10 +326,6 @@ export class ContractService {
 
         // resolve on exit
         command.on('exit', async () => {
-          if (isJob) {
-            const job = payload as Job<CompileContractDto>;
-            await Promise.all([job.moveToCompleted(output), job.progress(100)]);
-          }
           await new Promise((resolve) => setTimeout(() => resolve(true), 3000));
           resolve(output);
         });
@@ -347,8 +341,11 @@ export class ContractService {
    * @returns Verify output
    */
   async verifyContract(payload: VerifyERC20ContractDto) {
+    // replace filename white space with underscore
+    const filename = payload.contractName.replaceAll(/ /g, '_');
+
     // creates an argument file for use in contract verify
-    const argsName = `${payload.contractName}.js`;
+    const argsName = `${filename}.js`;
     const argsPath = `${this.argsContractPath}/${argsName}`;
     writeFileSync(
       argsPath,
