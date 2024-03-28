@@ -356,7 +356,7 @@ export class ContractService {
 
     // create execute streams
     const command = spawn(
-      `npx hardhat verify --network ${payload.chainName} ${payload.address} --constructor-args ${argsPath}`,
+      `npx hardhat verify --contract contracts/generated/${payload.contractType}/${filename}.sol:${filename} --network ${payload.chainName} ${payload.address} --constructor-args ${argsPath}`,
       {
         cwd: join(__dirname, '../'),
         shell: true,
