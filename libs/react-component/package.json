@@ -1,6 +1,6 @@
 {
   "name": "@jventures-jdn/react-component",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "author": "J Ventures Co., Ltd.",
   "dependencies": {
     "react": "^18",
