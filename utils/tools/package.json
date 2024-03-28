@@ -7,24 +7,10 @@
     "@jventures-jdn/eslint-config-nest": "*",
     "axios": "^1.6.8"
   },
-  "main": "./index.js",
-  "types": "./index.d.ts",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "default": "./dist/index.cjs"
-    },
-    "./content-management": {
-      "types": "./dist/src/content-management/index.d.ts",
-      "import": "./dist/src/content-management/index.mjs",
-      "default": "./src/content-management/index.ts"
-    },
-    "./fetcher": {
-      "types": "./dist/src/fetcher/index.d.ts",
-      "import": "./dist/src/fetcher/index.mjs",
-      "default": "./src/fetcher/index.ts"
-    }
+    ".": "./src/index.ts",
+    "./content-management": "./src/content-management/index.ts",
+    "./fetcher": "./src/fetcher/index.ts"
   },
   "devDependencies": {
     "@jventures-jdn/config-tsconfig": "*",

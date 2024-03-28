@@ -23,7 +23,7 @@ contract ERC20Generator is ERC20, ERC20Pausable, AccessControl {
         string symbol;
         uint256 initialSupply;
         uint256 supplyCap; // @supplyCap
-        address payee;
+        address recipient;
         address transferor; // @adminTransfer
         address minter; // @mint
         address burner; // @adminBurn @burn
@@ -37,14 +37,13 @@ contract ERC20Generator is ERC20, ERC20Pausable, AccessControl {
         _cap = args_.supplyCap;
         // @end_supplyCap
 
-        // Grant roles to a specified account
         _setupRole(TRANSFEROR_ROLE, args_.transferor); // @adminTransfer
         _setupRole(MINTER_ROLE, args_.minter); // @mint
         _setupRole(BURNER_ROLE, args_.burner); // @adminBurn
         _setupRole(PAUSER_ROLE, args_.pauser); // @pause
 
         // Mint `initialSupply` to the owner
-        _mint(args_.payee, args_.initialSupply);
+        _mint(args_.recipient, args_.initialSupply);
     }
 
     /* -------------------------------------------------------------------------- */

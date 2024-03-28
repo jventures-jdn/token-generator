@@ -10,7 +10,7 @@ describe('Contract Service', () => {
     symbol: string;
     initialSupply: string;
     supplyCap: string;
-    payee: `0x${string}` | string;
+    recipient: `0x${string}` | string;
     transferor: `0x${string}` | string;
     minter: `0x${string}` | string;
     burner: `0x${string}` | string;
@@ -39,7 +39,7 @@ describe('Contract Service', () => {
       symbol: 'JDB',
       initialSupply: '1000000000000000000000000', // 1*10^24
       supplyCap: '2000000000000000000000000', // 2*10^24
-      payee: '0x',
+      recipient: '0x',
       transferor: '0x',
       minter: '0x',
       burner: '0x',
@@ -48,12 +48,12 @@ describe('Contract Service', () => {
 
     const contractNamespaces = [
       { name: 'ERC20_NoCap', disable: { supplyCap: true } },
-      { name: 'ERC20_NoMint', disable: { mint: true } },
-      { name: 'ERC20_NoSelfBurn', disable: { burn: true } },
-      { name: 'ERC20_NoAdminBurn', disable: { adminBurn: true } },
-      { name: 'ERC20_NoBurn', disable: { adminBurn: true, burn: true } },
-      { name: 'ERC20_NoPause', disable: { pause: true } },
-      { name: 'ERC20_NoAdminTransfer', disable: { adminTransfer: true } },
+      { name: 'ERC20_NoMint', disable: { minter: true } },
+      { name: 'ERC20_NoSelfBurn', disable: { burnable: true } },
+      { name: 'ERC20_NoAdminBurn', disable: { burner: true } },
+      { name: 'ERC20_NoBurn', disable: { burner: true, burnable: true } },
+      { name: 'ERC20_NoPause', disable: { pauser: true } },
+      { name: 'ERC20_NoAdminTransfer', disable: { transferor: true } },
     ];
 
     beforeAll(async () => {
@@ -61,7 +61,7 @@ describe('Contract Service', () => {
       const [deployer] = await ethers.getSigners();
       initialArgs = {
         ...initialArgs,
-        payee: deployer.address,
+        recipient: deployer.address,
         transferor: deployer.address,
         minter: deployer.address,
         burner: deployer.address,
@@ -162,7 +162,7 @@ describe('Contract Service', () => {
       });
     });
 
-    describe('ERC20: Disable selfBurn', () => {
+    describe('ERC20: Disable burnable', () => {
       const contractName = 'ERC20_NoSelfBurn';
       let _args: DefaultArgs;
 
@@ -170,7 +170,7 @@ describe('Contract Service', () => {
         _args = { ...initialArgs, name: contractName };
       });
 
-      it('Disable `selfBurn` should not have `burn()` method', async () => {
+      it('Disable `burnable` should not have `burn()` method', async () => {
         const { contract } = await deploy(contractName, _args);
         const methods = contract.interface.fragments
           .map((f: any) => f.name)
@@ -178,7 +178,7 @@ describe('Contract Service', () => {
         expect(methods).not.toContain('burn');
       });
 
-      it('Disable `selfBurn` should not have `burnFrom()` method', async () => {
+      it('Disable `burnable` should not have `burnFrom()` method', async () => {
         const { contract } = await deploy(contractName, _args);
         const methods = contract.interface.fragments
           .map((f: any) => f.name)

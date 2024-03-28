@@ -15,7 +15,7 @@ describe('ERC20 Generator', function () {
     symbol: string;
     initialSupply: string;
     supplyCap: string;
-    payee: `0x${string}` | string;
+    recipient: `0x${string}` | string;
     transferor: `0x${string}` | string;
     minter: `0x${string}` | string;
     burner: `0x${string}` | string;
@@ -27,7 +27,7 @@ describe('ERC20 Generator', function () {
     symbol: 'JDB',
     initialSupply: '1000000000000000000000000', // 1*10^24
     supplyCap: '2000000000000000000000000', // 2*10^24
-    payee: '0x',
+    recipient: '0x',
     transferor: '0x',
     minter: '0x',
     burner: '0x',
@@ -67,7 +67,7 @@ describe('ERC20 Generator', function () {
     const [deployer] = await ethers.getSigners();
     initialArgs = {
       ...initialArgs,
-      payee: deployer.address,
+      recipient: deployer.address,
       transferor: deployer.address,
       minter: deployer.address,
       burner: deployer.address,
@@ -95,7 +95,7 @@ describe('ERC20 Generator', function () {
       await expect(contract.name()).resolves.toEqual(initialArgs.name);
       await expect(contract.symbol()).resolves.toEqual(initialArgs.symbol);
 
-      // check payee supply should same as initial supply
+      // check recipient supply should same as initial supply
       await expect(contract.balanceOf(deployer.address)).resolves.toEqual(
         BigNumber.from(initialArgs.initialSupply),
       );
@@ -150,7 +150,7 @@ describe('ERC20 Generator', function () {
       // deployer contract with wallet1 is burner role
       const { contract, deployer } = await deploy({
         ...initialArgs,
-        payee: wallet1.address,
+        recipient: wallet1.address,
       });
 
       await expect(contract.mint(deployer.address, BigNumber.from(1000)));
@@ -165,7 +165,7 @@ describe('ERC20 Generator', function () {
       // deployer contract with wallet1 is burner role
       const { contract, deployer } = await deploy({
         ...initialArgs,
-        payee: wallet1.address,
+        recipient: wallet1.address,
       });
 
       await expect(contract.burn(BigNumber.from(100))).rejects.toThrow(
@@ -198,15 +198,15 @@ describe('ERC20 Generator', function () {
       )) as typeof contract;
       const burnAmount = 1000000;
 
-      // check payee supply should same as initial supply
+      // check recipient supply should same as initial supply
       await expect(
         contractWallet1.balanceOf(deployer.address),
       ).resolves.toEqual(BigNumber.from(initialArgs.initialSupply));
-      // burn payee
+      // burn recipient
       await expect(
         contractWallet1.adminBurn(deployer.address, BigNumber.from(burnAmount)),
       ).resolves.toBeTruthy();
-      // check payee supply
+      // check recipient supply
       await expect(
         contractWallet1.balanceOf(deployer.address),
       ).resolves.toEqual(
@@ -258,7 +258,7 @@ describe('ERC20 Generator', function () {
         ),
       ).resolves.toBeTruthy();
 
-      // check transfer from payee to wallet2
+      // check transfer from recipient to wallet2
       await expect(
         contractWallet1.adminTransfer(
           deployer.address,
@@ -267,7 +267,7 @@ describe('ERC20 Generator', function () {
         ),
       ).resolves.toBeTruthy();
 
-      // check payee balance
+      // check recipient balance
       await expect(
         contractWallet1.balanceOf(deployer.address),
       ).resolves.toEqual(
@@ -297,7 +297,7 @@ describe('ERC20 Generator', function () {
         ),
       ).resolves.toBeTruthy();
 
-      // check transfer from payee to wallet2
+      // check transfer from recipient to wallet2
       await expect(
         contractWallet1.adminTransfer(
           deployer.address,

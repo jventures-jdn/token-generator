@@ -29,9 +29,5 @@ module.exports = {
     darkTheme: 'jfinTheme', // name of one of the included themes for dark mode
   },
   plugins: [require('@tailwindcss/typography'), require('daisyui')],
-  safelist: [
-    {
-      pattern: /tooltip-./,
-    },
-  ],
+  safelist: [],
 };
