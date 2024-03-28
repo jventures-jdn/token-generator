@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { HiInformationCircle } from 'react-icons/hi';
 
 export type InputTooltipProps = {
@@ -7,38 +8,38 @@ export type InputTooltipProps = {
   open?: boolean;
 };
 export function InputTooltip({
-  className,
-  options,
+  title,
+  id,
+  text,
 }: {
-  className?: JSX.IntrinsicElements['div'];
-  options?: InputTooltipProps;
+  title: string;
+  id: string;
+  text: string;
 }) {
-  /* -------------------------------------------------------------------------- */
-  /*                                   States                                   */
-  /* -------------------------------------------------------------------------- */
-  const tooltipPosition = options?.position
-    ? `tooltip-${options?.position}`
-    : 'tooltip-right';
   /* -------------------------------------------------------------------------- */
   /*                                    Doms                                    */
   /* -------------------------------------------------------------------------- */
-  if (!options) return;
+
   return (
-    <div
-      className={`tooltip tooltip-secondary hidden md:flex ${
-        options?.position === 'top'
-          ? `!tooltip-top`
-          : options?.position === 'bottom'
-            ? '!tooltip-bottom'
-            : options?.position === 'left'
-              ? '!tooltip-left'
-              : options?.position === 'right'
-                ? '!tooltip-right'
-                : '!tooltip-right'
-      } ${className || ''}`}
-      data-tip={options.text}
-    >
-      {options.icon || <HiInformationCircle />}
+    <div>
+      <div
+        onClick={() => (document.getElementById(id) as any)?.showModal()}
+        className="cursor-pointer"
+      >
+        {<HiInformationCircle />}
+      </div>
+      <dialog
+        id={id}
+        className="modal"
+        onClick={() => (document.getElementById(id) as any)?.close()}
+      >
+        <div className={`modal-box ${open ? 'modal-open' : ''}`}>
+          <h3 className="font-bold text-lg capitalize flex items-center gap-2">
+            {title} <HiInformationCircle />
+          </h3>
+          <p className="py-4 text-md ">{text}</p>
+        </div>
+      </dialog>
     </div>
   );
 }

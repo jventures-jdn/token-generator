@@ -42,7 +42,7 @@ export default function ERC20Page() {
       .max(100, 'Symbol must be less than 100 characters')
       .regex(
         /^[a-zA-Z][A-Za-z0-9 _]+$/,
-        'Name must be [alphanumeric,space,dash] and start with a letter',
+        'Name must be alphanumeric space underscore and must start with a letter',
       ),
     symbol: z
       .string({ required_error: 'Symbol is required' })
@@ -50,7 +50,7 @@ export default function ERC20Page() {
       .max(10, 'Symbol must be less than 10 characters')
       .regex(
         /^[a-zA-Z][A-Za-z0-9 _]+$/,
-        'Symbol must be [alphanumeric,space,dash] and start with a letter',
+        'Symbol must be alphanumeric space underscore and must start with a letter',
       ),
     recipient: z
       .string({ required_error: 'Recipient is required' })
@@ -157,7 +157,9 @@ export default function ERC20Page() {
               disabled: isDisabled,
             }}
             title="Name"
-            tooltip={{ text: 'Name of the token' }}
+            tooltip={{
+              text: 'Name of the token, must be alphanumeric space underscore and must start with a letter',
+            }}
           />
           <TextInput
             controller={{
@@ -179,7 +181,9 @@ export default function ERC20Page() {
               disabled: isDisabled,
             }}
             title="Recipient"
-            tooltip={{ text: 'Initial token recipient.' }}
+            tooltip={{
+              text: 'Symbol of the token, must be alphanumeric space underscore and must start with a letter',
+            }}
           />
         </div>
 
@@ -199,7 +203,7 @@ export default function ERC20Page() {
             step={stepSupply}
             title="Initial Supply"
             tooltip={{
-              text: 'Initial token to be delivered to receiver',
+              text: 'Initial token amount that will be mint to recipient address',
             }}
           />
 

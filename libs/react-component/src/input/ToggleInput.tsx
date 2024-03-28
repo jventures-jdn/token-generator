@@ -1,3 +1,5 @@
+'use client';
+
 import { UseControllerProps, useController } from 'react-hook-form';
 import { InputTooltip, InputTooltipProps } from './Fragment';
 
@@ -32,7 +34,7 @@ export function ToggleInput<Inputs extends Record<string, any>>({
       {/* Title */}
       <div className="flex items-center gap-2 label-text">
         {title && <label className="ml-1">{title}</label>}
-        <InputTooltip options={tooltip} />
+        <InputTooltip title={title} id={controller.name} text={tooltip.text} />
         <input
           {...field}
           defaultChecked={field.value}

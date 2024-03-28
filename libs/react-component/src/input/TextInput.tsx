@@ -1,3 +1,5 @@
+'use client';
+
 import {
   UseControllerProps,
   UseFormUnregister,
@@ -72,7 +74,7 @@ export function TextInput<
       {/* Title */}
       <div className="flex items-center gap-1 label-text ml-1">
         <label>{title}</label>
-        <InputTooltip options={tooltip} />
+        <InputTooltip id={controller.name} title={title} text={tooltip.text} />
         {toggleFields && (
           <input
             checked={fieldState}
