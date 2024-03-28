@@ -1,6 +1,6 @@
 {
   "name": "@jventures-jdn/config-tailwind",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "author": "J Ventures Co., Ltd.",
   "dependencies": {
     "@tailwindcss/typography": "^0.5.10",
