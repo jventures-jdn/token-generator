@@ -170,7 +170,9 @@ export default function ERC20Page() {
               disabled: isDisabled,
             }}
             title="Symbol"
-            tooltip={{ text: 'Symbol of the token' }}
+            tooltip={{
+              text: 'Symbol of the token, must be alphanumeric space underscore and must start with a letter',
+            }}
           />
           <TextInput
             controller={{
@@ -182,7 +184,7 @@ export default function ERC20Page() {
             }}
             title="Recipient"
             tooltip={{
-              text: 'Symbol of the token, must be alphanumeric space underscore and must start with a letter',
+              text: 'Recipient address who received the initial token when smart contract deployed',
             }}
           />
         </div>
