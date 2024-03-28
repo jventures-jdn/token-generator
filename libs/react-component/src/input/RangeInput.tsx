@@ -7,7 +7,10 @@ import {
 import { InputTooltipProps } from './Fragment';
 import { TextInput } from '.';
 
-export function RangeInput<Inputs extends Record<string, any>>({
+export function RangeInput<
+  Inputs extends Record<string, any>,
+  FieldStates extends Record<string, any>,
+>({
   controller,
   size,
   title,
@@ -29,8 +32,8 @@ export function RangeInput<Inputs extends Record<string, any>>({
   max?: number;
   step?: number;
   toggleFields?: {
-    setter: Dispatch<SetStateAction<{ [key in keyof Inputs]: boolean }>>;
-    value: { [key in keyof Inputs]: boolean };
+    setter: Dispatch<SetStateAction<{ [key in keyof FieldStates]: boolean }>>;
+    value: { [key in keyof FieldStates]: boolean };
   };
 }) {
   /* -------------------------------------------------------------------------- */

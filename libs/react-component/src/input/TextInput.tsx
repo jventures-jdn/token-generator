@@ -11,7 +11,10 @@ import {
   useEffect,
 } from 'react';
 
-export function TextInput<Inputs extends Record<string, any>>({
+export function TextInput<
+  Inputs extends Record<string, any>,
+  FieldStates extends Record<string, any>,
+>({
   controller,
   type,
   size,
@@ -31,8 +34,8 @@ export function TextInput<Inputs extends Record<string, any>>({
   placeholder?: string;
   tooltip?: InputTooltipProps;
   toggleFields?: {
-    setter: Dispatch<SetStateAction<{ [key in keyof Inputs]: boolean }>>;
-    value: { [key in keyof Inputs]: boolean };
+    setter: Dispatch<SetStateAction<{ [key in keyof FieldStates]: boolean }>>;
+    value: { [key in keyof FieldStates]: boolean };
   };
   hideMessage?: boolean;
   alwayShowInput?: boolean;
