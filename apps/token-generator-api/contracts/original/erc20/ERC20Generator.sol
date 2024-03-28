@@ -37,7 +37,6 @@ contract ERC20Generator is ERC20, ERC20Pausable, AccessControl {
         _cap = args_.supplyCap;
         // @end_supplyCap
 
-        // Grant roles to a specified account
         _setupRole(TRANSFEROR_ROLE, args_.transferor); // @adminTransfer
         _setupRole(MINTER_ROLE, args_.minter); // @mint
         _setupRole(BURNER_ROLE, args_.burner); // @adminBurn
