@@ -48,12 +48,12 @@ describe('Contract Service', () => {
 
     const contractNamespaces = [
       { name: 'ERC20_NoCap', disable: { supplyCap: true } },
-      { name: 'ERC20_NoMint', disable: { mint: true } },
-      { name: 'ERC20_NoSelfBurn', disable: { burn: true } },
-      { name: 'ERC20_NoAdminBurn', disable: { adminBurn: true } },
-      { name: 'ERC20_NoBurn', disable: { adminBurn: true, burn: true } },
-      { name: 'ERC20_NoPause', disable: { pause: true } },
-      { name: 'ERC20_NoAdminTransfer', disable: { adminTransfer: true } },
+      { name: 'ERC20_NoMint', disable: { minter: true } },
+      { name: 'ERC20_NoSelfBurn', disable: { burnable: true } },
+      { name: 'ERC20_NoAdminBurn', disable: { burner: true } },
+      { name: 'ERC20_NoBurn', disable: { burner: true, burnable: true } },
+      { name: 'ERC20_NoPause', disable: { pauser: true } },
+      { name: 'ERC20_NoAdminTransfer', disable: { transferor: true } },
     ];
 
     beforeAll(async () => {
@@ -162,7 +162,7 @@ describe('Contract Service', () => {
       });
     });
 
-    describe('ERC20: Disable selfBurn', () => {
+    describe('ERC20: Disable burnable', () => {
       const contractName = 'ERC20_NoSelfBurn';
       let _args: DefaultArgs;
 
@@ -170,7 +170,7 @@ describe('Contract Service', () => {
         _args = { ...initialArgs, name: contractName };
       });
 
-      it('Disable `selfBurn` should not have `burn()` method', async () => {
+      it('Disable `burnable` should not have `burn()` method', async () => {
         const { contract } = await deploy(contractName, _args);
         const methods = contract.interface.fragments
           .map((f: any) => f.name)
@@ -178,7 +178,7 @@ describe('Contract Service', () => {
         expect(methods).not.toContain('burn');
       });
 
-      it('Disable `selfBurn` should not have `burnFrom()` method', async () => {
+      it('Disable `burnable` should not have `burnFrom()` method', async () => {
         const { contract } = await deploy(contractName, _args);
         const methods = contract.interface.fragments
           .map((f: any) => f.name)

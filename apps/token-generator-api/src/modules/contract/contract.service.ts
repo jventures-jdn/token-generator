@@ -151,22 +151,22 @@ export class ContractService {
    * @param contractRaw - The raw contract string.
    * @param disable - An optional object specifying which features to disable.
    * @param disable.supplyCap - Set to `true` to disable the supplyCap feature.
-   * @param disable.mintable - Set to `true` to disable the mintable feature.
+   * @param disable.minter - Set to `true` to disable the minter feature.
    * @param disable.burnable - Set to `true` to disable the self burnable feature.
-   * @param disable.adminBurn - Set to `true` to disable the admin burn feature.
-   * @param disable.pausable - Set to `true` to disable the pausable feature.
-   * @param disable.adminTransfer - Set to `true` to disable the admin transfer feature.
+   * @param disable.burner - Set to `true` to disable the admin burn feature.
+   * @param disable.pauser - Set to `true` to disable the pausable feature.
+   * @param disable.transferor - Set to `true` to disable the admin transfer feature.
    * @returns The modified contract string.
    */
   contractFeatureGenerator(
     contractRaw: string,
     disable?: {
       supplyCap?: boolean;
-      mintable?: boolean;
+      minter?: boolean;
       burnable?: boolean;
-      adminBurn?: boolean;
-      pausable?: boolean;
-      adminTransfer?: boolean;
+      burner?: boolean;
+      pauser?: boolean;
+      transferor?: boolean;
     },
   ) {
     let newContractRaw = contractRaw;
@@ -187,7 +187,7 @@ export class ContractService {
     }
 
     // no mint
-    if (disable?.mintable) {
+    if (disable?.minter) {
       newContractRaw = ContentManagement.editContent(
         newContractRaw,
         'LINE',
@@ -211,7 +211,7 @@ export class ContractService {
     }
 
     // no admin burn
-    if (disable?.adminBurn) {
+    if (disable?.burner) {
       newContractRaw = ContentManagement.editContent(
         newContractRaw,
         'LINE',
@@ -226,7 +226,7 @@ export class ContractService {
     }
 
     // no brun
-    if (disable?.burnable && disable?.adminBurn) {
+    if (disable?.burnable && disable?.burner) {
       newContractRaw = ContentManagement.editContent(
         newContractRaw,
         'LINE',
@@ -241,7 +241,7 @@ export class ContractService {
     }
 
     // no pause
-    if (disable?.pausable) {
+    if (disable?.pauser) {
       newContractRaw = ContentManagement.editContent(
         newContractRaw,
         'REPLACE',
@@ -262,7 +262,7 @@ export class ContractService {
     }
 
     // no admin transfer
-    if (disable?.adminTransfer) {
+    if (disable?.transferor) {
       newContractRaw = ContentManagement.editContent(
         newContractRaw,
         'RANGE',
