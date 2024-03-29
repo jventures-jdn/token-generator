@@ -126,17 +126,16 @@ export default function ERC20Page() {
   /* -------------------------------------------------------------------------- */
   /*                                   Watches                                  */
   /* -------------------------------------------------------------------------- */
-  const initialSupply = watch('initialSupply');
-  const supplyCap = watch('supplyCap');
+  const [initialSupply, supplyCap] = watch(['initialSupply', 'supplyCap']);
 
   useEffect(() => {
-    if (initialSupply > supplyCap) {
+    if (+initialSupply > +supplyCap) {
       setValue('supplyCap', initialSupply, { shouldValidate: true });
     }
   }, [initialSupply]);
 
   useEffect(() => {
-    if (supplyCap < initialSupply)
+    if (+supplyCap < +initialSupply)
       setValue('initialSupply', supplyCap, { shouldValidate: true });
   }, [supplyCap]);
 
