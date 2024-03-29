@@ -34,7 +34,7 @@ export function useErc20() {
   // State
   const minSupply = 0;
   const maxSupply = 10000000;
-  const stepSupply = 1000000;
+  const stepSupply = 500000;
   const isDisabled = !!loading[logSelectId] || initiating[logSelectId];
 
   // Account
@@ -101,7 +101,13 @@ export function useErc20() {
   /* -------------------------------------------------------------------------- */
   /*                                   Watches                                  */
   /* -------------------------------------------------------------------------- */
-  useEffect(handleAccountChange, [account.address]);
+  useEffect(() => {
+    handleAccountChange();
+    if (!account.address) {
+      setLoading(undefined);
+      setInitiating(false);
+    }
+  }, [account.address]);
   useEffect(() => {
     setLoading(undefined);
     setInitiating(false);
