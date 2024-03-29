@@ -33,7 +33,7 @@ export function InputTooltip({
         className="modal"
         onClick={() => (document.getElementById(id) as any)?.close()}
       >
-        <div className={`modal-box ${open ? 'modal-open' : ''}`}>
+        <div className="modal-box">
           <h3 className="font-bold text-lg capitalize flex items-center gap-2">
             {title} <HiInformationCircle />
           </h3>
