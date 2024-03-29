@@ -1,7 +1,7 @@
 'use client';
 
 import { LoggerStore, LoggerWindow } from '../../../../libs/react-logger';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useErc20 } from './hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -67,25 +67,29 @@ export default function ERC20Page() {
     ),
     burnable: z.boolean(),
     burner: z
-      .string({ required_error: 'Burner address is required' })
+      .string()
+      .optional()
       .refine(
         (v) => !fieldStates['burner'] || /^0x[a-fA-F0-9]{40}$/.test(v),
         'Invalid address',
       ),
     minter: z
-      .string({ required_error: 'Minter address is required' })
+      .string()
+      .optional()
       .refine(
         (v) => !fieldStates['minter'] || /^0x[a-fA-F0-9]{40}$/.test(v),
         'Invalid address',
       ),
     pauser: z
-      .string({ required_error: 'Pauser address is required' })
+      .string()
+      .optional()
       .refine(
         (v) => !fieldStates['pauser'] || /^0x[a-fA-F0-9]{40}$/.test(v),
         'Invalid address',
       ),
     transferor: z
-      .string({ required_error: 'Trasnferor address is required' })
+      .string()
+      .optional()
       .refine(
         (v) => !fieldStates['transferor'] || /^0x[a-fA-F0-9]{40}$/.test(v),
         'Invalid address',
@@ -93,7 +97,7 @@ export default function ERC20Page() {
   });
 
   /* ---------------------------------- Form ---------------------------------- */
-  const { handleSubmit, control, unregister, setValue, watch } = useForm<
+  const { handleSubmit, control, unregister, setValue, watch, reset } = useForm<
     typeof schema._type
   >({
     resolver: zodResolver(schema),
@@ -139,6 +143,17 @@ export default function ERC20Page() {
       setValue('initialSupply', supplyCap, { shouldValidate: true });
   }, [supplyCap]);
 
+  useMemo(() => {
+    if (!account.address) return;
+    reset({
+      recipient: account.address || '0x',
+      burner: account.address || '0x',
+      minter: account.address || '0x',
+      pauser: account.address || '0x',
+      transferor: account.address || '0x',
+    });
+  }, [account.address]);
+
   /* -------------------------------------------------------------------------- */
   /*                                    Doms                                    */
   /* -------------------------------------------------------------------------- */
@@ -177,7 +192,7 @@ export default function ERC20Page() {
             controller={{
               control: control,
               name: 'recipient',
-              defaultValue: account.address,
+              defaultValue: '0x',
               rules: { required: true },
               disabled: isDisabled,
             }}
@@ -204,7 +219,7 @@ export default function ERC20Page() {
             step={stepSupply}
             title="Initial Supply"
             tooltip={{
-              text: 'Initial token amount that will be mint to recipient address',
+              text: 'Initial token amount that will be mint to recipient address ',
             }}
           />
 
@@ -249,7 +264,7 @@ export default function ERC20Page() {
             controller={{
               control: control,
               name: 'burner',
-              defaultValue: account.address,
+              defaultValue: '0x',
               rules: { required: true },
               disabled: isDisabled,
             }}
@@ -263,7 +278,7 @@ export default function ERC20Page() {
             controller={{
               control: control,
               name: 'minter',
-              defaultValue: account.address,
+              defaultValue: '0x',
               rules: { required: true },
               disabled: isDisabled,
             }}
@@ -278,7 +293,7 @@ export default function ERC20Page() {
             controller={{
               control: control,
               name: 'pauser',
-              defaultValue: account.address,
+              defaultValue: '0x',
               rules: { required: true },
               disabled: isDisabled,
             }}
@@ -293,7 +308,7 @@ export default function ERC20Page() {
             controller={{
               control: control,
               name: 'transferor',
-              defaultValue: account.address,
+              defaultValue: '0x',
               rules: { required: true },
               disabled: isDisabled,
             }}
