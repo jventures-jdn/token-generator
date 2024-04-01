@@ -166,7 +166,7 @@ export function useDeployErc20() {
           name: data.name,
           recipient: data.recipient,
           initialSupply: BigInt(data.initialSupply) * CHAIN_DECIMAL,
-          ...(data.supplyCap && {
+          ...(fieldStates.supplyCap && {
             supplyCap: BigInt(data.supplyCap) * CHAIN_DECIMAL,
           }),
           ...(fieldStates.transferor && {
@@ -180,7 +180,10 @@ export function useDeployErc20() {
         add(`🗳️ Deploying ERC20 to ${chain?.name}`, { color: 'info' });
         add(
           <div className="flex flex-col gap-2">
-            {Object.entries(args).map(([arg, value]) => (
+            {Object.entries({
+              ...args,
+              ...(data.burnable && { burnable: data.burnable }),
+            }).map(([arg, value]) => (
               <div key={arg}>
                 <span className="capitalize">{arg}: </span>
                 <span>{`${value}`}</span>
