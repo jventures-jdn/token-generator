@@ -156,6 +156,7 @@ export class ContractService {
    * Modifies a contract by disabling certain features based on the provided options.
    * @param contractRaw - The raw contract string.
    * @param disable - An optional object specifying which features to disable.
+   * @param disable.decimal - The number of decimals to set for the contract.
    * @param disable.supplyCap - Set to `true` to disable the supplyCap feature.
    * @param disable.minter - Set to `true` to disable the minter feature.
    * @param disable.burnable - Set to `true` to disable the self burnable feature.
@@ -167,6 +168,7 @@ export class ContractService {
   contractFeatureGenerator(
     contractRaw: string,
     disable?: {
+      decimals?: number;
       supplyCap?: boolean;
       minter?: boolean;
       burnable?: boolean;
@@ -176,6 +178,16 @@ export class ContractService {
     },
   ) {
     let newContractRaw = contractRaw;
+
+    // if there is decimal
+    if (disable?.decimals && disable?.decimals !== 18) {
+      newContractRaw = ContentManagement.editContent(
+        newContractRaw,
+        'REPLACE',
+        'decimals',
+        disable.decimals?.toString(),
+      );
+    }
 
     // no supply cap
     if (disable?.supplyCap) {
@@ -281,6 +293,8 @@ export class ContractService {
         'adminTransfer',
       );
     }
+
+    newContractRaw = ContentManagement.cleanContent(newContractRaw);
 
     return newContractRaw;
   }

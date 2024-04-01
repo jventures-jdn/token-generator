@@ -286,6 +286,8 @@ contract ERC20Generator is ERC20, ERC20Pausable, AccessControl {
      * @dev Returns the number of decimal places used for token balances.
      */
     function decimals() public view virtual override returns (uint8) {
+        // @start_replace_decimals[18]
         return 18;
+        // @end_replace_decimals
     }
 }

@@ -8,7 +8,12 @@ export default class ContentManagement {
    * @param pattern - The pattern used to identify the content to be edited.
    * @returns The edited content.
    */
-  static editContent(content: string, type: EditContentType, pattern: string) {
+  static editContent(
+    content: string,
+    type: EditContentType,
+    pattern: string,
+    newValue?: string,
+  ) {
     // remove content line by line
     if (type === 'LINE') {
       return content
@@ -58,7 +63,7 @@ export default class ContentManagement {
                 .replaceAll('[', '')
                 .replaceAll(']', '');
             }
-            acc.new.push(line.replaceAll(acc.replace, ''));
+            acc.new.push(line.replaceAll(acc.replace, newValue || ''));
           } else {
             acc.new.push(line);
           }
@@ -75,5 +80,50 @@ export default class ContentManagement {
       );
       return newContractRaw.new.join('\n');
     }
+  }
+
+  static cleanContent(content: string) {
+    function replaceWordsWithEmpty(text: string, words: string[]) {
+      // Create a regular expression pattern to match any of the words in the list
+      const bracketPattern = /\[([^\]]*?)\]/g;
+      const pattern = new RegExp(
+        '// @' + '\\b(?:' + words.join('|') + ')\\b',
+        'gi',
+      );
+      const pattern2 = new RegExp(
+        '@' + '\\b(?:' + words.join('|') + ')\\b',
+        'gi',
+      );
+
+      // Replace the matched words with an empty string
+      const replacedText = text
+        .replaceAll(pattern, '')
+        .replaceAll(pattern2, '')
+        .replaceAll(bracketPattern, '');
+
+      return replacedText;
+    }
+
+    const patterns = [
+      'pause',
+      'supplyCap',
+      'adminTransfer',
+      'adminBurn',
+      'burn',
+      'mint',
+      'decimals',
+      'selfBurn',
+    ];
+
+    const types = ['', 'start_', 'end_', 'start_replace_', 'end_replace_'];
+
+    const replacePatterns = types.reduce((acc, type) => {
+      patterns.forEach((pattern) => {
+        acc.push(`${type}${pattern}`);
+      });
+      return acc;
+    }, []);
+
+    return replaceWordsWithEmpty(content, replacePatterns);
   }
 }
