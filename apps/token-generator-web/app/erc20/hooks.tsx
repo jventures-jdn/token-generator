@@ -24,7 +24,6 @@ export function useErc20() {
 
   /* ------------------------------ Field States ------------------------------ */
   const [fieldStates, setFieldStates] = useState({
-    decimals: 18,
     supplyCap: true,
     minter: true,
     burner: false,

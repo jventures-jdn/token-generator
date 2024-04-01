@@ -27,12 +27,12 @@ type _ERC20FormSchema = {
 
 type _FieldStates = {
   supplyCap: boolean;
-  decimals: number;
   minter: boolean;
   burner: boolean;
   pauser: boolean;
   transferor: boolean;
   burnable: boolean;
+  decimals: number;
 };
 
 export function useDeployErc20() {
