@@ -166,9 +166,10 @@ export function useDeployErc20() {
           symbol: data.symbol,
           name: data.name,
           recipient: data.recipient,
-          initialSupply: BigInt(data.initialSupply) * CHAIN_DECIMAL,
+          initialSupply:
+            BigInt(data.initialSupply) * BigInt(fieldStates.decimals),
           ...(fieldStates.supplyCap && {
-            supplyCap: BigInt(data.supplyCap) * CHAIN_DECIMAL,
+            supplyCap: BigInt(data.supplyCap) * BigInt(fieldStates.decimals),
           }),
           ...(fieldStates.transferor && {
             transferor: data.transferor,
