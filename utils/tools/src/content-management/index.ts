@@ -81,4 +81,44 @@ export default class ContentManagement {
       return newContractRaw.new.join('\n');
     }
   }
+
+  static cleanContent(content: string) {
+    function replaceWordsWithEmpty(text: string, words: string[]) {
+      // Create a regular expression pattern to match any of the words in the list
+      const bracketPattern = /\[([^\]]+)\]/g;
+      const pattern = new RegExp(
+        '// @' + '\\b(?:' + words.join('|') + ')\\b',
+        'gi',
+      );
+
+      // Replace the matched words with an empty string
+      const replacedText = text
+        .replaceAll(pattern, '')
+        .replaceAll(bracketPattern, '');
+
+      return replacedText;
+    }
+
+    const patterns = [
+      'pause',
+      'supplyCap',
+      'adminTransfer',
+      'adminBurn',
+      'burn',
+      'mint',
+      'decimals',
+      'selfBurn',
+    ];
+
+    const types = ['', 'start_', 'end_', 'start_replace_', 'end_replace_'];
+
+    const replacePatterns = types.reduce((acc, type) => {
+      patterns.forEach((pattern) => {
+        acc.push(`${type}${pattern}`);
+      });
+      return acc;
+    }, []);
+
+    return replaceWordsWithEmpty(content, replacePatterns);
+  }
 }

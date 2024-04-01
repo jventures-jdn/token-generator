@@ -294,6 +294,8 @@ export class ContractService {
       );
     }
 
+    newContractRaw = ContentManagement.cleanContent(newContractRaw);
+
     return newContractRaw;
   }
 
