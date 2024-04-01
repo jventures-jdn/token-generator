@@ -55,6 +55,10 @@ export default function ERC20Page() {
     recipient: z
       .string({ required_error: 'Recipient is required' })
       .refine((v) => /^0x[a-fA-F0-9]{40}$/.test(v), 'Invalid address'),
+    decimals: z.coerce
+      .number({ required_error: 'Decimals is required' })
+      .min(1, 'Decimals must be between 1 and 18')
+      .max(18, 'Decimals must be between 1 and 18'),
     initialSupply: z
       .string()
       .regex(/^\d+$/, 'Initial supply must be number')
@@ -105,12 +109,15 @@ export default function ERC20Page() {
   });
 
   const onSubmit = async (data: typeof schema._type) => {
+    console.log(data.decimals);
     const handler = async () => {
       const _fieldStates = {
         ...fieldStates,
+        decimals: data.decimals,
         burnable: data.burnable,
       };
       clear();
+
       setLoading('🚀 Contract Processing ...');
       await generate(data.name, _fieldStates);
       await compile(data.name);
@@ -199,6 +206,19 @@ export default function ERC20Page() {
             title="Recipient"
             tooltip={{
               text: 'Recipient address who received the initial token when smart contract deployed',
+            }}
+          />
+          <TextInput
+            controller={{
+              control: control,
+              name: 'decimals',
+              defaultValue: 18,
+              rules: { required: true },
+              disabled: isDisabled,
+            }}
+            title="Decimals"
+            tooltip={{
+              text: 'Decimals of the token, must be between 1 and 18',
             }}
           />
         </div>

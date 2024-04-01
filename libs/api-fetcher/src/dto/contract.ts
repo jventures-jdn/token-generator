@@ -4,9 +4,12 @@ import {
   IsEnum,
   IsEthereumAddress,
   IsNotEmpty,
+  IsNumber,
   IsNumberString,
   IsOptional,
   IsString,
+  Max,
+  Min,
 } from 'class-validator';
 import {
   ContractTypeEnum,
@@ -115,6 +118,12 @@ export const CompileContractResponseExample = convertObjectToExample({
 
 /* -------------------------------- Generate -------------------------------- */
 class GenerateContractDisable {
+  @IsNumber()
+  @Min(1)
+  @Max(18)
+  @IsOptional()
+  decimal?: number;
+
   @IsBoolean()
   @IsOptional()
   supplyCap?: boolean;

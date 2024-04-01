@@ -8,7 +8,12 @@ export default class ContentManagement {
    * @param pattern - The pattern used to identify the content to be edited.
    * @returns The edited content.
    */
-  static editContent(content: string, type: EditContentType, pattern: string) {
+  static editContent(
+    content: string,
+    type: EditContentType,
+    pattern: string,
+    newValue?: string,
+  ) {
     // remove content line by line
     if (type === 'LINE') {
       return content
@@ -58,7 +63,7 @@ export default class ContentManagement {
                 .replaceAll('[', '')
                 .replaceAll(']', '');
             }
-            acc.new.push(line.replaceAll(acc.replace, ''));
+            acc.new.push(line.replaceAll(acc.replace, newValue || ''));
           } else {
             acc.new.push(line);
           }

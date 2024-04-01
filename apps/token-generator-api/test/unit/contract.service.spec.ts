@@ -47,6 +47,7 @@ describe('Contract Service', () => {
     });
 
     const contractNamespaces = [
+      { name: 'ERC20_Decimals', disable: { decimals: 15 } },
       { name: 'ERC20_NoCap', disable: { supplyCap: true } },
       { name: 'ERC20_NoMint', disable: { minter: true } },
       { name: 'ERC20_NoSelfBurn', disable: { burnable: true } },
@@ -130,6 +131,20 @@ describe('Contract Service', () => {
             BigInt(initialArgs.initialSupply + 1000000),
           ),
         ).resolves.toBeTruthy();
+      });
+    });
+
+    describe('ERC20: Decimals', () => {
+      const contractName = 'ERC20_Decimals';
+      let _args: DefaultArgs;
+
+      beforeAll(async () => {
+        _args = { ...initialArgs, name: contractName };
+      });
+
+      it('Disable `mint`  should not have `mint()` method', async () => {
+        const { contract } = await deploy(contractName, _args);
+        await expect(contract.decimals()).resolves.toEqual(15);
       });
     });
 

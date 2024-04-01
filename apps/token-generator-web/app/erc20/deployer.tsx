@@ -27,6 +27,7 @@ type _ERC20FormSchema = {
 
 type _FieldStates = {
   supplyCap: boolean;
+  decimals: number;
   minter: boolean;
   burner: boolean;
   pauser: boolean;
@@ -53,10 +54,10 @@ export function useDeployErc20() {
         contractName,
         disable: Object.entries(fieldStates).reduce(
           (prev, [index, value]) => {
-            prev[index] = !value;
+            prev[index] = typeof value === 'number' ? value : !value;
             return prev;
           },
-          {} as Record<string, boolean>,
+          {} as Record<string, boolean | number>,
         ),
       });
 
