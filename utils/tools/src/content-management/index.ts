@@ -85,15 +85,20 @@ export default class ContentManagement {
   static cleanContent(content: string) {
     function replaceWordsWithEmpty(text: string, words: string[]) {
       // Create a regular expression pattern to match any of the words in the list
-      const bracketPattern = /\[([^\]]+)\]/g;
+      const bracketPattern = /\[([^\]]*?)\]/g;
       const pattern = new RegExp(
         '// @' + '\\b(?:' + words.join('|') + ')\\b',
+        'gi',
+      );
+      const pattern2 = new RegExp(
+        '@' + '\\b(?:' + words.join('|') + ')\\b',
         'gi',
       );
 
       // Replace the matched words with an empty string
       const replacedText = text
         .replaceAll(pattern, '')
+        .replaceAll(pattern2, '')
         .replaceAll(bracketPattern, '');
 
       return replacedText;
