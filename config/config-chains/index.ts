@@ -42,7 +42,7 @@ export const jfin: Chain = {
   name: CHAIN_NAME.JFIN,
   network: CHAIN_SYMBOL.JFIN as InternalChain,
   nativeCurrency: {
-    decimals: 1,
+    decimals: 18,
     name: CHAIN_NAME.JFIN,
     symbol: CHAIN_SYMBOL.JFIN,
   },
