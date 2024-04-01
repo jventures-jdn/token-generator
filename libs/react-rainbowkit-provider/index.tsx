@@ -16,7 +16,7 @@ import { jfin, jfint } from '@jventures-jdn/config-chains';
 /*                                   States                                   */
 /* -------------------------------------------------------------------------- */
 const { chains, publicClient } = configureChains(
-  [mainnet, polygon, optimism, arbitrum, jfin, jfint],
+  [jfin, jfint],
   [publicProvider()],
 );
 
