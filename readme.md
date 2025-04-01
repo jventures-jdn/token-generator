@@ -43,10 +43,10 @@
 
 ### CI/CD
 
-- [ ] setup cloudflare configuration for web deployment
+- [x] setup cloudflare configuration for web deployment
 - [x] setup glcoud configuration for api for deployment
-- [ ] setup secrets for github actions
-- [ ] setup dockerfile for frontend
+- [x] setup secrets for github actions
+- [x] setup dockerfile for frontend
 - [x] setup dockerfile for backend
 - [x] make hardhat runable in backend container
 - [x] make changeset release version when merge to main
@@ -60,7 +60,7 @@
 - [x] endpoint for read original, generated smart contract
 - [x] endpoint for generate smart contract with new name
 - [x] endpoint for compile generated smart contract
-- [ ] endpoint for verify generated smart contract
+- [x] endpoint for verify generated smart contract
 - [x] endpoint for remove generated & compile smart contract
 - [x] endpoint for read abi, bytecode from compiled smart contract
 - [x] setup test for contract endpoints
