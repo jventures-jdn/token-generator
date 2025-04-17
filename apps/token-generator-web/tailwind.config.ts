@@ -13,6 +13,7 @@ const config = {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     '../../libs/**/*.{js,ts,jsx,tsx,mdx}',
+    '!../../libs/**/node_modules/**/*', // Exclude node_modules inside libs
   ],
 };
 export default config;

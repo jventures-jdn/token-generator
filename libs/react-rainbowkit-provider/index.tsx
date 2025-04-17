@@ -23,6 +23,7 @@ const { chains, publicClient } = configureChains(
 const { connectors } = getDefaultWallets({
   appName: 'Token Generator',
   projectId:
+    // eslint-disable-next-line turbo/no-undeclared-env-vars
     process.env['010ccdb31998feacae63140786d809ee'] ||
     '010ccdb31998feacae63140786d809ee',
   chains,

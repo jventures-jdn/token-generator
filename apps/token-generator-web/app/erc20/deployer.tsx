@@ -267,8 +267,9 @@ export function useDeployErc20() {
                   BigInt(transactionFeeDecimal)) /
                   CHAIN_DECIMAL,
               ) / transactionFeeDecimal
-            ).toLocaleString(undefined, { minimumFractionDigits: 7 })} ${chain
-              ?.nativeCurrency.symbol}`,
+            ).toLocaleString(undefined, { minimumFractionDigits: 7 })} ${
+              chain?.nativeCurrency.symbol
+            }`,
           );
 
           return resolve({

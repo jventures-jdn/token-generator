@@ -7,7 +7,7 @@ export type FetcherApiResponse<T> = {
   message?: string;
   data: T;
 };
-export default class FetcherAPI {
+export class FetcherAPI {
   constructor(version?: number, endpoint?: string, baseUrl?: string) {
     this.version = version || 1;
     this.endpoint = endpoint || environmentConfig.tokenGeneratorApiEndpoint;

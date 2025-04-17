@@ -59,9 +59,9 @@ export const LoggerStore = create<ILoggerState & ILoggerAction>()(
   immer(
     devtools((set, get) => ({
       /* --------------------------------- States --------------------------------- */
-      logs: { main: [] },
-      loading: { main: undefined },
-      initiating: { main: true },
+      logs: { main: [] as ILoggerState['logs'][string] },
+      loading: { main: undefined as ILoggerState['loading'][string] },
+      initiating: { main: true as ILoggerState['initiating'][string] },
       defaultProvider: 'DEPLOYER',
       logSelectId: 'main',
 

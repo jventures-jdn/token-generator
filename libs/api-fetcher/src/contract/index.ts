@@ -20,7 +20,7 @@ import {
   VerifyERC20ContractResponse,
 } from '../dto/contract';
 
-export default class ContractFetcherAPI {
+export class ContractFetcherAPI {
   private readonly key = 'contract';
   private fetcher = fetcherAPI.fetch;
 
